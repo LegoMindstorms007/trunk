@@ -1,6 +1,7 @@
 package Test;
 
 import lejos.nxt.Motor;
+import lejos.nxt.SensorPort;
 import RobotMovement.UltrasoundArm;
 
 public class TestThread implements Runnable {
@@ -10,8 +11,13 @@ public class TestThread implements Runnable {
 	private UltrasoundArm arm;
 	private boolean running;
 
+	private int measurements[];
+	private long times[];
+
 	public TestThread() {
-		arm = new UltrasoundArm();
+		arm = new UltrasoundArm(SensorPort.S3);
+		times = new int[3];
+		measurements = new int[3];
 	}
 
 	@Override
@@ -23,12 +29,18 @@ public class TestThread implements Runnable {
 			switch (i) {
 			case 0:
 				arm.turnToLeft();
+				measurements[0] = arm.getMeasurment();
+				times[0] = System.currentTimeMillis();
 				break;
 			case 2:
 				arm.TurnToRight();
+				measurements[0] = arm.getMeasurment();
+				times[0] = System.currentTimeMillis();
 				break;
 			default:
 				arm.center();
+				measurements[0] = arm.getMeasurment();
+				times[0] = System.currentTimeMillis();
 			}
 			sleep(TIMEOUT);
 			i++;
