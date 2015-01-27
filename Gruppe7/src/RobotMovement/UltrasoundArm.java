@@ -19,10 +19,15 @@ public class UltrasoundArm {
 	final int CENTERPOSITION = 0;
 	FeatureDetector sensor;
 
+	private int measurements[];
+	private long times[];
+
 	public UltrasoundArm(SensorPort portOfSensor) {
 		motor = Motor.C;
 		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S3);
 		sensor = new RangeFeatureDetector(us, MAX_DISTANCE, PERIOD);
+		times = new long[3];
+		measurements = new int[3];
 	}
 
 	public int getMeasurment() {
@@ -34,13 +39,43 @@ public class UltrasoundArm {
 
 	public void turnToLeft() {
 		motor.rotateTo(LEFTPOSITION);
+		measurements[0] = getMeasurment();
+		times[0] = System.currentTimeMillis();
 	}
 
 	public void TurnToRight() {
 		motor.rotateTo(RIGHTPOSITION);
+		measurements[2] = getMeasurment();
+		times[2] = System.currentTimeMillis();
 	}
 
 	public void center() {
 		motor.rotateTo(CENTERPOSITION);
+		measurements[1] = getMeasurment();
+		times[1] = System.currentTimeMillis();
+	}
+
+	public int getRightMeasurement() {
+		return measurements[0];
+	}
+
+	public int getLeftMeasurement() {
+		return measurements[2];
+	}
+
+	public int getCenterMeasurement() {
+		return measurements[1];
+	}
+
+	public int getAgeLeft() {
+		return (int) (System.currentTimeMillis() - times[0]);
+	}
+
+	public int getAgeRight() {
+		return (int) (System.currentTimeMillis() - times[2]);
+	}
+
+	public int getAgeCenter() {
+		return (int) (System.currentTimeMillis() - times[1]);
 	}
 }
