@@ -38,6 +38,8 @@ public class LineFolower implements Runnable {
 			} else {
 				track.pivotAngleRight(angle);
 			}
+			i++;
+			i %= 2;
 			angle += 5;
 		}
 	}
