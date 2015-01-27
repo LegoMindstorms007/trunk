@@ -16,7 +16,7 @@ public class TestThread implements Runnable {
 
 	public TestThread() {
 		arm = new UltrasoundArm(SensorPort.S3);
-		times = new int[3];
+		times = new long[3];
 		measurements = new int[3];
 	}
 
@@ -34,13 +34,13 @@ public class TestThread implements Runnable {
 				break;
 			case 2:
 				arm.TurnToRight();
-				measurements[0] = arm.getMeasurment();
-				times[0] = System.currentTimeMillis();
+				measurements[2] = arm.getMeasurment();
+				times[2] = System.currentTimeMillis();
 				break;
 			default:
 				arm.center();
-				measurements[0] = arm.getMeasurment();
-				times[0] = System.currentTimeMillis();
+				measurements[1] = arm.getMeasurment();
+				times[1] = System.currentTimeMillis();
 			}
 			sleep(TIMEOUT);
 			i++;
@@ -60,6 +60,30 @@ public class TestThread implements Runnable {
 
 	public void halt() {
 		running = false;
+	}
+
+	public int getRightMeasurement() {
+		return measurements[0];
+	}
+
+	public int getLeftMeasurement() {
+		return measurements[2];
+	}
+
+	public int getCenterMeasurement() {
+		return measurements[1];
+	}
+
+	public int getAgeLeft() {
+		return (int) (System.currentTimeMillis() - times[0]);
+	}
+
+	public int getAgeRight() {
+		return (int) (System.currentTimeMillis() - times[2]);
+	}
+
+	public int getAgeCenter() {
+		return (int) (System.currentTimeMillis() - times[1]);
 	}
 
 }
