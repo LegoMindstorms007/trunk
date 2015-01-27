@@ -7,6 +7,8 @@ import RobotMovement.TrackSuspension;
 public class LineFolower implements Runnable {
 
 	private static final int LINE_VALUE = 35;
+	private static final int MOVING_SPEED = 500;
+	private static final int ROTATING_SPEED = 1000;
 	LightSensor light;
 	TrackSuspension track;
 	private boolean running;
@@ -15,7 +17,7 @@ public class LineFolower implements Runnable {
 		light = new LightSensor(portOfLightSensor);
 
 		track = new TrackSuspension();
-		track.setSpeed(500);
+		track.setSpeed(MOVING_SPEED);
 	}
 
 	@Override
@@ -37,24 +39,17 @@ public class LineFolower implements Runnable {
 	}
 
 	private void searchTrack() {
-		track.setSpeed(1000);
+		track.setSpeed(ROTATING_SPEED);
 		int angle = 5;
 		int i = 0;
 		boolean found = false;
 		while (!found) {
 			if (i == 0) {
-				if (angle < 10) {
-					track.turnLeft(angle);
-				} else {
-					track.pivotAngleLeft(angle);
-				}
+				track.pivotAngleLeft(angle);
 			} else {
-				if (angle < 10) {
-					track.turnRight(angle);
-				} else {
-					track.pivotAngleRight(angle);
-				}
+				track.pivotAngleRight(angle);
 			}
+
 			while (track.motorsMoving()) {
 				if (isLine()) {
 					track.stop();
@@ -62,12 +57,13 @@ public class LineFolower implements Runnable {
 				}
 				sleep(10);
 			}
+
 			found = isLine();
 			i++;
 			i %= 2;
 			angle += 5;
 		}
-		track.setSpeed(100);
+		track.setSpeed(MOVING_SPEED);
 	}
 
 	private boolean isLine() {
