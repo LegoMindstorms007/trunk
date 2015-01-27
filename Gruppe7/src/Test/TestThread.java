@@ -4,7 +4,7 @@ import lejos.nxt.Motor;
 import RobotMovement.UltrasoundArm;
 
 public class TestThread implements Runnable {
-
+	private static final int MOTORSPEED = 90;
 	private static final int TIMEOUT = 300;
 	private static final int DEGREE = 65;
 	private UltrasoundArm arm;
@@ -16,7 +16,7 @@ public class TestThread implements Runnable {
 
 	@Override
 	public void run() {
-		Motor.C.setSpeed(60);
+		Motor.C.setSpeed(MOTORSPEED);
 		int i = 0;
 		running = true;
 		while (running) {

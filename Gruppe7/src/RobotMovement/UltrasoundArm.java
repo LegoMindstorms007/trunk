@@ -5,8 +5,8 @@ import lejos.nxt.NXTRegulatedMotor;
 
 public class UltrasoundArm {
 	private NXTRegulatedMotor motor;
-	final int LEFTPOSITION = 0;
-	final int RIGHTPOSITION = 0;
+	final int LEFTPOSITION = -65;
+	final int RIGHTPOSITION = 65;
 	final int CENTERPOSITION = 0;
 
 	public UltrasoundArm() {
