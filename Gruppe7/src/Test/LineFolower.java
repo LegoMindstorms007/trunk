@@ -37,19 +37,33 @@ public class LineFolower implements Runnable {
 	}
 
 	private void searchTrack() {
+		track.setSpeed(1000);
 		int angle = 5;
 		int i = 0;
-		while (light.getLightValue() < LINE_VALUE) {
+		boolean found = false;
+		while (!found) {
 			if (i == 0) {
 				track.pivotAngleLeft(angle);
 			} else {
 				track.pivotAngleRight(angle);
 			}
+			while (track.isM) {
+				if (isLine()) {
+					track.stop();
+					found = true;
+					sleep(10);
+				}
+			}
+			found = isLine();
 			i++;
 			i %= 2;
 			angle += 5;
-			track.waitForMotors();
 		}
+		track.setSpeed(100);
+	}
+
+	private boolean isLine() {
+		return light.getLightValue() < LINE_VALUE;
 	}
 
 	private void sleep(int millis) {
