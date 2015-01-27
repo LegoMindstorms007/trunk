@@ -15,7 +15,7 @@ public class LineFolower implements Runnable {
 		light = new LightSensor(portOfLightSensor);
 
 		track = new TrackSuspension();
-		track.setSpeed(100);
+		track.setSpeed(500);
 	}
 
 	@Override

@@ -69,4 +69,8 @@ public class TrackSuspension {
 		left.waitComplete();
 		right.waitComplete();
 	}
+	
+	public boolean motorsMoving() {
+		return left.isMoving() || right.isMoving();
+	}
 }
