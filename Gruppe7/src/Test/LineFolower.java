@@ -71,7 +71,7 @@ public class LineFolower implements Runnable {
 	}
 
 	private boolean isLine() {
-		return light.getLightValue() < LINE_VALUE;
+		return light.getLightValue() >= LINE_VALUE;
 	}
 
 	private void sleep(int millis) {
