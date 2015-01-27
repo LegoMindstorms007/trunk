@@ -43,24 +43,24 @@ public class LineFolower implements Runnable {
 		boolean found = false;
 		while (!found) {
 			if (i == 0) {
-				if(angle < 10) {
+				if (angle < 10) {
 					track.turnLeft(angle);
 				} else {
-				track.pivotAngleLeft(angle);
+					track.pivotAngleLeft(angle);
 				}
 			} else {
-				if(angle < 10) {
+				if (angle < 10) {
 					track.turnRight(angle);
 				} else {
-				track.pivotAngleRight(angle);
+					track.pivotAngleRight(angle);
 				}
 			}
-			while (track.isM) {
+			while (track.motorsMoving()) {
 				if (isLine()) {
 					track.stop();
 					found = true;
-					sleep(10);
 				}
+				sleep(10);
 			}
 			found = isLine();
 			i++;
