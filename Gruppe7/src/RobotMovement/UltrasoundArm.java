@@ -14,8 +14,8 @@ public class UltrasoundArm {
 	private static int MAX_DISTANCE = 50;
 	private static int PERIOD = 50;
 	private NXTRegulatedMotor motor;
-	final int LEFTPOSITION = 0;
-	final int RIGHTPOSITION = 0;
+	final int LEFTPOSITION = -65;
+	final int RIGHTPOSITION = 65;
 	final int CENTERPOSITION = 0;
 	FeatureDetector sensor;
 
