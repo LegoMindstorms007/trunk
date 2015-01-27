@@ -8,7 +8,7 @@ public class LineFolower implements Runnable {
 
 	private static final int LINE_VALUE = 35;
 	private static final int MOVING_SPEED = 500;
-	private static final int ROTATING_SPEED = 1000;
+	private static final int ROTATING_SPEED = 500;
 	LightSensor light;
 	TrackSuspension track;
 	private boolean running;
@@ -40,10 +40,10 @@ public class LineFolower implements Runnable {
 
 	private void searchTrack() {
 		track.setSpeed(ROTATING_SPEED);
-		int angle = 5;
+		int angle = 20;
 		int i = 0;
 		boolean found = false;
-		while (!found) {
+		while (running && !found) {
 			if (i == 0) {
 				track.pivotAngleLeft(angle);
 			} else {
@@ -55,13 +55,13 @@ public class LineFolower implements Runnable {
 					track.stop();
 					found = true;
 				}
-				sleep(10);
+				sleep(5);
 			}
 
 			found = isLine();
 			i++;
 			i %= 2;
-			angle += 5;
+			angle += 20;
 		}
 		track.setSpeed(MOVING_SPEED);
 	}
