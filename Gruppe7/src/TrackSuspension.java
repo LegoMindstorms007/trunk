@@ -49,9 +49,11 @@ public class TrackSuspension {
 	}
 	
 	public void pivotAngleLeft(int angle) {
-		
+		left.rotate(-angle * ROTATIONTRANSLATION);
+		right.rotate(angle * ROTATIONTRANSLATION);
 	}
 	public void pivotAngleRight(int angle) {
-		
+		left.rotate(angle * ROTATIONTRANSLATION);
+		right.rotate(-angle * ROTATIONTRANSLATION);
 	}
 }
