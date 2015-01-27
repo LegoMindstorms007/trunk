@@ -1,3 +1,4 @@
+package RobotMovement;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 
@@ -5,7 +6,7 @@ import lejos.nxt.NXTRegulatedMotor;
 public class TrackSuspension {
 	private NXTRegulatedMotor left;
 	private	NXTRegulatedMotor right;
-	private final int ROTATIONTRANSLATION = 1;
+	private final float ROTATIONTRANSLATION = 8.0f;
 	public TrackSuspension() {
 		left = Motor.B;
 		right = Motor.A;
@@ -49,11 +50,11 @@ public class TrackSuspension {
 	}
 	
 	public void pivotAngleLeft(int angle) {
-		left.rotate(-angle * ROTATIONTRANSLATION);
-		right.rotate(angle * ROTATIONTRANSLATION);
+		left.rotate((int)(-angle * ROTATIONTRANSLATION), true);
+		right.rotate((int)(angle * ROTATIONTRANSLATION), true);
 	}
 	public void pivotAngleRight(int angle) {
-		left.rotate(angle * ROTATIONTRANSLATION);
-		right.rotate(-angle * ROTATIONTRANSLATION);
+		left.rotate((int)(angle * ROTATIONTRANSLATION), true);
+		right.rotate((int)(-angle * ROTATIONTRANSLATION), true);
 	}
 }

@@ -4,18 +4,19 @@ import lejos.nxt.Motor;
 
 public class TestThread implements Runnable {
 
-	private static final int TIMEOUT = 200;
-
+	private static final int TIMEOUT = 300;
+	private static final int DEGREE = 65;
 	@Override
 	public void run() {
+		Motor.C.setSpeed(60);
 		while (true) {
-			Motor.C.rotate(45);
+			Motor.C.rotate(DEGREE);
 			sleep(TIMEOUT);
-			Motor.C.rotate(-45);
+			Motor.C.rotate(-DEGREE);
 			sleep(TIMEOUT);
-			Motor.C.rotate(-45);
+			Motor.C.rotate(-DEGREE);
 			sleep(TIMEOUT);
-			Motor.C.rotate(45);
+			Motor.C.rotate(DEGREE);
 			sleep(TIMEOUT);
 		}
 
