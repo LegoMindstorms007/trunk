@@ -6,7 +6,7 @@ import lejos.nxt.NXTRegulatedMotor;
 public class TrackSuspension {
 	private NXTRegulatedMotor left;
 	private	NXTRegulatedMotor right;
-	private final float ROTATIONTRANSLATION = 8.0f;
+	private final float ROTATIONTRANSLATION = 5.3f;
 	public TrackSuspension() {
 		left = Motor.B;
 		right = Motor.A;
