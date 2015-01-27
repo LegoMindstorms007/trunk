@@ -57,4 +57,9 @@ public class TrackSuspension {
 		left.rotate((int)(angle * ROTATIONTRANSLATION), true);
 		right.rotate((int)(-angle * ROTATIONTRANSLATION), true);
 	}
+	
+	public void waitForMotors() {
+		left.waitComplete();
+		right.waitComplete();
+	}
 }

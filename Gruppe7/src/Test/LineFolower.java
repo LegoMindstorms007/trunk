@@ -34,13 +34,14 @@ public class LineFolower implements Runnable {
 		int i = 0;
 		while (light.getLightValue() < LINE_VALUE) {
 			if (i == 0) {
-				track.pivotAngleLeft(5);
+				track.pivotAngleLeft(angle);
 			} else {
 				track.pivotAngleRight(angle);
 			}
 			i++;
 			i %= 2;
 			angle += 5;
+			track.waitForMotors();
 		}
 	}
 
