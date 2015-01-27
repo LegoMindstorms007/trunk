@@ -18,6 +18,7 @@ public class TestThread implements Runnable {
 	public void run() {
 		Motor.C.setSpeed(60);
 		int i = 0;
+		running = true;
 		while (running) {
 			switch (i) {
 			case 0:
