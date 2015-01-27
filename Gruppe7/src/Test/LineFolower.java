@@ -9,17 +9,20 @@ public class LineFolower implements Runnable {
 	private static final int LINE_VALUE = 35;
 	LightSensor light;
 	TrackSuspension track;
+	private boolean running;
 
 	public LineFolower(SensorPort portOfLightSensor) {
 		light = new LightSensor(portOfLightSensor);
 
 		track = new TrackSuspension();
+		track.setSpeed(100);
 	}
 
 	@Override
 	public void run() {
+		running = true;
 
-		while (true) {
+		while (running) {
 			if (light.getLightValue() >= LINE_VALUE) {
 				track.forward();
 			} else {
@@ -27,6 +30,10 @@ public class LineFolower implements Runnable {
 				searchTrack();
 			}
 		}
+	}
+
+	public void halt() {
+		running = false;
 	}
 
 	private void searchTrack() {
