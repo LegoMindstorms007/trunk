@@ -12,9 +12,18 @@ public class SensorArm {
 		motor = Motor.C;
 	}
 	
+	public void setSpeed(int speed) {
+		motor.setSpeed(speed);
+	}
+	
 	public void turnArmLeft(int angle) {
 		int turn = Math.min(MAXLEFT, motor.getTachoCount() + angle);
 		motor.rotateTo(turn);
+	}
+
+	public void turnArmLeft(int angle, boolean immidiateReturn) {
+		int turn = Math.min(MAXLEFT, motor.getTachoCount() + angle);
+		motor.rotateTo(turn, immidiateReturn);
 	}
 	
 	public void turnArmRight(int angle) {
@@ -22,6 +31,10 @@ public class SensorArm {
 		motor.rotateTo(turn);
 	}
 	
+	public void turnArmRight(int angle, boolean immidiateReturn) {
+		int turn = Math.max(MAXRIGHT, motor.getTachoCount() - angle);
+		motor.rotateTo(turn, immidiateReturn);
+	}
 	public int getArmPosition() {
 		return motor.getTachoCount();
 	}
@@ -34,5 +47,14 @@ public class SensorArm {
 		angle = Math.min(MAXLEFT, angle);
 		angle = Math.max(MAXRIGHT, angle);
 		motor.rotateTo(angle);
+	}
+	public void turnToPosition(int angle, boolean immidiateReturn) {
+		angle = Math.min(MAXLEFT, angle);
+		angle = Math.max(MAXRIGHT, angle);
+		motor.rotateTo(angle, immidiateReturn);
+	}
+	
+	public boolean isMoving() {
+		return motor.isMoving();
 	}
 }
