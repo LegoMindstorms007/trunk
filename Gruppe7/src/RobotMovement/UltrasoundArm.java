@@ -14,8 +14,8 @@ public class UltrasoundArm {
 	private static int MAX_DISTANCE = 50;
 	private static int PERIOD = 50;
 	private NXTRegulatedMotor motor;
-	final int LEFTPOSITION = -65;
-	final int RIGHTPOSITION = 65;
+	final int LEFTPOSITION = 60;
+	final int RIGHTPOSITION = -60;
 	final int CENTERPOSITION = 0;
 	FeatureDetector sensor;
 
@@ -25,6 +25,7 @@ public class UltrasoundArm {
 	public UltrasoundArm(SensorPort portOfSensor) {
 		motor = Motor.C;
 		UltrasonicSensor us = new UltrasonicSensor(portOfSensor);
+		motor.setSpeed(90);
 		sensor = new RangeFeatureDetector(us, MAX_DISTANCE, PERIOD);
 		times = new long[3];
 		measurements = new int[3];
@@ -39,43 +40,67 @@ public class UltrasoundArm {
 
 	public void turnToLeft() {
 		motor.rotateTo(LEFTPOSITION);
-		measurements[0] = getMeasurment();
-		times[0] = System.currentTimeMillis();
+		sleep(100);
+		measurements[Directions.LEFT.ordinal()] = getMeasurment();
+		times[Directions.LEFT.ordinal()] = System.currentTimeMillis();
 	}
 
-	public void TurnToRight() {
+	public void turnToRight() {
 		motor.rotateTo(RIGHTPOSITION);
-		measurements[2] = getMeasurment();
-		times[2] = System.currentTimeMillis();
+		sleep(100);
+		measurements[Directions.RIGHT.ordinal()] = getMeasurment();
+		times[Directions.RIGHT.ordinal()] = System.currentTimeMillis();
 	}
 
 	public void center() {
 		motor.rotateTo(CENTERPOSITION);
-		measurements[1] = getMeasurment();
-		times[1] = System.currentTimeMillis();
+		measurements[Directions.CENTER.ordinal()] = getMeasurment();
+		times[Directions.CENTER.ordinal()] = System.currentTimeMillis();
 	}
 
 	public int getRightMeasurement() {
-		return measurements[0];
+		return measurements[Directions.LEFT.ordinal()];
 	}
 
 	public int getLeftMeasurement() {
-		return measurements[2];
+		return measurements[Directions.RIGHT.ordinal()];
 	}
 
 	public int getCenterMeasurement() {
-		return measurements[1];
+		return measurements[Directions.CENTER.ordinal()];
 	}
 
 	public int getAgeLeft() {
-		return (int) (System.currentTimeMillis() - times[0]);
+		return (int) (System.currentTimeMillis() - times[Directions.LEFT
+				.ordinal()]);
 	}
 
 	public int getAgeRight() {
-		return (int) (System.currentTimeMillis() - times[2]);
+		return (int) (System.currentTimeMillis() - times[Directions.RIGHT
+				.ordinal()]);
 	}
 
 	public int getAgeCenter() {
-		return (int) (System.currentTimeMillis() - times[1]);
+		return (int) (System.currentTimeMillis() - times[Directions.CENTER
+				.ordinal()]);
+	}
+
+	public int[] fullMeasureMent() {
+		turnToLeft();
+		turnToRight();
+		return measurements;
+	}
+
+	private void sleep(int millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public enum Directions {
+		LEFT, CENTER, RIGHT;
 	}
 }
