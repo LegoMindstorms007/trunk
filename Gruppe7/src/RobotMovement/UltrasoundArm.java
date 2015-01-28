@@ -24,7 +24,7 @@ public class UltrasoundArm {
 
 	public UltrasoundArm(SensorPort portOfSensor) {
 		motor = Motor.C;
-		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S3);
+		UltrasonicSensor us = new UltrasonicSensor(portOfSensor);
 		sensor = new RangeFeatureDetector(us, MAX_DISTANCE, PERIOD);
 		times = new long[3];
 		measurements = new int[3];

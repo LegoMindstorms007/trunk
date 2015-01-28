@@ -1,6 +1,7 @@
 package Test;
 
 import lejos.nxt.LightSensor;
+import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import RobotMovement.TrackSuspension;
 
@@ -8,7 +9,7 @@ public class LineFolower implements Runnable {
 
 	private static final int LINE_VALUE = 35;
 	private static final int MOVING_SPEED = 500;
-	private static final int ROTATING_SPEED = 200;
+	private static final int ROTATING_SPEED = 250;
 	LightSensor light;
 	TrackSuspension track;
 	private boolean running;
@@ -25,12 +26,13 @@ public class LineFolower implements Runnable {
 		running = true;
 
 		while (running) {
-			if (light.getLightValue() >= LINE_VALUE) {
+			if (isLine()) {
 				track.forward();
 			} else {
 				track.stop();
 				searchTrack();
 			}
+			sleep(5);
 		}
 	}
 
@@ -38,36 +40,65 @@ public class LineFolower implements Runnable {
 		running = false;
 	}
 
-	private void searchTrack() {
-		track.setSpeed(ROTATING_SPEED);
-		int angle = 20;
-		int i = 0;
+	private boolean searchTrack() {
 		boolean found = false;
-		while (running && !found) {
-			if (i == 1) {
-				track.pivotAngleLeft(angle);
-			} else {
+		track.setSpeed(ROTATING_SPEED);
+
+		Motor.C.setSpeed(200);
+		int angle = 20;
+
+		while (!found && angle <= 100) {
+			if (checkRight(angle)) {
+				Motor.C.rotateTo(0);
 				track.pivotAngleRight(angle);
+				found = true;
+			} else if (checkLeft(angle)) {
+				Motor.C.rotateTo(0);
+				track.pivotAngleLeft(angle);
+				found = true;
 			}
-
-			while (track.motorsMoving()) {
-				if (isLine()) {
-					track.stop();
-					found = true;
-				}
-				sleep(5);
-			}
-
-			found = isLine();
-			i++;
-			i %= 2;
 			angle += 20;
 		}
+
+		Motor.C.rotateTo(0);
+
+		while (running && track.motorsMoving()) {
+			if (isLine()) {
+				track.stop();
+			}
+		}
 		track.setSpeed(MOVING_SPEED);
+		return found;
 	}
 
 	private boolean isLine() {
 		return light.getLightValue() >= LINE_VALUE;
+	}
+
+	private boolean checkLeft(int angle) {
+		boolean found = false;
+		Motor.C.rotateTo(angle, true);
+		while (Motor.C.getPosition() <= 0)
+			;
+		while (running && !found && Motor.C.isMoving()) {
+			if (isLine()) {
+				found = true;
+			}
+		}
+		return found;
+	}
+
+	private boolean checkRight(int angle) {
+		boolean found = false;
+		Motor.C.rotateTo(-angle, true);
+		while (Motor.C.getPosition() >= 0)
+			;
+		while (running && !found && Motor.C.isMoving()) {
+			if (isLine()) {
+				found = true;
+			}
+		}
+		return found;
 	}
 
 	private void sleep(int millis) {
