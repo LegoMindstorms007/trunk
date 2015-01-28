@@ -17,7 +17,10 @@ public class Demo {
 		 */
 		LineFolower follower = new LineFolower(SensorPort.S4);
 		new Thread(follower).start();
+		// Labyrinth maze = new Labyrinth();
+		// new Thread(maze).start();
 		Button.waitForAnyPress();
+		// maze.halt();
 		follower.halt();
 		// test.halt();
 	}
