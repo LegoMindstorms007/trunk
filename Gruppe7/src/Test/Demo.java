@@ -1,6 +1,7 @@
 package Test;
 
 import RobotMovement.RobotTest;
+import RobotMovement.SensorArm;
 import RobotMovement.UltrasoundArm;
 import lejos.nxt.Button;
 import lejos.nxt.SensorPort;
@@ -16,15 +17,15 @@ public class Demo {
 		  testbot.suspension.pivotAngleRight(90); 
 		  testbot.suspension.waitForMotors();
 		  testbot.suspension.pivotAngleLeft(90);*/
-		LineFolower follower = new LineFolower(SensorPort.S4);
-		new Thread(follower).start();
+	//	LineFolower follower = new LineFolower(SensorPort.S4);
+	//	new Thread(follower).start();
 	/*	RConsole.openBluetooth(0);
 		
 		BridgeDriving bridge = new BridgeDriving();
 		new Thread(bridge).start();*/
 		Button.waitForAnyPress();
 	//	bridge.halt();
-		follower.halt();
+	//	follower.halt();
 		//itest.halt();
 	}
 
