@@ -26,7 +26,7 @@ public class TestThread implements Runnable {
 				arm.turnToLeft();
 				break;
 			case 2:
-				arm.TurnToRight();
+			//	arm.TurnToRight();
 				break;
 			default:
 				arm.center();

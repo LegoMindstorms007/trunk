@@ -7,6 +7,6 @@ public class RobotTest {
 	
 	public RobotTest() {
 		suspension = new TrackSuspension();
-		usArm = new UltrasoundArm();
+		usArm = new UltrasoundArm(null);
 	}
 }
