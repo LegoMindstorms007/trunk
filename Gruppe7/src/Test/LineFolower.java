@@ -1,8 +1,8 @@
 package Test;
 
 import lejos.nxt.LightSensor;
-import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
+import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 
 public class LineFolower implements Runnable {
@@ -13,12 +13,15 @@ public class LineFolower implements Runnable {
 	LightSensor light;
 	TrackSuspension track;
 	private boolean running;
+	private SensorArm sensorArm;
 
 	public LineFolower(SensorPort portOfLightSensor) {
 		light = new LightSensor(portOfLightSensor);
 
 		track = new TrackSuspension();
 		track.setSpeed(MOVING_SPEED);
+		sensorArm = new SensorArm();
+		sensorArm.setSpeed(200);
 	}
 
 	@Override
@@ -32,7 +35,7 @@ public class LineFolower implements Runnable {
 				track.stop();
 				searchTrack();
 			}
-			sleep(5);
+			sleep(10);
 		}
 	}
 
@@ -43,24 +46,20 @@ public class LineFolower implements Runnable {
 	private boolean searchTrack() {
 		boolean found = false;
 		track.setSpeed(ROTATING_SPEED);
-
-		Motor.C.setSpeed(200);
 		int angle = 20;
 
 		while (!found && angle <= 100) {
 			if (checkRight(angle)) {
-				Motor.C.rotateTo(0);
+				sensorArm.turnToCenter();
 				track.pivotAngleRight(angle);
 				found = true;
 			} else if (checkLeft(angle)) {
-				Motor.C.rotateTo(0);
+				sensorArm.turnToCenter();
 				track.pivotAngleLeft(angle);
 				found = true;
 			}
 			angle += 20;
 		}
-
-		Motor.C.rotateTo(0);
 
 		while (running && track.motorsMoving()) {
 			if (isLine()) {
@@ -77,10 +76,10 @@ public class LineFolower implements Runnable {
 
 	private boolean checkLeft(int angle) {
 		boolean found = false;
-		Motor.C.rotateTo(angle, true);
-		while (Motor.C.getPosition() <= 0)
+		sensorArm.turnArmLeft(angle, true);
+		while (sensorArm.getArmPosition() <= 0)
 			;
-		while (running && !found && Motor.C.isMoving()) {
+		while (running && !found && sensorArm.isMoving()) {
 			if (isLine()) {
 				found = true;
 			}
@@ -90,10 +89,10 @@ public class LineFolower implements Runnable {
 
 	private boolean checkRight(int angle) {
 		boolean found = false;
-		Motor.C.rotateTo(-angle, true);
-		while (Motor.C.getPosition() >= 0)
+		sensorArm.turnArmRight(angle, true);
+		while (sensorArm.getArmPosition() >= 0)
 			;
-		while (running && !found && Motor.C.isMoving()) {
+		while (running && !found && sensorArm.isMoving()) {
 			if (isLine()) {
 				found = true;
 			}
