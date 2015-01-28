@@ -76,7 +76,7 @@ public class LineFolower implements Runnable {
 
 	private boolean checkLeft(int angle) {
 		boolean found = false;
-		sensorArm.turnArmLeft(angle, true);
+		sensorArm.turnToPosition(angle, true);
 		while (sensorArm.getArmPosition() <= 0)
 			;
 		while (running && !found && sensorArm.isMoving()) {
@@ -89,7 +89,7 @@ public class LineFolower implements Runnable {
 
 	private boolean checkRight(int angle) {
 		boolean found = false;
-		sensorArm.turnArmRight(angle, true);
+		sensorArm.turnToPosition(-angle, true);
 		while (sensorArm.getArmPosition() >= 0)
 			;
 		while (running && !found && sensorArm.isMoving()) {
