@@ -12,7 +12,7 @@ public class Demo {
 		int program = 0;
 		LineFolower follower = new LineFolower(SensorPort.S4, SensorPort.S3);
 		BridgeDriving bridge = new BridgeDriving();
-		Runnable current;
+		Program current = null;
 
 		while (program < numPrograms) {
 			switch (program) {
@@ -23,13 +23,13 @@ public class Demo {
 				current = bridge;
 				break;
 			}
-			Button.waitForAnyPress();
 
-			// should do this with interfaces
-			follower.halt();
-			bridge.halt();
+			new Thread(current).start();
+			while (current.isRunning()) {
+				if (Button.waitForAnyPress(100) > 0)
+					current.halt();
+			}
 			program++;
 		}
 	}
-
 }

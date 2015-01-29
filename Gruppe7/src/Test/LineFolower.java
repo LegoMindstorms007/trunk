@@ -6,7 +6,7 @@ import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import RobotMovement.UltrasoundSensor;
 
-public class LineFolower implements Runnable {
+public class LineFolower implements Program {
 
 	private static final int LINE_VALUE = 35;
 	private static final int MOVING_SPEED = 600;
@@ -74,6 +74,11 @@ public class LineFolower implements Runnable {
 			lightSweeper.halt();
 		}
 		running = false;
+	}
+
+	@Override
+	public boolean isRunning() {
+		return running;
 	}
 
 	private boolean searchTrack() {

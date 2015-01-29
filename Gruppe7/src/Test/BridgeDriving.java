@@ -5,7 +5,7 @@ import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 
-public class BridgeDriving implements Runnable {
+public class BridgeDriving implements Program {
 	private static final int MOVING_SPEED = 200;
 	private static final int SWEEPING_SPEED = 400;
 	private static final int ROTATINGSPEED = 500;
@@ -78,6 +78,11 @@ public class BridgeDriving implements Runnable {
 
 	public void halt() {
 		running = false;
+	}
+
+	@Override
+	public boolean isRunning() {
+		return running;
 	}
 
 	public enum Last {
