@@ -67,6 +67,7 @@ public class LineFolower implements Program {
 			}
 			track.stop();
 		}
+		running = false;
 	}
 
 	public void halt() {

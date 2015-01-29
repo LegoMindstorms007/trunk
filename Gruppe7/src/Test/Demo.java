@@ -25,6 +25,7 @@ public class Demo {
 			}
 
 			new Thread(current).start();
+			Button.waitForAnyPress(100);
 			while (current.isRunning()) {
 				if (Button.waitForAnyPress(100) > 0)
 					current.halt();

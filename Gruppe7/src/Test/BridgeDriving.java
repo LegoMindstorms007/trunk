@@ -74,6 +74,7 @@ public class BridgeDriving implements Program {
 			}
 		}
 		sweeper.halt();
+		running = false;
 	}
 
 	public void halt() {
