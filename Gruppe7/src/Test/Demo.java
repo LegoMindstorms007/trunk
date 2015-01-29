@@ -3,6 +3,9 @@ package Test;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
+import Programs.BridgeDriving;
+import Programs.LineFolower;
+import Programs.Program;
 import RobotMovement.BarcodeReader;
 
 public class Demo {

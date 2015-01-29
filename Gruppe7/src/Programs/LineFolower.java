@@ -1,4 +1,4 @@
-package Test;
+package Programs;
 
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;

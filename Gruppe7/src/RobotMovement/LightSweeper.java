@@ -1,6 +1,5 @@
-package Test;
+package RobotMovement;
 
-import RobotMovement.SensorArm;
 
 public class LightSweeper implements Runnable {
 	boolean running;
