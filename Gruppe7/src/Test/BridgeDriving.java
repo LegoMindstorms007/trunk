@@ -7,6 +7,7 @@ import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.comm.RConsole;
 import RobotMovement.Compass;
+import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import RobotMovement.UltrasoundArm;
 import RobotMovement.UltrasoundArm.Directions;
@@ -15,22 +16,42 @@ public class BridgeDriving implements Runnable {
 	private static final int MOVING_SPEED = 500;
 	private static final int ROTATING_SPEED = 200;
 	private static final int NOGROUNDSOUND = 30;
-	private static final int NOGROUNDLIGHT = 30;
+	private static final int NOGROUND = 25;
 	private TrackSuspension track;
-	private UltrasoundArm arm;
+	private SensorArm arm;
 	private LightSensor light;
 	private boolean running;
 	private Compass compass;
 	public BridgeDriving() {
 		track = new TrackSuspension();
-		arm = new UltrasoundArm(SensorPort.S3);
+		arm = new SensorArm();
 		light = new LightSensor(SensorPort.S4);
 		compass = new Compass();
+		arm.setSpeed(300);
+		track.setSpeed(200);
 	}
 	@Override
 	public void run() {
 		running = true;
 		while(running){
+			arm.tilt();
+			track.forward();
+			if(light.getLightValue() <= NOGROUND) {
+				arm.stop();
+				track.stop();
+				int position = arm.getArmPosition();
+				if(position <= 0) {
+					track.backward(20);
+					track.pivotAngleLeft(30);
+					track.waitForMotors();
+				} else {
+					track.backward(20);
+					track.pivotAngleRight(30);
+					track.waitForMotors();
+				}
+			}
+			
+			/*
 			Situation current = checkForGround();
 			switch(current) {
 			case OK:
@@ -66,7 +87,7 @@ public class BridgeDriving implements Runnable {
 			break;
 			}
 			RConsole.println("Aktuelle Richtung: " + compass.getDirection());
-			track.waitForMotors();
+			track.waitForMotors(); */
 		}
 	}
 	
@@ -75,7 +96,8 @@ public class BridgeDriving implements Runnable {
 	}
 
 	private Situation checkForGround() {
-		int[] measures = arm.fullMeasureMent();
+		int[] measures = new int[3];
+		
 		RConsole.println("Links: " + measures[0] + "  Rechts: "+ measures[2]);
 		//Test LEFT
 		if(abyssCenter(measures)) {
@@ -104,7 +126,7 @@ public class BridgeDriving implements Runnable {
 	}
 	
 	private boolean abyssCenter(int[] measures) {
-		return light.getLightValue() <= NOGROUNDLIGHT;
+		return light.getLightValue() <= NOGROUND;
 	}
 	
 	private boolean abyssRight(int[] measures) {
@@ -113,6 +135,8 @@ public class BridgeDriving implements Runnable {
 	public enum Situation {
 		OK, ABYSSLEFT, ABYSSRIGHT, ABYSSINFRONT, ABYSSLEFTINFRONT, ABYSSRIGHINFRONT, ABYSSALLAROUND
 	}
+	
+	
 	
 	private void moveForward() {
 		int currentDirection = compass.getDirection();
