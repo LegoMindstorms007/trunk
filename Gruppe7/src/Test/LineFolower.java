@@ -23,7 +23,6 @@ public class LineFolower implements Program {
 		usSensor = new UltrasoundSensor(portOfUsSensor);
 
 		track = new TrackSuspension();
-		track.setSpeed(MOVING_SPEED);
 		sensorArm = new SensorArm();
 		sensorArm.setSpeed(250);
 		lightSweeper = new LightSweeper(sensorArm, this);
@@ -39,6 +38,7 @@ public class LineFolower implements Program {
 		while (running && !lineFinished) {
 			// testing:
 			if (lightSweeper.isLine()) {
+				track.setSpeed(MOVING_SPEED);
 				// if (isLine()) {
 				track.forward();
 			} else {
