@@ -13,6 +13,8 @@ public class Demo {
 		//new Thread(follower).start();
 		BridgeDriving bridge = new BridgeDriving();
 		new Thread(bridge).start();
+		// Labyrinth maze = new Labyrinth();
+		// new Thread(maze).start();
 		Button.waitForAnyPress();
 		//follower.halt();
 		// test.halt();

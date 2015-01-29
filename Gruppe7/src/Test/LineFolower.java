@@ -1,8 +1,8 @@
 package Test;
 
 import lejos.nxt.LightSensor;
-import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
+import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 
 public class LineFolower implements Runnable {
@@ -13,54 +13,59 @@ public class LineFolower implements Runnable {
 	LightSensor light;
 	TrackSuspension track;
 	private boolean running;
+	private SensorArm sensorArm;
+	private LightSweeper lightSweeper;
 
 	public LineFolower(SensorPort portOfLightSensor) {
 		light = new LightSensor(portOfLightSensor);
 
 		track = new TrackSuspension();
 		track.setSpeed(MOVING_SPEED);
+		sensorArm = new SensorArm();
+		sensorArm.setSpeed(200);
+		lightSweeper = new LightSweeper(sensorArm, this);
 	}
 
 	@Override
 	public void run() {
 		running = true;
 
+		new Thread(lightSweeper).start();
+
 		while (running) {
-			if (isLine()) {
-				track.forward();
-			} else {
-				track.stop();
-				searchTrack();
-			}
-			sleep(5);
+			/*
+			 * // testing: new Thread(lightSweeper).start(); if
+			 * (lightSweeper.isLine()) { // if (isLine()) { track.forward(); }
+			 * else { lightSweeper.setMoving(false); track.stop(); if
+			 * (searchTrack()) { lightSweeper.setMoving(true); } } // sleep(10);
+			 */
 		}
 	}
 
 	public void halt() {
+		if (lightSweeper != null) {
+			lightSweeper.halt();
+		}
 		running = false;
 	}
 
 	private boolean searchTrack() {
 		boolean found = false;
 		track.setSpeed(ROTATING_SPEED);
-
-		Motor.C.setSpeed(200);
 		int angle = 20;
 
 		while (!found && angle <= 100) {
 			if (checkRight(angle)) {
-				Motor.C.rotateTo(0);
+				sensorArm.turnToCenter();
 				track.pivotAngleRight(angle);
 				found = true;
 			} else if (checkLeft(angle)) {
-				Motor.C.rotateTo(0);
+				sensorArm.turnToCenter();
 				track.pivotAngleLeft(angle);
 				found = true;
 			}
 			angle += 20;
 		}
-
-		Motor.C.rotateTo(0);
 
 		while (running && track.motorsMoving()) {
 			if (isLine()) {
@@ -71,16 +76,31 @@ public class LineFolower implements Runnable {
 		return found;
 	}
 
-	private boolean isLine() {
+	public boolean isLine() {
 		return light.getLightValue() >= LINE_VALUE;
+	}
+
+	/**
+	 * Adjusts Robots angle if there is a small drift
+	 * 
+	 * @param deltaAngle
+	 *            angle of abnormality
+	 */
+	public void adjustRobot(int deltaAngle) {
+		if (deltaAngle < 0)
+			track.turnLeft();
+		else
+			track.turnRight();
+		sleep(5);
+		track.forward();
 	}
 
 	private boolean checkLeft(int angle) {
 		boolean found = false;
-		Motor.C.rotateTo(angle, true);
-		while (Motor.C.getPosition() <= 0)
+		sensorArm.turnToPosition(angle, true);
+		while (sensorArm.getArmPosition() <= 0)
 			;
-		while (running && !found && Motor.C.isMoving()) {
+		while (running && !found && sensorArm.isMoving()) {
 			if (isLine()) {
 				found = true;
 			}
@@ -90,10 +110,10 @@ public class LineFolower implements Runnable {
 
 	private boolean checkRight(int angle) {
 		boolean found = false;
-		Motor.C.rotateTo(-angle, true);
-		while (Motor.C.getPosition() >= 0)
+		sensorArm.turnToPosition(-angle, true);
+		while (sensorArm.getArmPosition() >= 0)
 			;
-		while (running && !found && Motor.C.isMoving()) {
+		while (running && !found && sensorArm.isMoving()) {
 			if (isLine()) {
 				found = true;
 			}
@@ -105,8 +125,73 @@ public class LineFolower implements Runnable {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	private class LightSweeper implements Runnable {
+
+		private SensorArm arm;
+		private boolean isLine;
+		private boolean moving;
+		private boolean running;
+		boolean moveLeft;
+		private LineFolower follower;
+
+		public LightSweeper(SensorArm arm, LineFolower follower) {
+			this.follower = follower;
+			this.arm = arm;
+			isLine = true;
+			moving = true;
+			moveLeft = true;
+		}
+
+		@Override
+		public void run() {
+			arm.turnToPosition(5);
+			running = true;
+			while (running) {
+				while (running && moving) {
+					if (moveLeft) {
+						arm.turnToPosition(5, true);
+					} else {
+						arm.turnToPosition(-5, true);
+					}
+					int min = 5;
+					int max = -5;
+					while (running && moving && arm.isMoving()) {
+						int pos = arm.getArmPosition();
+						if (follower.isLine()) {
+							min = Math.min(min, pos);
+							max = Math.max(max, pos);
+						}
+					}
+					int delta = max - min / 2;
+					isLine = max >= min;
+					if (isLine) {
+						if (Math.abs(delta) >= 3)
+							follower.adjustRobot(delta);
+					}
+					moveLeft = !moveLeft;
+				}
+			}
+		}
+
+		public void setMoving(boolean shouldMove) {
+			if (shouldMove) {
+				isLine = true;
+				moveLeft = true;
+				arm.turnToPosition(5);
+			}
+			moving = shouldMove;
+		}
+
+		public void halt() {
+			running = false;
+		}
+
+		public boolean isLine() {
+			return isLine;
 		}
 	}
 
