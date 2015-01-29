@@ -9,7 +9,7 @@ import lejos.robotics.objectdetection.RangeFeatureDetector;
 
 public class UltrasoundSensor {
 
-	private static int MAX_DISTANCE = 50;
+	public static int MAX_DISTANCE = 50;
 	private static int PERIOD = 50;
 	FeatureDetector sensor;
 
