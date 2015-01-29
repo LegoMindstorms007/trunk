@@ -30,20 +30,15 @@ public class LineFolower implements Runnable {
 	public void run() {
 		running = true;
 
+		new Thread(lightSweeper).start();
+
 		while (running) {
-			// testing:
-			new Thread(lightSweeper).start();
-			if (lightSweeper.isLine()) {
-				// if (isLine()) {
-				track.forward();
-			} else {
-				lightSweeper.setMoving(false);
-				track.stop();
-				if (searchTrack()) {
-					lightSweeper.setMoving(true);
-				}
-			}
-			// sleep(10);
+			/*
+			 * // testing: new Thread(lightSweeper).start(); if
+			 * (lightSweeper.isLine()) { // if (isLine()) { track.forward(); }
+			 * else { lightSweeper.setMoving(false); track.stop(); if
+			 * (searchTrack()) { lightSweeper.setMoving(true); } } // sleep(10);
+			 */
 		}
 	}
 
