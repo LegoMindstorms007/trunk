@@ -4,41 +4,68 @@ import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
+import RobotMovement.UltrasoundSensor;
 
 public class LineFolower implements Runnable {
 
 	private static final int LINE_VALUE = 35;
-	private static final int MOVING_SPEED = 500;
-	private static final int ROTATING_SPEED = 250;
+	private static final int MOVING_SPEED = 600;
+	private static final int ROTATING_SPEED = 300;
 	LightSensor light;
 	TrackSuspension track;
 	private boolean running;
 	private SensorArm sensorArm;
+	private UltrasoundSensor usSensor;
 	private LightSweeper lightSweeper;
 
-	public LineFolower(SensorPort portOfLightSensor) {
+	public LineFolower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
 		light = new LightSensor(portOfLightSensor);
+		usSensor = new UltrasoundSensor(portOfUsSensor);
 
 		track = new TrackSuspension();
 		track.setSpeed(MOVING_SPEED);
 		sensorArm = new SensorArm();
-		sensorArm.setSpeed(200);
+		sensorArm.setSpeed(250);
 		lightSweeper = new LightSweeper(sensorArm, this);
 	}
 
 	@Override
 	public void run() {
 		running = true;
+		boolean lineFinished = false;
 
 		new Thread(lightSweeper).start();
 
-		while (running) {
-			/*
-			 * // testing: new Thread(lightSweeper).start(); if
-			 * (lightSweeper.isLine()) { // if (isLine()) { track.forward(); }
-			 * else { lightSweeper.setMoving(false); track.stop(); if
-			 * (searchTrack()) { lightSweeper.setMoving(true); } } // sleep(10);
-			 */
+		while (running && !lineFinished) {
+			// testing:
+			if (lightSweeper.isLine()) {
+				// if (isLine()) {
+				track.forward();
+			} else {
+				track.stop();
+				lightSweeper.setMoving(false);
+				if (searchTrack()) {
+					lightSweeper.setMoving(true);
+				} else {
+					if (checkWalls()) {
+						sensorArm.turnToCenter();
+						lineFinished = true;
+					} else {
+						// Fallback-search
+					}
+
+				}
+			}
+			// sleep(10);
+		}
+
+		if (running) {
+			track.setSpeed(1000);
+			track.forward();
+			while (!isLine()) {
+				sleep(10);
+			}
+			track.stop();
 		}
 	}
 
@@ -52,7 +79,7 @@ public class LineFolower implements Runnable {
 	private boolean searchTrack() {
 		boolean found = false;
 		track.setSpeed(ROTATING_SPEED);
-		int angle = 20;
+		int angle = 50;
 
 		while (!found && angle <= 100) {
 			if (checkRight(angle)) {
@@ -64,7 +91,7 @@ public class LineFolower implements Runnable {
 				track.pivotAngleLeft(angle);
 				found = true;
 			}
-			angle += 20;
+			angle += 40;
 		}
 
 		while (running && track.motorsMoving()) {
@@ -91,7 +118,7 @@ public class LineFolower implements Runnable {
 			track.turnLeft();
 		else
 			track.turnRight();
-		sleep(5);
+		sleep(50);
 		track.forward();
 	}
 
@@ -111,7 +138,7 @@ public class LineFolower implements Runnable {
 	private boolean checkRight(int angle) {
 		boolean found = false;
 		sensorArm.turnToPosition(-angle, true);
-		while (sensorArm.getArmPosition() >= 0)
+		while (running && sensorArm.getArmPosition() >= 0)
 			;
 		while (running && !found && sensorArm.isMoving()) {
 			if (isLine()) {
@@ -119,6 +146,32 @@ public class LineFolower implements Runnable {
 			}
 		}
 		return found;
+	}
+
+	private boolean checkWalls() {
+		boolean wallLeft = false;
+		boolean wallRight = false;
+		sensorArm.turnToPosition(100, true);
+		while (running && sensorArm.getArmPosition() < 0) {
+			sleep(10);
+		}
+		while (running && sensorArm.isMoving() && !wallLeft) {
+			if (usSensor.isWall()) {
+				wallLeft = true;
+			}
+		}
+		sensorArm.turnToPosition(-100, true);
+		while (running && sensorArm.getArmPosition() > 0) {
+			sleep(10);
+		}
+		while (running && sensorArm.isMoving() && !wallRight) {
+			if (usSensor.isWall()) {
+				wallRight = true;
+			}
+		}
+
+		return wallLeft && wallRight;
+
 	}
 
 	private void sleep(int millis) {
@@ -132,56 +185,48 @@ public class LineFolower implements Runnable {
 	private class LightSweeper implements Runnable {
 
 		private SensorArm arm;
-		private boolean isLine;
 		private boolean moving;
 		private boolean running;
 		boolean moveLeft;
 		private LineFolower follower;
+		private boolean measurements[];
+		private int head;
 
 		public LightSweeper(SensorArm arm, LineFolower follower) {
+			measurements = new boolean[130];
 			this.follower = follower;
 			this.arm = arm;
-			isLine = true;
 			moving = true;
 			moveLeft = true;
+			head = 0;
+			push(follower.isLine());
 		}
 
 		@Override
 		public void run() {
-			arm.turnToPosition(5);
 			running = true;
 			while (running) {
-				while (running && moving) {
+				while (running && isLine()) {
 					if (moveLeft) {
-						arm.turnToPosition(5, true);
+						arm.turnToPosition(8, true);
 					} else {
-						arm.turnToPosition(-5, true);
+						arm.turnToPosition(-8, true);
 					}
-					int min = 5;
-					int max = -5;
 					while (running && moving && arm.isMoving()) {
 						int pos = arm.getArmPosition();
-						if (follower.isLine()) {
-							min = Math.min(min, pos);
-							max = Math.max(max, pos);
-						}
+						push(follower.isLine());
 					}
-					int delta = max - min / 2;
-					isLine = max >= min;
-					if (isLine) {
-						if (Math.abs(delta) >= 3)
-							follower.adjustRobot(delta);
-					}
+					// int delta = max - min / 2;
+					// isLine = max >= min;
 					moveLeft = !moveLeft;
 				}
+				sleep(50);
 			}
 		}
 
 		public void setMoving(boolean shouldMove) {
 			if (shouldMove) {
-				isLine = true;
-				moveLeft = true;
-				arm.turnToPosition(5);
+				push(follower.isLine());
 			}
 			moving = shouldMove;
 		}
@@ -191,7 +236,17 @@ public class LineFolower implements Runnable {
 		}
 
 		public boolean isLine() {
-			return isLine;
+			for (boolean value : measurements)
+				if (value)
+					return true;
+
+			return false;
+		}
+
+		private void push(boolean value) {
+			measurements[head++] = value; // insert into Buffer and move head
+			head %= measurements.length; // move head to start of array if index
+											// is out of bounds
 		}
 	}
 
