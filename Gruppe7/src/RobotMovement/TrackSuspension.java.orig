@@ -60,10 +60,14 @@ public class TrackSuspension {
 		left.stop(true);
 		right.forward();
 	}
+<<<<<<< HEAD
 	
 	public void turnLeftBackward() {
 		right.backward();
 	}
+=======
+
+>>>>>>> origin/master
 	public void turnLeft(int angle) {
 		right.rotate((int) (angle * ROTATIONTRANSLATION), true);
 	}
@@ -76,10 +80,14 @@ public class TrackSuspension {
 	public void turnRight(int angle) {
 		left.rotate((int) (angle * ROTATIONTRANSLATION), true);
 	}
-
+<<<<<<< HEAD
+	
 	public void turnRightBackward() {
 		left.backward();
 	}
+=======
+
+>>>>>>> origin/master
 	public void pivotAngleLeft(int angle) {
 		left.rotate((int) (-angle * ROTATIONTRANSLATION), true);
 		right.rotate((int) (angle * ROTATIONTRANSLATION), true);

@@ -7,17 +7,32 @@ public class Demo {
 	public static void main(String[] args) {
 		// TestThread test = new TestThread();
 		// new Thread(test).start();
+<<<<<<< HEAD
 	//	LightBridgeDriving bridge = new LightBridgeDriving();
 	//	new Thread(bridge).start();
 		//LineFolower follower = new LineFolower(SensorPort.S4);
 		//new Thread(follower).start();
 		BridgeDriving bridge = new BridgeDriving();
 		new Thread(bridge).start();
+		Button.waitForAnyPress();
+		//follower.halt();
+=======
+		/*
+		 * RobotTest testbot = new RobotTest();
+		 * testbot.suspension.setSpeed(1000);
+		 * testbot.suspension.pivotAngleRight(90);
+		 * testbot.suspension.waitForMotors();
+		 * testbot.suspension.pivotAngleLeft(90);
+		 */
+		LineFolower follower = new LineFolower(SensorPort.S4);
+		new Thread(follower).start();
 		// Labyrinth maze = new Labyrinth();
 		// new Thread(maze).start();
 		Button.waitForAnyPress();
-		//follower.halt();
+		// maze.halt();
+		follower.halt();
+>>>>>>> origin/master
 		// test.halt();
-		bridge.halt();
+		//bridge.halt();
 	}
 }

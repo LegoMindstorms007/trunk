@@ -8,6 +8,7 @@ public class SensorArm {
 	public static final int MAXRIGHT = -90;
 	public static final int CENTER = 0;
 	private NXTRegulatedMotor motor;
+	private boolean tilting;
 	public SensorArm() {
 		motor = Motor.C;
 	}
@@ -56,5 +57,15 @@ public class SensorArm {
 	
 	public boolean isMoving() {
 		return motor.isMoving();
+	}
+	
+	public void tilt() {
+		motor.rotateTo(MAXLEFT);
+		motor.rotateTo(MAXRIGHT);
+	}
+	public void stop() {
+		if(isMoving()) {
+			motor.stop();
+		}
 	}
 }
