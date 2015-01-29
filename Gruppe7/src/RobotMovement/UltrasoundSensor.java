@@ -9,8 +9,9 @@ import lejos.robotics.objectdetection.RangeFeatureDetector;
 
 public class UltrasoundSensor {
 
-	private static int MAX_DISTANCE = 50;
+	public static int MAX_DISTANCE = 50;
 	private static int PERIOD = 50;
+	private static int WALL_VALUE = 30;
 	FeatureDetector sensor;
 
 	public UltrasoundSensor(SensorPort portOfSensor) {
@@ -23,5 +24,9 @@ public class UltrasoundSensor {
 		RangeReading fdscan = scan != null ? scan.getRangeReading() : null;
 
 		return fdscan != null ? (int) fdscan.getRange() : MAX_DISTANCE;
+	}
+
+	public boolean isWall() {
+		return getMeasurment() < WALL_VALUE;
 	}
 }

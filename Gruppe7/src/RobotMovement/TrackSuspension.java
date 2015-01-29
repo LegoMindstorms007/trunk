@@ -98,4 +98,11 @@ public class TrackSuspension {
 	public boolean motorsMoving() {
 		return left.isMoving() || right.isMoving();
 	}
+	
+	public void setSpeedLeft(int speed) {
+		left.setSpeed(speed);
+	}
+	public void setSpeedRight(int speed) {
+		right.setSpeed(speed);
+	}
 }
