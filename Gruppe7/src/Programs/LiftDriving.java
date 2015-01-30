@@ -69,10 +69,11 @@ public class LiftDriving implements Program {
 		arm.turnArmRight(90);
 		track.forward();
 
-		// redo this with push-sensors...
-		while (track.motorsMoving()) {
-			sleep(100);
-		}
+		// // redo this with push-sensors...
+		// while (shouldDoThis) {
+		// sleep(100);
+		// }
+		sleep(1000);
 		track.stop();
 	}
 
