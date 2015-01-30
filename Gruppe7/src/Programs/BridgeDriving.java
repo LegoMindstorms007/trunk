@@ -1,7 +1,8 @@
-package Test;
+package Programs;
 
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
+import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 

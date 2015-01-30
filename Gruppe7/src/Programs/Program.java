@@ -1,4 +1,4 @@
-package Test;
+package Programs;
 
 public interface Program extends Runnable {
 

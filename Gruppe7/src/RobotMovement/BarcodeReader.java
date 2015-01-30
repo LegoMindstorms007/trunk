@@ -6,7 +6,7 @@ import lejos.nxt.SensorPort;
 public class BarcodeReader {
 
 	private static final int LINE_VALUE = 35;
-	private static final int AVG_NOLINE_TIME = 150;
+	private static final int AVG_NOLINE_TIME = 250;
 	LightSensor light;
 	SensorArm arm;
 	TrackSuspension track;
@@ -20,12 +20,17 @@ public class BarcodeReader {
 
 	public int readBarcode() {
 
-		track.setSpeed(300);
+		track.setSpeed(500);
 		int code = 0;
+		boolean lineValue = false;
 
 		arm.turnToCenter();
+		track.backward();
+		while (!isLine()) {
+			sleep(10);
+		}
 		track.forward();
-		boolean lineValue = false;
+		lastLine = System.currentTimeMillis();
 		while (track.motorsMoving()) {
 			if (System.currentTimeMillis() - lastLine > 2 * AVG_NOLINE_TIME)
 				track.stop();
@@ -33,8 +38,10 @@ public class BarcodeReader {
 			if (lineValue != isLine()) {
 				lineValue = !lineValue;
 				if (lineValue) {
+					lastLine = System.currentTimeMillis();
 					code++;
 				}
+				sleep(100);
 			}
 
 		}
@@ -56,7 +63,7 @@ public class BarcodeReader {
 		arm.setSpeed(100);
 		arm.turnToCenter();
 
-		arm.turnToPosition(90, true);
+		arm.turnToPosition(100, true);
 		while (arm.isMoving()) {
 			if (isLine()) {
 				angleLeft = arm.getArmPosition();
@@ -65,7 +72,7 @@ public class BarcodeReader {
 		}
 		arm.turnToCenter();
 
-		arm.turnToPosition(-90, true);
+		arm.turnToPosition(-100, true);
 		while (arm.isMoving()) {
 			if (isLine()) {
 				angleRight = arm.getArmPosition();

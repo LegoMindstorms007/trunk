@@ -1,4 +1,4 @@
-package Test;
+package Programs;
 
 import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
