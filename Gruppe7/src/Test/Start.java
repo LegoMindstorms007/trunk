@@ -1,5 +1,6 @@
 package Test;
 
+import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import RobotMovement.UltrasoundSensor;

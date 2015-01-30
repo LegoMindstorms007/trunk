@@ -2,6 +2,7 @@ package Programs;
 
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
+import lejos.nxt.comm.RConsole;
 import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
@@ -30,11 +31,44 @@ public class BridgeDriving implements Program {
 
 	@Override
 	public void run() {
+		findBridge();
+		// Start the sweeping to prevent a Downfall
+		driveOverBridge();
+	}
+
+	public void halt() {
+		running = false;
+	}
+
+	@Override
+	public boolean isRunning() {
+		return running;
+	}
+
+	public enum Last {
+		LEFT, RIGHT;
+	}
+
+	protected void turnLeft(int angle) {
+		track.backward(10);
+		track.pivotAngleLeft(angle);
+		track.waitForMotors();
+		last = Last.LEFT;
+	}
+
+	protected void turnRight(int angle) {
+		track.backward(10);
+		track.pivotAngleRight(angle);
+		track.waitForMotors();
+		last = Last.RIGHT;
+	}
+
+	protected void findBridge() {
 		running = true;
 		boolean foundBridge = false;
 		track.setSpeed(1000);
 		// Find the Bridge
-		while (!foundBridge) {
+	while (!foundBridge) {
 			if (!track.motorsMoving()) {
 				track.forward();
 			}
@@ -44,7 +78,10 @@ public class BridgeDriving implements Program {
 			}
 			sleep(50);
 		}
-		// Start the sweeping to prevent a Downfall
+	}
+	
+	
+	protected void driveOverBridge() {
 		track.setSpeed(MOVING_SPEED);
 		Thread sweeping = new Thread(sweeper);
 		sweeping.start();
@@ -53,7 +90,9 @@ public class BridgeDriving implements Program {
 			if (!track.motorsMoving()) {
 				track.forward();
 			}
-			if (light.getLightValue() <= NOGROUND) {
+			int measurement = light.getLightValue();
+			RConsole.println("Measure: " + measurement);
+			if (measurement <= NOGROUND) {
 				int position = arm.getArmPosition();
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
@@ -77,34 +116,7 @@ public class BridgeDriving implements Program {
 		sweeper.halt();
 		running = false;
 	}
-
-	public void halt() {
-		running = false;
-	}
-
-	@Override
-	public boolean isRunning() {
-		return running;
-	}
-
-	public enum Last {
-		LEFT, RIGHT;
-	}
-
-	private void turnLeft(int angle) {
-		track.backward(10);
-		track.pivotAngleLeft(angle);
-		track.waitForMotors();
-		last = Last.LEFT;
-	}
-
-	private void turnRight(int angle) {
-		track.backward(10);
-		track.pivotAngleRight(angle);
-		track.waitForMotors();
-		last = Last.RIGHT;
-	}
-
+	
 	private void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
