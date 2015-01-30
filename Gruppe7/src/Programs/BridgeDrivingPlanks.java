@@ -8,6 +8,9 @@ public class BridgeDrivingPlanks extends BridgeDriving {
 	}
 	@Override
 	protected void driveOverBridge() {
-		super.driveOverBridge();
+		
 	}
+	
+	
+	
 }
