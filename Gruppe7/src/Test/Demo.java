@@ -14,10 +14,10 @@ public class Demo {
 	private static final int NUM_PROGRAMS = 3;
 	private static final int START_WITH = 1;
 
-	private static final SensorPort BUMP_RIGHT = 1;
-	private static final SensorPort BUMP_LEFT = 2;
-	private static final SensorPort ULTRA_SOUND = 3;
-	private static final SensorPort LIGHT = 4;
+	private static final SensorPort BUMP_RIGHT = SensorPort.S1;
+	private static final SensorPort BUMP_LEFT = SensorPort.S2;
+	private static final SensorPort ULTRA_SOUND = SensorPort.S3;
+	private static final SensorPort LIGHT = SensorPort.S4;
 
 	public static void main(String[] args) {
 

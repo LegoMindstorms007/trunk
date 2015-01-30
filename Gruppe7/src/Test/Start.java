@@ -32,7 +32,7 @@ public class Start implements Runnable {
 		arm = new SensorArm();
 		track = new TrackSuspension();
 		running = true;
-		sweeper = new LightSweeper();
+		sweeper = new LightSweeper(SensorPort.S4);
 		track.setSpeed(MAXSPEED);
 		currentTurn = Turns.FIRSTLEFT;
 		cautios = 20;

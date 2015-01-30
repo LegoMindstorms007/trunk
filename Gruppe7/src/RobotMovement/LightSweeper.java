@@ -1,21 +1,27 @@
 package RobotMovement;
 
+import Programs.BridgeDriving;
+import lejos.nxt.ADSensorPort;
+import lejos.nxt.LCD;
+import lejos.nxt.LightSensor;
+import lejos.nxt.comm.RConsole;
+
 
 public class LightSweeper implements Runnable {
 	boolean running;
 	boolean moving;
 	private SensorArm arm;
-	
-	public LightSweeper() {
+	public LightSweeper(ADSensorPort port) {
 		running = true;
 		moving = true;
 		arm = new SensorArm();
+		arm.setSpeed(400);
 	}
 	@Override
 	public void run() {
 		while(running) {
 		while(moving) {
-			arm.tilt();
+		 arm.tilt();
 		}
 		sleep(200);
 		}
