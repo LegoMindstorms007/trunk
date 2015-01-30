@@ -73,7 +73,7 @@ public class BridgeDriving implements Program {
 			}
 			if (light.getLightValue() >= BLACKGROUND) {
 				foundBridge = true;
-				track.forward(250);
+				track.forward(1300);
 			}
 			sleep(50);
 		}
