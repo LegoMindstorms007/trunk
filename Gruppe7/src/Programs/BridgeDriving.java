@@ -11,7 +11,7 @@ public class BridgeDriving implements Program {
 	private static final int MOVING_SPEED = 200;
 	private static final int SWEEPING_SPEED = 400;
 	private static final int ROTATINGSPEED = 500;
-	private static final int NOGROUND = 25;
+	public static final int NOGROUND = 25;
 	private static final int BLACKGROUND = 26;
 	private TrackSuspension track;
 	private SensorArm arm;
@@ -26,7 +26,7 @@ public class BridgeDriving implements Program {
 		light = new LightSensor(SensorPort.S4);
 		arm.setSpeed(SWEEPING_SPEED);
 		track.setSpeed(MOVING_SPEED);
-		sweeper = new LightSweeper();
+		sweeper = new LightSweeper(SensorPort.S3);
 	}
 
 	@Override
@@ -91,7 +91,6 @@ public class BridgeDriving implements Program {
 				track.forward();
 			}
 			int measurement = light.getLightValue();
-			RConsole.println("Measure: " + measurement);
 			if (measurement <= NOGROUND) {
 				int position = arm.getArmPosition();
 				track.stop();
@@ -112,9 +111,15 @@ public class BridgeDriving implements Program {
 				}
 				track.setSpeed(MOVING_SPEED);
 			}
+			if(sweeper.lineFound()) {
+				track.stop();
+				sweeper.stopSweeping();
+				arm.turnToCenter();
+				halt();
+			}
 		}
-		sweeper.halt();
 		running = false;
+		sweeper.halt();
 	}
 	
 	private void sleep(int millis) {
