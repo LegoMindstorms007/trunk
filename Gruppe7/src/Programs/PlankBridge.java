@@ -1,33 +1,59 @@
 package Programs;
 
+import RobotMovement.TrackSuspension;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 
 public class PlankBridge implements Program {
-	// private LineFolower firstFollower;
-	private LineFollower secondFollower;
+	private UpwardsFollower firstFollower;
+	private  DownwardFollower secondFollower;
 	private BridgeDriving bridgeDriving;
 	private boolean running;
-
+	private TrackSuspension track = new TrackSuspension();
 	public PlankBridge(SensorPort lightSensorPort, SensorPort ultaSoundPort) {
-		// firstFollower = new LineFolower(SensorPort.S4, SensorPort.S3);
+		firstFollower = new UpwardsFollower(lightSensorPort, ultaSoundPort);
 		bridgeDriving = new BridgeDriving(lightSensorPort, ultaSoundPort);
-		secondFollower = new LineFollower(lightSensorPort, ultaSoundPort);
+		secondFollower = new DownwardFollower(lightSensorPort, ultaSoundPort);
+		bridgeDriving = new BridgeDriving(lightSensorPort, ultaSoundPort);
 		running = true;
 	}
-
 	@Override
 	public void run() {
-		new Thread(bridgeDriving).start();
-		while (bridgeDriving.isRunning()) {
-			sleep(500);
-		}
-		new Thread(secondFollower).start();
+			new Thread(firstFollower).start();
+			LCD.drawString("FirstFollower", 0, 1);
+			sleep(200);
+			while(firstFollower.isRunning()) {
+				if (Button.waitForAnyPress(100) > 0) {
+					firstFollower.halt();
+				}
+			}
+			LCD.drawString("", 0, 1);
+			LCD.drawString("BridgeDriving", 0, 1);
+			new Thread(bridgeDriving).start();
+			sleep(200);
+			while(bridgeDriving.isRunning()) {
+				if (Button.waitForAnyPress(100) > 0) {
+					bridgeDriving.halt();
+				}
+			}
+			LCD.drawString("", 0, 1);
+			LCD.drawString("SecondFollower", 0, 1);
+			track.setSpeed(2000);
+			track.forward(100);
+			track.stop();
+			
+			new Thread(secondFollower).start();
+			sleep(100);
+			while(secondFollower.isRunning()){
+				
+			}
 	}
 
 	@Override
 	public void halt() {
 		running = false;
-
+		
 	}
 
 	@Override
@@ -41,5 +67,5 @@ public class PlankBridge implements Program {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
+}
 }

@@ -9,7 +9,6 @@ public class LightSweeper implements Runnable {
 
 	public LightSweeper(ADSensorPort port) {
 		arm = new SensorArm();
-		arm.setSpeed(400);
 	}
 
 	@Override

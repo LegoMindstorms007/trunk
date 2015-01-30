@@ -18,7 +18,7 @@ public class LineFollower implements Program {
 	private UltrasoundSensor usSensor;
 	private LightSweeper lightSweeper;
 	private int deltaSpeed;
-
+	protected boolean lineFinished;
 	public LineFollower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
 		init(portOfLightSensor, portOfUsSensor);
 		deltaSpeed = 0;
@@ -43,7 +43,7 @@ public class LineFollower implements Program {
 	@Override
 	public void run() {
 		running = true;
-		boolean lineFinished = false;
+	    lineFinished = false;
 
 		findLineStart();
 
@@ -65,10 +65,7 @@ public class LineFollower implements Program {
 						sensorArm.turnToCenter();
 						lineFinished = true;
 					} else {
-						// fallbackSearch (wall or Line)
-						lineFinished = !fallbackSearch();
-						if (!lineFinished)
-							lightSweeper.setMoving(true);
+						fallbackSearch();
 					}
 
 				}
@@ -79,7 +76,13 @@ public class LineFollower implements Program {
 
 		running = false;
 	}
-
+	
+	protected void fallBackSearch() {
+		// fallbackSearch (wall or Line)
+		lineFinished = !fallbackSearch();
+		if (!lineFinished)
+			lightSweeper.setMoving(true);
+	}
 	protected void getToBarcode() {
 		if (running) {
 			track.setSpeed(1000);
