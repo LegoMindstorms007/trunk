@@ -19,6 +19,7 @@ public class LineFollower implements Program {
 	private LightSweeper lightSweeper;
 	private int deltaSpeed;
 	protected boolean lineFinished;
+
 	public LineFollower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
 		init(portOfLightSensor, portOfUsSensor);
 		deltaSpeed = 0;
@@ -43,7 +44,7 @@ public class LineFollower implements Program {
 	@Override
 	public void run() {
 		running = true;
-	    lineFinished = false;
+		lineFinished = false;
 
 		findLineStart();
 
@@ -52,9 +53,9 @@ public class LineFollower implements Program {
 		while (running && !lineFinished) {
 			// testing:
 			if (lightSweeper.isLine()) {
+				track.forward();
 				track.setSpeed(MOVING_SPEED + deltaSpeed);
 				// if (isLine()) {
-				track.forward();
 			} else {
 				track.stop();
 				lightSweeper.setMoving(false);
@@ -76,13 +77,14 @@ public class LineFollower implements Program {
 
 		running = false;
 	}
-	
+
 	protected void fallBack() {
 		// fallbackSearch (wall or Line)
 		lineFinished = !fallbackSearch();
 		if (!lineFinished)
 			lightSweeper.setMoving(true);
 	}
+
 	protected void getToBarcode() {
 		if (running) {
 			track.setSpeed(1000);
@@ -95,11 +97,11 @@ public class LineFollower implements Program {
 	}
 
 	protected void findLineStart() {
-		track.setSpeed(MOVING_SPEED + deltaSpeed);
 		track.forward();
-		sleep(500);
+		track.setSpeed(MOVING_SPEED + deltaSpeed);
+		sleep(1000);
 
-		while (!isLine()) {
+		while (running && !isLine()) {
 			sleep(10);
 		}
 	}
