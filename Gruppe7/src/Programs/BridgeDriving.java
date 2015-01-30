@@ -95,6 +95,10 @@ public class BridgeDriving implements Program {
 				int position = arm.getArmPosition();
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
+				if(position > -40 && position < 40) {
+					track.stop();
+					halt();
+				} else {
 				if (position < 0) {
 					turnLeft(20);
 					// Problem if found Cliff direcetly in Front
@@ -110,12 +114,7 @@ public class BridgeDriving implements Program {
 					turnRight(20);
 				}
 				track.setSpeed(MOVING_SPEED);
-			}
-			if(sweeper.lineFound()) {
-				track.stop();
-				sweeper.stopSweeping();
-				arm.turnToCenter();
-				halt();
+				}
 			}
 		}
 		running = false;

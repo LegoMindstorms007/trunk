@@ -8,7 +8,7 @@ import RobotMovement.UltrasoundSensor;
 
 public class LineFolower implements Program {
 
-	private static final int LINE_VALUE = 35;
+	protected static final int LINE_VALUE = 35;
 	private static final int MOVING_SPEED = 600;
 	private static final int ROTATING_SPEED = 300;
 	LightSensor light;

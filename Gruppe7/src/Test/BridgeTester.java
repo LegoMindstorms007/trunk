@@ -1,6 +1,7 @@
 package Test;
 
 import Programs.BridgeDriving;
+import Programs.LineFolower;
 import Programs.PlankBridge;
 import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
@@ -17,11 +18,11 @@ public class BridgeTester {
 		new Thread(bridge).start();
 		Button.waitForAnyPress();
 		bridge.halt(); */
-		RConsole.openBluetooth(0);
+	/*	RConsole.openBluetooth(0);
 		LightSweeper sweeper = new LightSweeper(SensorPort.S4);
 		new Thread(sweeper).start();
 		Button.waitForAnyPress();
-		sweeper.halt(); 
+		sweeper.halt();*/ 
 	/*	SensorArm arm = new SensorArm();
 		arm.setSpeed(50);
 		LightSensor light = new LightSensor(SensorPort.S4);
@@ -37,5 +38,9 @@ public class BridgeTester {
 			}
 			
 		}*/
+		LineFolower follower = new LineFolower(SensorPort.S4, SensorPort.S3);
+		new Thread(follower).start();
+		Button.waitForAnyPress();
+		follower.halt();
 	}
 }
