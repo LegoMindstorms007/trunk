@@ -11,6 +11,8 @@ public class LineFollower implements Program {
 	protected static final int LINE_VALUE = 35;
 	private static final int MOVING_SPEED = 600;
 	private static final int ROTATING_SPEED = 300;
+	private static final int MANIPULATION_SPEED = -200;
+	private static final int MANIPULATION_TIME = 1000;
 	LightSensor light;
 	TrackSuspension track;
 	private boolean running;
@@ -19,6 +21,7 @@ public class LineFollower implements Program {
 	private LightSweeper lightSweeper;
 	private int deltaSpeed;
 	protected boolean lineFinished;
+	private long setSpeedBackAt;
 
 	public LineFollower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
 		init(portOfLightSensor, portOfUsSensor);
@@ -32,6 +35,7 @@ public class LineFollower implements Program {
 	}
 
 	private void init(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
+		setSpeedBackAt = -1;
 		light = new LightSensor(portOfLightSensor);
 		usSensor = new UltrasoundSensor(portOfUsSensor);
 
@@ -49,12 +53,17 @@ public class LineFollower implements Program {
 		findLineStart();
 
 		new Thread(lightSweeper).start();
+		track.setSpeed(MOVING_SPEED + deltaSpeed);
 
 		while (running && !lineFinished) {
 			// testing:
 			if (lightSweeper.isLine()) {
-				track.forward();
-				track.setSpeed(MOVING_SPEED + deltaSpeed);
+				if (!track.motorsMoving())
+					track.forward();
+
+				if (setSpeedBackAt > 0
+						&& setSpeedBackAt < System.currentTimeMillis())
+					track.equalSpeed();
 				// if (isLine()) {
 			} else {
 				track.stop();
@@ -69,6 +78,9 @@ public class LineFollower implements Program {
 						fallBack();
 					}
 
+				}
+				if (!lineFinished) {
+					track.setSpeed(MOVING_SPEED + deltaSpeed);
 				}
 			}
 		}
@@ -190,21 +202,6 @@ public class LineFollower implements Program {
 		return foundLine;
 	}
 
-	/**
-	 * Adjusts Robots angle if there is a small drift
-	 * 
-	 * @param deltaAngle
-	 *            angle of abnormality
-	 */
-	public void adjustRobot(int deltaAngle) {
-		if (deltaAngle < 0)
-			track.turnLeft();
-		else
-			track.turnRight();
-		sleep(100);
-		track.forward();
-	}
-
 	private boolean checkLeft(int angle) {
 		boolean found = false;
 		sensorArm.turnToPosition(angle, true);
@@ -265,6 +262,16 @@ public class LineFollower implements Program {
 		}
 	}
 
+	public void gearLeft() {
+		track.manipulateRight(MANIPULATION_SPEED);
+		setSpeedBackAt = System.currentTimeMillis() + MANIPULATION_TIME;
+	}
+
+	public void gearRight() {
+		track.manipulateLeft(MANIPULATION_SPEED);
+		setSpeedBackAt = System.currentTimeMillis() + MANIPULATION_TIME;
+	}
+
 	private class LightSweeper implements Runnable {
 
 		private SensorArm arm;
@@ -297,7 +304,14 @@ public class LineFollower implements Program {
 					}
 					while (running && moving && arm.isMoving()) {
 						int pos = arm.getArmPosition();
-						push(follower.isLine());
+						boolean isOnLine = follower.isLine();
+						push(isOnLine);
+						if (isOnLine)
+							if (pos > 4) {
+								follower.gearRight();
+							} else if (pos < 4) {
+								follower.gearLeft();
+							}
 					}
 					// int delta = max - min / 2;
 					// isLine = max >= min;

@@ -29,6 +29,14 @@ public class Demo {
 		BarcodeReader barcode = new BarcodeReader(LIGHT);
 
 		while (program < NUM_PROGRAMS) {
+
+			if (current != null) {
+				while (current.isRunning()) {
+					current.halt();
+					sleep(10);
+				}
+			}
+
 			switch (program) {
 			case 1:
 				current = follower;
@@ -50,12 +58,7 @@ public class Demo {
 				new Thread(current).start();
 
 				while (!current.isRunning()) {
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					sleep(10);
 				}
 				boolean buttonPressed = false;
 				while (current.isRunning()) {
@@ -72,6 +75,15 @@ public class Demo {
 			}
 
 			program++;
+		}
+	}
+
+	private static void sleep(int millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

@@ -1,8 +1,10 @@
 package Programs;
 
+import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import Communication.BluetoothCommunication;
+import RobotMovement.Aligner;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.BumpSensor;
@@ -14,16 +16,21 @@ public class LiftDriving implements Program {
 	private static final int IS_DOWN = 1;
 	private static final int CLOSE_CONNECTION = 2;
 	private static final int GREENLIGHT = 40;
+	private static final int RIFT_LIMIT = 25;
 	private BluetoothCommunication com;
+	private SensorPort portOfLightSensor;
 	private boolean running;
 	private LightSensor light;
 	private SensorArm arm;
 	private TrackSuspension track;
 	private BumpSensor bump;
+	private Aligner aligner;
 
 	public LiftDriving(SensorPort portOfLightSensor, SensorPort leftBumpSensor,
 			SensorPort rightBumpSensor) {
-		light = new LightSensor(portOfLightSensor);
+
+		this.portOfLightSensor = portOfLightSensor;
+		aligner = new Aligner(portOfLightSensor, 30, true, false);
 		arm = new SensorArm();
 		track = new TrackSuspension();
 		bump = new BumpSensor(leftBumpSensor, rightBumpSensor);
@@ -34,8 +41,11 @@ public class LiftDriving implements Program {
 
 	@Override
 	public void run() {
-		track.stop();
 		running = true;
+
+		alignRobotOnPlate();
+
+		track.stop();
 		while (running && !com.openConnection(LIFT))
 			sleep(250);
 
@@ -58,6 +68,46 @@ public class LiftDriving implements Program {
 			closeConnection();
 	}
 
+	private void alignRobotOnPlate() {
+		aligner.align();
+
+		initLight(true);
+
+		track.forward(250);
+		// turn right
+		track.pivotAngleRight(90);
+		track.waitForMotors();
+
+		// find rift
+		track.setSpeed(400);
+		while (running && !isRift()) {
+			LCD.drawInt(light.getLightValue(), 0, 1);
+			track.forward();
+		}
+		track.stop();
+		// back up a little
+		while (running && isRift()) {
+			LCD.drawInt(light.getLightValue(), 0, 2);
+			track.backward();
+		}
+		track.stop();
+
+		// turn back left
+		track.pivotAngleLeft(90);
+		track.waitForMotors();
+
+		// should be centered now
+		track.setSpeed(1000);
+	}
+
+	private void initLight(boolean useLight) {
+		light = new LightSensor(portOfLightSensor, useLight);
+	}
+
+	private boolean isRift() {
+		return light.getLightValue() < RIFT_LIMIT;
+	}
+
 	@Override
 	public void halt() {
 		running = false;
@@ -73,19 +123,20 @@ public class LiftDriving implements Program {
 	}
 
 	private void driveIntoLift() {
-		arm.turnArmRight(90);
+		arm.turnArmLeft(90);
 		track.forward();
 
 		while (!bump.touchedFront()) {
 			sleep(100);
 		}
 		track.stop();
+		track.backward(30);
 	}
 
 	private void driveOut() {
 		arm.turnToCenter();
 		track.forward();
-		sleep(3000);
+		sleep(2000);
 		track.stop();
 	}
 
