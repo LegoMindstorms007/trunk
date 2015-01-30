@@ -17,8 +17,20 @@ public class LineFolower implements Program {
 	private SensorArm sensorArm;
 	private UltrasoundSensor usSensor;
 	private LightSweeper lightSweeper;
+	private int deltaSpeed;
 
 	public LineFolower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
+		init(portOfLightSensor, portOfUsSensor);
+		deltaSpeed = 0;
+	}
+
+	public LineFolower(SensorPort portOfLightSensor, SensorPort portOfUsSensor,
+			int deltaSpeed) {
+		init(portOfLightSensor, portOfUsSensor);
+		this.deltaSpeed = deltaSpeed;
+	}
+
+	private void init(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
 		light = new LightSensor(portOfLightSensor);
 		usSensor = new UltrasoundSensor(portOfUsSensor);
 
@@ -33,12 +45,19 @@ public class LineFolower implements Program {
 		running = true;
 		boolean lineFinished = false;
 
+		track.setSpeed(MOVING_SPEED + deltaSpeed);
+		track.forward();
+		sleep(500);
+
+		while (!isLine()) {
+			sleep(10);
+		}
 		new Thread(lightSweeper).start();
 
 		while (running && !lineFinished) {
 			// testing:
 			if (lightSweeper.isLine()) {
-				track.setSpeed(MOVING_SPEED);
+				track.setSpeed(MOVING_SPEED + deltaSpeed);
 				// if (isLine()) {
 				track.forward();
 			} else {
@@ -51,12 +70,14 @@ public class LineFolower implements Program {
 						sensorArm.turnToCenter();
 						lineFinished = true;
 					} else {
-						// Fallback-search
+						// fallbackSearch (wall or Line)
+						lineFinished = !fallbackSearch();
+						if (!lineFinished)
+							lightSweeper.setMoving(true);
 					}
 
 				}
 			}
-			// sleep(10);
 		}
 
 		if (running) {
@@ -105,12 +126,53 @@ public class LineFolower implements Program {
 				track.stop();
 			}
 		}
-		track.setSpeed(MOVING_SPEED);
+		track.setSpeed(MOVING_SPEED + deltaSpeed);
 		return found;
 	}
 
 	public boolean isLine() {
 		return light.getLightValue() >= LINE_VALUE;
+	}
+
+	private boolean fallbackSearch() {
+		boolean foundLine = false;
+		track.setSpeed(ROTATING_SPEED);
+
+		// checkLeft
+		track.pivotAngleLeft(50);
+		track.waitForMotors();
+		if (checkLeft(90)) {
+			foundLine = true;
+			sensorArm.turnToCenter();
+			track.pivotAngleLeft(90);
+		}
+
+		// checkRight
+		if (!foundLine) {
+			track.pivotAngleRight(100);
+			track.waitForMotors();
+			if (checkRight(90)) {
+				foundLine = true;
+				sensorArm.turnToCenter();
+				track.pivotAngleRight(90);
+			}
+
+		}
+
+		if (!foundLine) {
+			track.pivotAngleLeft(50);
+			track.waitForMotors();
+		}
+
+		while (foundLine && running && track.motorsMoving()) {
+			if (isLine()) {
+				track.stop();
+			}
+		}
+		sensorArm.turnToCenter();
+
+		track.setSpeed(MOVING_SPEED + deltaSpeed);
+		return foundLine;
 	}
 
 	/**
@@ -124,7 +186,7 @@ public class LineFolower implements Program {
 			track.turnLeft();
 		else
 			track.turnRight();
-		sleep(50);
+		sleep(100);
 		track.forward();
 	}
 
