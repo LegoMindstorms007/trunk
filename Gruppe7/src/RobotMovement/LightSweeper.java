@@ -15,7 +15,6 @@ public class LightSweeper implements Runnable {
 		running = true;
 		moving = true;
 		arm = new SensorArm();
-		arm.setSpeed(400);
 	}
 	@Override
 	public void run() {
