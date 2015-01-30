@@ -28,22 +28,99 @@ public class Aligner {
 		int angleL = getLeftAngle();
 		int angleR = getRightAngle();
 
+		int deltaAngle = (angleL + angleR) / 2;
+
+		if (deltaAngle < 0) {
+			track.pivotAngleRight(-deltaAngle);
+		} else {
+			track.pivotAngleLeft(deltaAngle);
+		}
+
+		track.waitForMotors();
+
 	}
 
 	private int getRightAngle() {
+		int angle = 0;
+		boolean found = false;
+		arm.turnToCenter();
 		arm.turnArmRight(90, true);
-		return 0;
+
+		while (arm.isMoving() && !found) {
+			if (isBackLine()) {
+				found = true;
+				angle = arm.getArmPosition();
+			}
+		}
+
+		if (!found) {
+			arm.turnToCenter();
+			track.pivotAngleRight(90);
+			track.waitForMotors();
+
+			arm.turnToCenter();
+			arm.turnArmRight(90, true);
+
+			while (arm.isMoving() && !found) {
+				if (isBackLine()) {
+					found = true;
+					angle = -90 + arm.getArmPosition();
+				}
+			}
+
+			track.pivotAngleLeft(90);
+			track.waitForMotors();
+
+		}
+
+		arm.turnToCenter();
+		return angle;
 	}
 
 	private int getLeftAngle() {
-		// TODO Auto-generated method stub
-		return 0;
+		int angle = 0;
+		boolean found = false;
+		arm.turnToCenter();
+		arm.turnArmLeft(90, true);
+
+		while (arm.isMoving() && !found) {
+			if (isBackLine()) {
+				found = true;
+				angle = arm.getArmPosition();
+			}
+		}
+
+		if (!found) {
+			arm.turnToCenter();
+			track.pivotAngleLeft(90);
+			track.waitForMotors();
+
+			arm.turnToCenter();
+			arm.turnArmLeft(90, true);
+
+			while (arm.isMoving() && !found) {
+				if (isBackLine()) {
+					found = true;
+					angle = 90 + arm.getArmPosition();
+				}
+			}
+
+			track.pivotAngleRight(90);
+			track.waitForMotors();
+
+		}
+
+		arm.turnToCenter();
+		return angle;
 	}
 
 	private void getOnFrontLine() {
+		track.forward();
 		while (!isFrontLine()) {
-			track.forward(1);
+			sleep(10);
 		}
+		track.stop();
+		track.forward(50);
 	}
 
 	private boolean isFrontLine() {

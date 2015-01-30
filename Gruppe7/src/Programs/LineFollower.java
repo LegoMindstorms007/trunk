@@ -96,7 +96,7 @@ public class LineFollower implements Program {
 		track.forward();
 		sleep(500);
 
-		while (!isLine()) {
+		while (running && !isLine()) {
 			sleep(10);
 		}
 	}
