@@ -8,14 +8,13 @@ import lejos.nxt.SensorPort;
 public class PlankBridge implements Program {
 	private UpwardsFollower firstFollower;
 	private  DownwardFollower secondFollower;
-	private BridgeDriving bridgeDriving;
+	private PlankBridgeDriving bridgeDriving;
 	private boolean running;
 	private TrackSuspension track = new TrackSuspension();
 	public PlankBridge(SensorPort lightSensorPort, SensorPort ultaSoundPort) {
 		firstFollower = new UpwardsFollower(lightSensorPort, ultaSoundPort);
-		bridgeDriving = new BridgeDriving(lightSensorPort, ultaSoundPort);
+		bridgeDriving = new PlankBridgeDriving(lightSensorPort, ultaSoundPort);
 		secondFollower = new DownwardFollower(lightSensorPort, ultaSoundPort);
-		bridgeDriving = new BridgeDriving(lightSensorPort, ultaSoundPort);
 		running = true;
 	}
 	@Override

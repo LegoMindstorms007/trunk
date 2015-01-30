@@ -13,7 +13,7 @@ public class UpwardsFollower extends LineFollower {
 	protected void findLineStart() {
 	}
 	@Override
-	protected void fallBackSearch() {
+	protected void fallBack() {
 		lineFinished = true;
 	}
 	protected void getToBarcode() {

@@ -7,18 +7,17 @@ import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 
 public class BridgeDriving implements Program {
-	private static final int MOVING_SPEED = 200;
-	private static final int SWEEPING_SPEED = 400;
-	private static final int ROTATINGSPEED = 500;
+	public static final int MOVING_SPEED = 200;
+	public static final int SWEEPING_SPEED = 400;
+	public static final int ROTATINGSPEED = 500;
 	public static final int NOGROUND = 25;
-	private static final int BLACKGROUND = 26;
-	private TrackSuspension track;
-	private SensorArm arm;
-	private LightSensor light;
-	private boolean running;
-	private LightSweeper sweeper;
+	public static final int BLACKGROUND = 26;
+	protected TrackSuspension track;
+	protected SensorArm arm;
+	protected LightSensor light;
+	protected boolean running;
+	protected LightSweeper sweeper;
 	Last last;
-	private int frontcounter;
 
 	public BridgeDriving(SensorPort lightPort, SensorPort ultraSoundPort) {
 		track = new TrackSuspension();
@@ -27,13 +26,12 @@ public class BridgeDriving implements Program {
 		arm.setSpeed(SWEEPING_SPEED);
 		track.setSpeed(MOVING_SPEED);
 		sweeper = new LightSweeper(ultraSoundPort);
-		frontcounter = 0;
 		running = true;
 	}
 
 	@Override
 	public void run() {
-		//findBridge();
+		findBridge();
 		// Start the sweeping to prevent a Downfall
 		driveOverBridge();
 	}
@@ -95,45 +93,28 @@ public class BridgeDriving implements Program {
 				int position = arm.getArmPosition();
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
-				if (position > -40 && position < 40) {
-					if(frontcounter >=3) {
-						track.stop();
-						sweeper.stopSweeping();
-						sweeper.halt();
-						halt();
-					} else {
-						track.forward(10);
-						frontcounter++;
-					}
-				} else {
 					if (position < 0) {
 						turnLeft(20);
 						// Problem if found Cliff direcetly in Front
 					} else if (position == 0) {
-					/*if (last == null) {
+						if (last == null) {
+								turnLeft(10);
+							} else if (last == Last.RIGHT) {
+								turnRight(10);
+							} else {
+								turnLeft(10);
 							turnLeft(10);
-						} else if (last == Last.RIGHT) {
-							turnRight(10);
-						} else {
-							turnLeft(10);
-						turnLeft(10);
-					} else if (last == Last.RIGHT) {
-						turnRight(10);
-					} else {
-						turnLeft(10);
-					}*/
+						}
 					} else {
 						turnRight(20);
 					}
 					track.setSpeed(MOVING_SPEED);
 				}
-			}
 		}
 		sweeper.stopSweeping();
 		track.stop();
 		sweeper.halt();
 		track.stop();
-		arm.turnToCenter();
 		arm.turnToCenter();
 		running = false;
 	}

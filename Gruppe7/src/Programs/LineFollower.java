@@ -65,7 +65,7 @@ public class LineFollower implements Program {
 						sensorArm.turnToCenter();
 						lineFinished = true;
 					} else {
-						fallbackSearch();
+						fallBack();
 					}
 
 				}
@@ -77,7 +77,7 @@ public class LineFollower implements Program {
 		running = false;
 	}
 	
-	protected void fallBackSearch() {
+	protected void fallBack() {
 		// fallbackSearch (wall or Line)
 		lineFinished = !fallbackSearch();
 		if (!lineFinished)
