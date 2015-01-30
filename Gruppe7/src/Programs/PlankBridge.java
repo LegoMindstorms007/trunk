@@ -7,17 +7,15 @@ import lejos.nxt.SensorPort;
 
 public class PlankBridge implements Program {
 	private UpwardsFollower firstFollower;
-	private LineFolower secondFollower;
+	private  DownwardFollower secondFollower;
 	private BridgeDriving bridgeDriving;
 	private boolean running;
 	private TrackSuspension track = new TrackSuspension();
 	public PlankBridge(SensorPort lightSensorPort, SensorPort ultaSoundPort) {
-	public PlankBridge() {
-		firstFollower = new UpwardsFollower(SensorPort.S4, SensorPort.S3);
+		firstFollower = new UpwardsFollower(lightSensorPort, ultaSoundPort);
 		bridgeDriving = new BridgeDriving(lightSensorPort, ultaSoundPort);
-		secondFollower = new LineFollower(lightSensorPort, ultaSoundPort);
-		bridgeDriving = new BridgeDriving();
-		secondFollower = new LineFolower(SensorPort.S4, SensorPort.S3);
+		secondFollower = new DownwardFollower(lightSensorPort, ultaSoundPort);
+		bridgeDriving = new BridgeDriving(lightSensorPort, ultaSoundPort);
 		running = true;
 	}
 	@Override
@@ -31,10 +29,6 @@ public class PlankBridge implements Program {
 				}
 			}
 			LCD.drawString("", 0, 1);
-			track.setSpeed(2000);
-			track.forward(100);
-			track.stop();
-			track.setSpeed(200);
 			LCD.drawString("BridgeDriving", 0, 1);
 			new Thread(bridgeDriving).start();
 			sleep(200);
@@ -46,8 +40,9 @@ public class PlankBridge implements Program {
 			LCD.drawString("", 0, 1);
 			LCD.drawString("SecondFollower", 0, 1);
 			track.setSpeed(2000);
-			track.forward(50);
+			track.forward(100);
 			track.stop();
+			
 			new Thread(secondFollower).start();
 			sleep(100);
 			while(secondFollower.isRunning()){

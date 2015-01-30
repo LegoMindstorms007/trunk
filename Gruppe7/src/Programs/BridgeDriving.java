@@ -126,10 +126,6 @@ public class BridgeDriving implements Program {
 						turnRight(20);
 					}
 					track.setSpeed(MOVING_SPEED);
-				} else {
-					turnRight(20);
-				}
-				track.setSpeed(MOVING_SPEED);
 				}
 			}
 		}

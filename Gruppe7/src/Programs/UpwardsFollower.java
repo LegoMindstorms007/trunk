@@ -9,5 +9,16 @@ public class UpwardsFollower extends LineFollower {
 			SensorPort portOfUsSensor) {
 		super(portOfLightSensor, portOfUsSensor);
 	}
-
+	@Override
+	protected void findLineStart() {
+	}
+	@Override
+	protected void fallBackSearch() {
+		lineFinished = true;
+	}
+	protected void getToBarcode() {
+		track.setSpeed(2000);
+		track.forward(100);
+		track.stop();
+	}
 }
