@@ -34,6 +34,7 @@ public class LiftDriving implements Program {
 
 	@Override
 	public void run() {
+		track.stop();
 		running = true;
 		while (running && !com.openConnection(LIFT))
 			sleep(250);

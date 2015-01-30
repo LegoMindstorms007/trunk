@@ -31,15 +31,15 @@ public class Demo {
 			switch (program) {
 			case 1:
 				current = follower;
-				LCD.drawString("Line Follower loaded", 0, 0);
+				LCD.drawString("Line", 0, 0);
 				break;
 			case 2:
-				LCD.drawString("Line Follower", 0, 0);
 				current = bridge;
+				LCD.drawString("Bridge", 0, 0);
 				break;
 			case 3:
-				LCD.drawString("Lift Program loaded", 0, 0);
 				current = lift;
+				LCD.drawString("Lift ", 0, 0);
 				break;
 			default:
 				current = null;

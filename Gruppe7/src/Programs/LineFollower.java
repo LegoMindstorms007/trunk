@@ -24,8 +24,8 @@ public class LineFollower implements Program {
 		deltaSpeed = 0;
 	}
 
-	public LineFollower(SensorPort portOfLightSensor, SensorPort portOfUsSensor,
-			int deltaSpeed) {
+	public LineFollower(SensorPort portOfLightSensor,
+			SensorPort portOfUsSensor, int deltaSpeed) {
 		init(portOfLightSensor, portOfUsSensor);
 		this.deltaSpeed = deltaSpeed;
 	}
@@ -45,13 +45,8 @@ public class LineFollower implements Program {
 		running = true;
 		boolean lineFinished = false;
 
-		track.setSpeed(MOVING_SPEED + deltaSpeed);
-		track.forward();
-		sleep(500);
+		findLineStart();
 
-		while (!isLine()) {
-			sleep(10);
-		}
 		new Thread(lightSweeper).start();
 
 		while (running && !lineFinished) {
@@ -80,6 +75,12 @@ public class LineFollower implements Program {
 			}
 		}
 
+		getToBarcode();
+
+		running = false;
+	}
+
+	protected void getToBarcode() {
 		if (running) {
 			track.setSpeed(1000);
 			track.forward();
@@ -88,7 +89,16 @@ public class LineFollower implements Program {
 			}
 			track.stop();
 		}
-		running = false;
+	}
+
+	protected void findLineStart() {
+		track.setSpeed(MOVING_SPEED + deltaSpeed);
+		track.forward();
+		sleep(500);
+
+		while (!isLine()) {
+			sleep(10);
+		}
 	}
 
 	public void halt() {
