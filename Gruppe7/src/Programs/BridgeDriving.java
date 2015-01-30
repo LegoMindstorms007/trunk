@@ -2,7 +2,6 @@ package Programs;
 
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
-import lejos.nxt.comm.RConsole;
 import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
@@ -21,13 +20,13 @@ public class BridgeDriving implements Program {
 	Last last;
 	private int frontcounter;
 
-	public BridgeDriving() {
+	public BridgeDriving(SensorPort lightPort, SensorPort ultraSoundPort) {
 		track = new TrackSuspension();
 		arm = new SensorArm();
-		light = new LightSensor(SensorPort.S4);
+		light = new LightSensor(lightPort);
 		arm.setSpeed(SWEEPING_SPEED);
 		track.setSpeed(MOVING_SPEED);
-		sweeper = new LightSweeper(SensorPort.S3);
+		sweeper = new LightSweeper(ultraSoundPort);
 		frontcounter = 0;
 		running = true;
 	}
@@ -70,7 +69,7 @@ public class BridgeDriving implements Program {
 		boolean foundBridge = false;
 		track.setSpeed(1000);
 		// Find the Bridge
-	while (!foundBridge) {
+		while (running && !foundBridge) {
 			if (!track.motorsMoving()) {
 				track.forward();
 			}
@@ -81,8 +80,7 @@ public class BridgeDriving implements Program {
 			sleep(50);
 		}
 	}
-	
-	
+
 	protected void driveOverBridge() {
 		track.setSpeed(MOVING_SPEED);
 		Thread sweeping = new Thread(sweeper);
@@ -97,7 +95,7 @@ public class BridgeDriving implements Program {
 				int position = arm.getArmPosition();
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
-				if(position > -40 && position < 40) {
+				if (position > -40 && position < 40) {
 					if(frontcounter >=3) {
 						track.stop();
 						sweeper.stopSweeping();
@@ -108,17 +106,26 @@ public class BridgeDriving implements Program {
 						frontcounter++;
 					}
 				} else {
-				if (position < 0) {
-					turnLeft(20);
-					// Problem if found Cliff direcetly in Front
-				} else if (position == 0) {
+					if (position < 0) {
+						turnLeft(20);
+						// Problem if found Cliff direcetly in Front
+					} else if (position == 0) {
 					/*if (last == null) {
+							turnLeft(10);
+						} else if (last == Last.RIGHT) {
+							turnRight(10);
+						} else {
+							turnLeft(10);
 						turnLeft(10);
 					} else if (last == Last.RIGHT) {
 						turnRight(10);
 					} else {
 						turnLeft(10);
 					}*/
+					} else {
+						turnRight(20);
+					}
+					track.setSpeed(MOVING_SPEED);
 				} else {
 					turnRight(20);
 				}
@@ -127,8 +134,10 @@ public class BridgeDriving implements Program {
 			}
 		}
 		sweeper.stopSweeping();
+		track.stop();
 		sweeper.halt();
 		track.stop();
+		arm.turnToCenter();
 		arm.turnToCenter();
 		running = false;
 	}

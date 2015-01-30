@@ -11,8 +11,11 @@ public class PlankBridge implements Program {
 	private BridgeDriving bridgeDriving;
 	private boolean running;
 	private TrackSuspension track = new TrackSuspension();
+	public PlankBridge(SensorPort lightSensorPort, SensorPort ultaSoundPort) {
 	public PlankBridge() {
 		firstFollower = new UpwardsFollower(SensorPort.S4, SensorPort.S3);
+		bridgeDriving = new BridgeDriving(lightSensorPort, ultaSoundPort);
+		secondFollower = new LineFollower(lightSensorPort, ultaSoundPort);
 		bridgeDriving = new BridgeDriving();
 		secondFollower = new LineFolower(SensorPort.S4, SensorPort.S3);
 		running = true;

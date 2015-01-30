@@ -6,7 +6,7 @@ import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import RobotMovement.UltrasoundSensor;
 
-public class LineFolower implements Program {
+public class LineFollower implements Program {
 
 	protected static final int LINE_VALUE = 35;
 	private static final int MOVING_SPEED = 600;
@@ -19,13 +19,13 @@ public class LineFolower implements Program {
 	private LightSweeper lightSweeper;
 	private int deltaSpeed;
 
-	public LineFolower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
+	public LineFollower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
 		init(portOfLightSensor, portOfUsSensor);
 		deltaSpeed = 0;
 	}
 
-	public LineFolower(SensorPort portOfLightSensor, SensorPort portOfUsSensor,
-			int deltaSpeed) {
+	public LineFollower(SensorPort portOfLightSensor,
+			SensorPort portOfUsSensor, int deltaSpeed) {
 		init(portOfLightSensor, portOfUsSensor);
 		this.deltaSpeed = deltaSpeed;
 	}
@@ -45,13 +45,8 @@ public class LineFolower implements Program {
 		running = true;
 		boolean lineFinished = false;
 
-		track.setSpeed(MOVING_SPEED + deltaSpeed);
-		track.forward();
-		sleep(500);
+		findLineStart();
 
-		while (!isLine()) {
-			sleep(10);
-		}
 		new Thread(lightSweeper).start();
 
 		while (running && !lineFinished) {
@@ -80,6 +75,12 @@ public class LineFolower implements Program {
 			}
 		}
 
+		getToBarcode();
+
+		running = false;
+	}
+
+	protected void getToBarcode() {
 		if (running) {
 			track.setSpeed(1000);
 			track.forward();
@@ -88,7 +89,16 @@ public class LineFolower implements Program {
 			}
 			track.stop();
 		}
-		running = false;
+	}
+
+	protected void findLineStart() {
+		track.setSpeed(MOVING_SPEED + deltaSpeed);
+		track.forward();
+		sleep(500);
+
+		while (!isLine()) {
+			sleep(10);
+		}
 	}
 
 	public void halt() {
@@ -256,11 +266,11 @@ public class LineFolower implements Program {
 		private boolean moving;
 		private boolean running;
 		boolean moveLeft;
-		private LineFolower follower;
+		private LineFollower follower;
 		private boolean measurements[];
 		private int head;
 
-		public LightSweeper(SensorArm arm, LineFolower follower) {
+		public LightSweeper(SensorArm arm, LineFollower follower) {
 			measurements = new boolean[130];
 			this.follower = follower;
 			this.arm = arm;
