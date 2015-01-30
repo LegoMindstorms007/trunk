@@ -1,7 +1,7 @@
 package Test;
 
 import Programs.BridgeDriving;
-import Programs.LineFolower;
+import Programs.LineFollower;
 import Programs.PlankBridge;
 import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
@@ -38,7 +38,7 @@ public class BridgeTester {
 			}
 			
 		}*/
-		LineFolower follower = new LineFolower(SensorPort.S4, SensorPort.S3);
+		LineFollower follower = new LineFollower(SensorPort.S4, SensorPort.S3);
 		new Thread(follower).start();
 		Button.waitForAnyPress();
 		follower.halt();

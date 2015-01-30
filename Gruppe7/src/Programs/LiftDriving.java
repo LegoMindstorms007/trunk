@@ -29,6 +29,7 @@ public class LiftDriving implements Program {
 		bump = new BumpSensor(leftBumpSensor, rightBumpSensor);
 		track.setSpeed(1000);
 		arm.setSpeed(250);
+		com = new BluetoothCommunication();
 	}
 
 	@Override
@@ -52,7 +53,8 @@ public class LiftDriving implements Program {
 		if (running)
 			driveOut();
 
-		closeConnection();
+		if (running)
+			closeConnection();
 	}
 
 	@Override
@@ -82,7 +84,7 @@ public class LiftDriving implements Program {
 	private void driveOut() {
 		arm.turnToCenter();
 		track.forward();
-		sleep(1000);
+		sleep(3000);
 		track.stop();
 	}
 

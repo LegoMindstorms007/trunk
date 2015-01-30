@@ -6,7 +6,7 @@ import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import RobotMovement.UltrasoundSensor;
 
-public class LineFolower implements Program {
+public class LineFollower implements Program {
 
 	protected static final int LINE_VALUE = 35;
 	private static final int MOVING_SPEED = 600;
@@ -19,12 +19,12 @@ public class LineFolower implements Program {
 	private LightSweeper lightSweeper;
 	private int deltaSpeed;
 
-	public LineFolower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
+	public LineFollower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
 		init(portOfLightSensor, portOfUsSensor);
 		deltaSpeed = 0;
 	}
 
-	public LineFolower(SensorPort portOfLightSensor, SensorPort portOfUsSensor,
+	public LineFollower(SensorPort portOfLightSensor, SensorPort portOfUsSensor,
 			int deltaSpeed) {
 		init(portOfLightSensor, portOfUsSensor);
 		this.deltaSpeed = deltaSpeed;
@@ -256,11 +256,11 @@ public class LineFolower implements Program {
 		private boolean moving;
 		private boolean running;
 		boolean moveLeft;
-		private LineFolower follower;
+		private LineFollower follower;
 		private boolean measurements[];
 		private int head;
 
-		public LightSweeper(SensorArm arm, LineFolower follower) {
+		public LightSweeper(SensorArm arm, LineFollower follower) {
 			measurements = new boolean[130];
 			this.follower = follower;
 			this.arm = arm;
