@@ -5,6 +5,7 @@ import lejos.nxt.SensorPort;
 import Communication.BluetoothCommunication;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
+import Sensors.BumpSensor;
 
 public class LiftDriving implements Program {
 
@@ -18,11 +19,14 @@ public class LiftDriving implements Program {
 	private LightSensor light;
 	private SensorArm arm;
 	private TrackSuspension track;
+	private BumpSensor bump;
 
-	public LiftDriving(SensorPort portOfLightSensor) {
+	public LiftDriving(SensorPort portOfLightSensor, SensorPort leftBumpSensor,
+			SensorPort rightBumpSensor) {
 		light = new LightSensor(portOfLightSensor);
 		arm = new SensorArm();
 		track = new TrackSuspension();
+		bump = new BumpSensor(leftBumpSensor, rightBumpSensor);
 		track.setSpeed(1000);
 		arm.setSpeed(250);
 	}
@@ -69,11 +73,9 @@ public class LiftDriving implements Program {
 		arm.turnArmRight(90);
 		track.forward();
 
-		// // redo this with push-sensors...
-		// while (shouldDoThis) {
-		// sleep(100);
-		// }
-		sleep(1000);
+		while (!bump.touchedFront()) {
+			sleep(100);
+		}
 		track.stop();
 	}
 

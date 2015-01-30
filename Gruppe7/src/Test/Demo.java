@@ -4,30 +4,40 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import Programs.BridgeDriving;
+import Programs.LiftDriving;
 import Programs.LineFolower;
 import Programs.Program;
 import RobotMovement.BarcodeReader;
 
 public class Demo {
 
-	private static final int numPrograms = 2;
+	private static final int NUM_PROGRAMS = 3;
+	private static final int START_WITH = 1;
+
+	private static final SensorPort BUMP_RIGHT = 1;
+	private static final SensorPort BUMP_LEFT = 2;
+	private static final SensorPort ULTRA_SOUND = 3;
+	private static final SensorPort LIGHT = 4;
 
 	public static void main(String[] args) {
 
-		int program = 0;
-		LineFolower follower = new LineFolower(SensorPort.S4, SensorPort.S3);
+		int program = START_WITH;
+		LineFolower follower = new LineFolower(LIGHT, ULTRA_SOUND);
 		BridgeDriving bridge = new BridgeDriving();
+		LiftDriving lift = new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
 		Program current = null;
-		BarcodeReader barcode = new BarcodeReader(SensorPort.S4);
+		BarcodeReader barcode = new BarcodeReader(LIGHT);
 
-		while (program < numPrograms) {
+		while (program < NUM_PROGRAMS) {
 			switch (program) {
-			case 0:
+			case 1:
 				current = follower;
 				break;
-			case 1:
+			case 2:
 				current = bridge;
 				break;
+			case 3:
+				current = lift;
 			}
 
 			new Thread(current).start();
