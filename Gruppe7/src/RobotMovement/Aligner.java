@@ -69,11 +69,11 @@ public class Aligner {
 			}
 
 			track.pivotAngleLeft(90);
-			track.waitForMotors();
 
 		}
 
 		arm.turnToCenter();
+		track.waitForMotors();
 		return angle;
 	}
 
@@ -106,21 +106,29 @@ public class Aligner {
 			}
 
 			track.pivotAngleRight(90);
-			track.waitForMotors();
 
 		}
 
+		track.waitForMotors();
 		arm.turnToCenter();
 		return angle;
 	}
 
 	private void getOnFrontLine() {
+		if (isFrontLine()) {
+			track.backward();
+			while (isFrontLine()) {
+				sleep(10);
+			}
+			track.stop();
+		}
+
 		track.forward();
-		while (!isFrontLine()) {
+		while (isBackLine()) {
 			sleep(10);
 		}
 		track.stop();
-		track.forward(50);
+		track.forward(25);
 	}
 
 	private boolean isFrontLine() {

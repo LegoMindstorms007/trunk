@@ -7,6 +7,7 @@ import Programs.BridgeDriving;
 import Programs.LiftDriving;
 import Programs.LineFollower;
 import Programs.Program;
+import RobotMovement.Aligner;
 import RobotMovement.BarcodeReader;
 
 public class Demo {
@@ -47,6 +48,15 @@ public class Demo {
 
 			if (current != null) {
 				new Thread(current).start();
+
+				while (!current.isRunning()) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				boolean buttonPressed = false;
 				while (current.isRunning()) {
 					if (Button.waitForAnyPress(100) > 0) {
@@ -57,7 +67,7 @@ public class Demo {
 				if (!buttonPressed) {
 					LCD.drawString("Barcode value: " + barcode.readBarcode(),
 							0, 1);
-					barcode.alignOnBarcode();
+					Aligner aligner = new Aligner(LIGHT, 35, false);
 				}
 			}
 
