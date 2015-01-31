@@ -1,4 +1,4 @@
-package RobotMovement;
+package Sensors;
 
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;

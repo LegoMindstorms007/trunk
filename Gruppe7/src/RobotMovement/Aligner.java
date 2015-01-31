@@ -3,6 +3,12 @@ package RobotMovement;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 
+/**
+ * class containing an algorithm for aligning the robot on a line
+ * 
+ * @author Dominik Muth
+ * 
+ */
 public class Aligner {
 	private LightSensor light;
 	private int threshold;
@@ -10,12 +16,35 @@ public class Aligner {
 	private TrackSuspension track;
 	private SensorArm arm;
 
+	/**
+	 * constructs a new Aligner
+	 * 
+	 * @param portOfLight
+	 *            SensorPort of light sensor
+	 * @param threshold
+	 *            light limit to distinguish between front and back part
+	 * @param frontIsBrighter
+	 *            whether the front is brighter then the back or not
+	 */
 	public Aligner(SensorPort portOfLight, int threshold,
 			boolean frontIsBrighter) {
 		init(threshold, frontIsBrighter);
 		light = new LightSensor(portOfLight);
 	}
 
+	/**
+	 * constructs a new Aligner
+	 * 
+	 * @param portOfLight
+	 *            SensorPort of light sensor
+	 * @param threshold
+	 *            light limit to distinguish between front and back part
+	 * @param frontIsBrighter
+	 *            whether the front is brighter then the back or not
+	 * @param useFlashlight
+	 *            whether the flashlight of the light sensor should be used or
+	 *            not
+	 */
 	public Aligner(SensorPort portOfLight, int threshold,
 			boolean frontIsBrighter, boolean useFlashlight) {
 		init(threshold, frontIsBrighter);
@@ -29,6 +58,9 @@ public class Aligner {
 		this.frontIsBrighter = frontIsBrighter;
 	}
 
+	/**
+	 * start aligning
+	 */
 	public void align() {
 		track.setSpeed(300);
 		arm.setSpeed(150);
@@ -149,6 +181,12 @@ public class Aligner {
 		return !isFrontLine();
 	}
 
+	/**
+	 * sleep method
+	 * 
+	 * @param milliseconds
+	 *            time to sleep in milliseconds
+	 */
 	public void sleep(int milliseconds) {
 		try {
 			Thread.sleep(milliseconds);

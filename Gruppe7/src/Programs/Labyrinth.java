@@ -3,7 +3,7 @@ package Programs;
 import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
-import RobotMovement.UltrasoundSensor;
+import Sensors.UltrasoundSensor;
 
 public class Labyrinth implements Runnable {
 

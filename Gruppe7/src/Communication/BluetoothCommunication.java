@@ -10,6 +10,12 @@ import lejos.nxt.LCD;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 
+/**
+ * Bluetooth communication class
+ * 
+ * @author Dominik Muth
+ * 
+ */
 public class BluetoothCommunication {
 	private DataInputStream dis;
 	private DataOutputStream dos;
