@@ -12,9 +12,19 @@ public class Aligner {
 
 	public Aligner(SensorPort portOfLight, int threshold,
 			boolean frontIsBrighter) {
+		init(threshold, frontIsBrighter);
+		light = new LightSensor(portOfLight);
+	}
+
+	public Aligner(SensorPort portOfLight, int threshold,
+			boolean frontIsBrighter, boolean useFlashlight) {
+		init(threshold, frontIsBrighter);
+		light = new LightSensor(portOfLight, useFlashlight);
+	}
+
+	private void init(int threshold, boolean frontIsBrighter) {
 		arm = new SensorArm();
 		track = new TrackSuspension();
-		light = new LightSensor(portOfLight);
 		this.threshold = threshold;
 		this.frontIsBrighter = frontIsBrighter;
 	}

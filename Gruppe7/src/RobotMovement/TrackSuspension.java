@@ -7,13 +7,17 @@ public class TrackSuspension {
 	private NXTRegulatedMotor left;
 	private NXTRegulatedMotor right;
 	private final float ROTATIONTRANSLATION = 5.3f;
+	private int speed;
 
 	public TrackSuspension() {
 		left = Motor.B;
 		right = Motor.A;
+		speed = Motor.B.getSpeed();
+		Motor.A.setSpeed(speed);
 	}
 
 	public void setSpeed(int speed) {
+		this.speed = speed;
 		left.setSpeed(speed);
 		right.setSpeed(speed);
 	}
@@ -60,10 +64,11 @@ public class TrackSuspension {
 		left.stop(true);
 		right.forward();
 	}
-	
+
 	public void turnLeftBackward() {
 		right.backward();
 	}
+
 	public void turnLeft(int angle) {
 		right.rotate((int) (angle * ROTATIONTRANSLATION), true);
 	}
@@ -80,6 +85,7 @@ public class TrackSuspension {
 	public void turnRightBackward() {
 		left.backward();
 	}
+
 	public void pivotAngleLeft(int angle) {
 		left.rotate((int) (-angle * ROTATIONTRANSLATION), true);
 		right.rotate((int) (angle * ROTATIONTRANSLATION), true);
@@ -98,11 +104,25 @@ public class TrackSuspension {
 	public boolean motorsMoving() {
 		return left.isMoving() || right.isMoving();
 	}
-	
+
 	public void setSpeedLeft(int speed) {
 		left.setSpeed(speed);
 	}
+
 	public void setSpeedRight(int speed) {
 		right.setSpeed(speed);
+	}
+
+	public void manipulateLeft(int deltaSpeed) {
+		left.setSpeed(Math.min(0, speed + deltaSpeed));
+	}
+
+	public void manipulateRight(int deltaSpeed) {
+		right.setSpeed(Math.min(0, speed + deltaSpeed));
+	}
+
+	public void equalSpeed() {
+		right.setSpeed(speed);
+		left.setSpeed(speed);
 	}
 }
