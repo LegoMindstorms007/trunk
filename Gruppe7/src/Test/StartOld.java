@@ -8,9 +8,13 @@ import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.comm.RConsole;
+import lejos.robotics.RangeReading;
+import lejos.robotics.objectdetection.Feature;
+import lejos.robotics.objectdetection.RangeFeatureDetector;
 
-public class Start implements Runnable {
-	
+public class StartOld implements Runnable {
+	private RangeFeatureDetector sensor;
+	private static final int MAXDISTANCE = 80;
 	private static final int LINE = 35;
 	private static final int DISTANCETOWALL = 25;
 	private static final int MAXSPEED = 2000;
@@ -20,15 +24,11 @@ public class Start implements Runnable {
 	private int stop;
 	private int border;
 	private Turns currentTurn;
-	private UltrasoundSensor us;
 	private TrackSuspension track;
 	private SensorArm arm;
-	private LightSensor light;
 	private LightSweeper sweeper;
 	private boolean running;
-	public Start() {
-		us = new UltrasoundSensor(SensorPort.S3);
-		light = new LightSensor(SensorPort.S4);
+	public StartOld() {
 		arm = new SensorArm();
 		track = new TrackSuspension();
 		running = true;
@@ -38,6 +38,7 @@ public class Start implements Runnable {
 		cautios = 20;
 		stop = 15;
 		border = 30;
+
 	}
 	@Override
 	public void run() {
@@ -47,7 +48,8 @@ public class Start implements Runnable {
 		 if(!track.motorsMoving()) {
 			 track.forward();
 		 }
-		 int distance = us.getMeasurment();
+		 int distance = getMeasurment();
+		 RConsole.println("Distance: " +distance);
 		 int position = arm.getArmPosition();
 		 if(distance < border) {
 			 if(position < 0) {
@@ -99,28 +101,28 @@ public class Start implements Runnable {
 		switch(currentTurn) {
 			case FIRSTLEFT:
 				arm.turnToPosition(SensorArm.MAXLEFT);
-				measurement = us.getMeasurment();
+				measurement = getMeasurment();
 				maxposition = SensorArm.MAXLEFT;
 				arm.turnToPosition(SensorArm.MAXRIGHT, true);
 				nextTurn = Turns.SECONDLEFT;
 			break;
 			case SECONDLEFT:
 				arm.turnToPosition(SensorArm.MAXLEFT);
-				measurement = us.getMeasurment();
+				measurement = getMeasurment();
 				maxposition = SensorArm.MAXLEFT;
 				arm.turnToPosition(SensorArm.MAXRIGHT, true);
 				nextTurn = Turns.RIGHT;
 			break;
 			case RIGHT:
 				arm.turnToPosition(SensorArm.MAXRIGHT);
-				measurement = us.getMeasurment();
+				measurement = getMeasurment();
 				maxposition = SensorArm.MAXRIGHT;
 				arm.turnToPosition(SensorArm.MAXLEFT, true);
 				nextTurn =  Turns.FINISH;
 			break;
 			case FINISH:
 				arm.turnToCenter();
-				measurement = us.getMeasurment();
+				measurement = getMeasurment();
 				maxposition = SensorArm.CENTER;
 				arm.turnToPosition(SensorArm.MAXRIGHT);
 				arm.turnToPosition(SensorArm.MAXLEFT, true);
@@ -132,7 +134,7 @@ public class Start implements Runnable {
 		}
 		if(!(measurement == UltrasoundSensor.MAX_DISTANCE)) {
 		while(arm.isMoving()) {
-			int newmeasurement = us.getMeasurment();
+			int newmeasurement = getMeasurment();
 			int position = arm.getArmPosition();
 			if(newmeasurement > measurement) {
 				measurement = newmeasurement;
@@ -140,7 +142,7 @@ public class Start implements Runnable {
 				RConsole.println("Position: " + maxposition);
 				RConsole.println("Value: " + measurement);
 			}
-			measurement = Math.max(measurement, us.getMeasurment());
+			measurement = Math.max(measurement, getMeasurment());
 		} 
 		} else {
 			currentTurn = nextTurn;
@@ -153,5 +155,12 @@ public class Start implements Runnable {
 	
 	private enum Turns {
 		FIRSTLEFT, SECONDLEFT, RIGHT, FINISH;
+	}
+	
+	public int getMeasurment() {
+		Feature scan = sensor.scan();
+		RangeReading fdscan = scan != null ? scan.getRangeReading() : null;
+
+		return fdscan != null ? (int) fdscan.getRange() : MAXDISTANCE;
 	}
 }

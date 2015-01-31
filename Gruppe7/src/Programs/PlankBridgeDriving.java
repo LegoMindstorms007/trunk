@@ -9,6 +9,11 @@ private int frontcounter;
 		super(lightPort, ultraSoundPort);		
 		frontcounter = 0;
 	}
+	@Override
+	protected void findBridge(){
+		track.setSpeed(2000);
+		track.forward(250);
+	}
 	
 	@Override 
 	protected void driveOverBridge() {
@@ -25,11 +30,11 @@ private int frontcounter;
 				int position = arm.getArmPosition();
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
-				if (position > -30 && position < 30) {
+				if (position > -40 && position < 40) {
 						sweeper.stopSweeping();
 						arm.turnToCenter();
 						track.forward(5);
-						if(light.getLightValue() <= NOGROUND) {
+						if(light.getLightValue() >= NOGROUND) {
 							//Keine Lücke
 							frontcounter++;
 						} 
