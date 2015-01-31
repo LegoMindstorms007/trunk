@@ -41,13 +41,21 @@ public class LiftDriving implements Program {
 
 	@Override
 	public void run() {
+		BTConnector connector = new BTConnector(com);
+		// wait till connector is started
+		while (!connector.isRunning()) {
+			sleep(10);
+		}
+		connector.start();
 		running = true;
 
 		alignRobotOnPlate();
 
 		track.stop();
-		while (running && !com.openConnection(LIFT))
-			sleep(250);
+
+		while (running && connector.isRunning()) {
+			sleep(50);
+		}
 
 		while (running && !isGreen())
 			sleep(100);
@@ -66,6 +74,9 @@ public class LiftDriving implements Program {
 
 		if (running)
 			closeConnection();
+
+		// halt connector if this program is premature interrupted via halt()
+		connector.halt();
 	}
 
 	private void alignRobotOnPlate() {
@@ -180,6 +191,47 @@ public class LiftDriving implements Program {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	private class BTConnector extends Thread {
+		private BluetoothCommunication com;
+		private boolean running;
+
+		public BTConnector(BluetoothCommunication com) {
+			this.com = com;
+		}
+
+		@Override
+		public void run() {
+			running = true;
+			while (running && !com.openConnection(LIFT)) {
+				sleep(100);
+			}
+			running = false;
+		}
+
+		public void halt() {
+			running = false;
+		}
+
+		public boolean isRunning() {
+			return running;
+		}
+
+		/**
+		 * sleep method
+		 * 
+		 * @param milliseconds
+		 *            milliseconds to sleep
+		 */
+		public void sleep(int milliseconds) {
+			try {
+				Thread.sleep(milliseconds);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }
