@@ -1,12 +1,20 @@
 package Programs;
 
+import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import Communication.BluetoothCommunication;
+import RobotMovement.Aligner;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.BumpSensor;
 
+/**
+ * program for driving a lift
+ * 
+ * @author Dominik Muth
+ * 
+ */
 public class LiftDriving implements Program {
 
 	private static final String LIFT = "Lift";
@@ -14,31 +22,61 @@ public class LiftDriving implements Program {
 	private static final int IS_DOWN = 1;
 	private static final int CLOSE_CONNECTION = 2;
 	private static final int GREENLIGHT = 40;
+	private static final int RIFT_LIMIT = 25;
 	private BluetoothCommunication com;
+	private SensorPort portOfLightSensor;
 	private boolean running;
 	private LightSensor light;
 	private SensorArm arm;
 	private TrackSuspension track;
 	private BumpSensor bump;
+	private Aligner aligner;
 
+	/**
+	 * constructs a new lift driver
+	 * 
+	 * @param portOfLightSensor
+	 *            self explaining
+	 * @param leftBumpSensor
+	 *            self explaining
+	 * @param rightBumpSensor
+	 *            self explaining
+	 */
 	public LiftDriving(SensorPort portOfLightSensor, SensorPort leftBumpSensor,
 			SensorPort rightBumpSensor) {
-		light = new LightSensor(portOfLightSensor);
+
+		this.portOfLightSensor = portOfLightSensor;
+		aligner = new Aligner(portOfLightSensor, 30, true, false);
 		arm = new SensorArm();
 		track = new TrackSuspension();
 		bump = new BumpSensor(leftBumpSensor, rightBumpSensor);
 		track.setSpeed(1000);
 		arm.setSpeed(250);
+		com = new BluetoothCommunication();
 	}
 
 	@Override
 	public void run() {
+		BTConnector connector = new BTConnector(com);
+		// wait till connector is started
+		while (!connector.isRunning()) {
+			sleep(10);
+		}
+		connector.start();
 		running = true;
-		while (running && !com.openConnection(LIFT))
-			sleep(250);
+
+		alignRobotOnPlate();
+
+		track.stop();
+
+		// sort of join, tough not blocking -> checking of running variable is
+		// possible
+		while (running && connector.isRunning()) {
+			sleep(50);
+		}
 
 		while (running && !isGreen())
-			sleep(100);
+			sleep(50);
 
 		if (running)
 			driveIntoLift();
@@ -47,12 +85,56 @@ public class LiftDriving implements Program {
 			goDown();
 
 		while (running && !canExit())
-			sleep(100);
+			sleep(50);
 
 		if (running)
 			driveOut();
 
-		closeConnection();
+		if (running)
+			closeConnection();
+
+		// halt connector if this program is premature interrupted via halt()
+		connector.halt();
+	}
+
+	private void alignRobotOnPlate() {
+		aligner.align();
+
+		initLight(true);
+
+		track.forward(250);
+		// turn right
+		track.pivotAngleRight(90);
+		track.waitForMotors();
+
+		// find rift
+		track.setSpeed(400);
+		while (running && !isRift()) {
+			LCD.drawInt(light.getLightValue(), 0, 1);
+			track.forward();
+		}
+		track.stop();
+		// back up a little
+		while (running && isRift()) {
+			LCD.drawInt(light.getLightValue(), 0, 2);
+			track.backward();
+		}
+		track.stop();
+
+		// turn back left
+		track.pivotAngleLeft(90);
+		track.waitForMotors();
+
+		// should be centered now
+		track.setSpeed(1000);
+	}
+
+	private void initLight(boolean useLight) {
+		light = new LightSensor(portOfLightSensor, useLight);
+	}
+
+	private boolean isRift() {
+		return light.getLightValue() < RIFT_LIMIT;
 	}
 
 	@Override
@@ -65,24 +147,29 @@ public class LiftDriving implements Program {
 		return running;
 	}
 
+	/**
+	 * 
+	 * @return whether the panel is green or not
+	 */
 	public boolean isGreen() {
 		return light.getLightValue() >= GREENLIGHT;
 	}
 
 	private void driveIntoLift() {
-		arm.turnArmRight(90);
+		arm.turnArmLeft(90);
 		track.forward();
 
 		while (!bump.touchedFront()) {
 			sleep(100);
 		}
 		track.stop();
+		track.backward(30);
 	}
 
 	private void driveOut() {
 		arm.turnToCenter();
 		track.forward();
-		sleep(1000);
+		sleep(2000);
 		track.stop();
 	}
 
@@ -126,6 +213,61 @@ public class LiftDriving implements Program {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * inner class, made for connecting to the lift while not blocking the
+	 * program
+	 * 
+	 * @author Dominik Muth
+	 * 
+	 */
+	private class BTConnector extends Thread {
+		private BluetoothCommunication com;
+		private boolean running;
+
+		public BTConnector(BluetoothCommunication com) {
+			this.com = com;
+		}
+
+		@Override
+		public void run() {
+			running = true;
+			while (running && !com.openConnection(LIFT)) {
+				sleep(100);
+			}
+			running = false;
+		}
+
+		/**
+		 * stops the bluetooth connector
+		 */
+		public void halt() {
+			running = false;
+		}
+
+		/**
+		 * 
+		 * @return whether the connector is running or not
+		 */
+		public boolean isRunning() {
+			return running;
+		}
+
+		/**
+		 * sleep method
+		 * 
+		 * @param milliseconds
+		 *            milliseconds to sleep
+		 */
+		public void sleep(int milliseconds) {
+			try {
+				Thread.sleep(milliseconds);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

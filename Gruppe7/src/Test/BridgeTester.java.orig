@@ -1,0 +1,47 @@
+package Test;
+<<<<<<< HEAD
+=======
+
+import Programs.BridgeDriving;
+import Programs.LineFollower;
+>>>>>>> origin/master
+import Programs.PlankBridge;
+import lejos.nxt.Button;
+
+
+public class BridgeTester {
+	public static void main(String[] args) {
+		PlankBridge bridge = new PlankBridge();
+		new Thread(bridge).start();
+		Button.waitForAnyPress();
+<<<<<<< HEAD
+		bridge.halt();
+=======
+		bridge.halt(); */
+	/*	RConsole.openBluetooth(0);
+		LightSweeper sweeper = new LightSweeper(SensorPort.S4);
+		new Thread(sweeper).start();
+		Button.waitForAnyPress();
+		sweeper.halt();*/ 
+	/*	SensorArm arm = new SensorArm();
+		arm.setSpeed(50);
+		LightSensor light = new LightSensor(SensorPort.S4);
+		while(true) {
+			arm.turnToPosition(SensorArm.MAXLEFT, true); 
+			while(arm.isMoving()) {
+				LCD.drawString(String.valueOf(light.getLightValue()), 0, 1);
+			}
+			arm.turnToPosition(SensorArm.MAXRIGHT, true); 
+			while(arm.isMoving()) {
+				LCD.drawString(String.valueOf(light.getLightValue()), 0, 1);
+				
+			}
+			
+		}*/
+		LineFollower follower = new LineFollower(SensorPort.S4, SensorPort.S3);
+		new Thread(follower).start();
+		Button.waitForAnyPress();
+		follower.halt();
+>>>>>>> origin/master
+	}
+}

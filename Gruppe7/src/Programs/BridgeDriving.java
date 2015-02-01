@@ -2,31 +2,31 @@ package Programs;
 
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
-import lejos.nxt.comm.RConsole;
 import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 
 public class BridgeDriving implements Program {
-	private static final int MOVING_SPEED = 200;
-	private static final int SWEEPING_SPEED = 400;
-	private static final int ROTATINGSPEED = 500;
+	public static final int MOVING_SPEED = 200;
+	public static final int SWEEPING_SPEED = 400;
+	public static final int ROTATINGSPEED = 500;
 	public static final int NOGROUND = 25;
-	private static final int BLACKGROUND = 26;
-	private TrackSuspension track;
-	private SensorArm arm;
-	private LightSensor light;
-	private boolean running;
-	private LightSweeper sweeper;
+	public static final int BLACKGROUND = 26;
+	protected TrackSuspension track;
+	protected SensorArm arm;
+	protected LightSensor light;
+	protected boolean running;
+	protected LightSweeper sweeper;
 	Last last;
 
-	public BridgeDriving() {
+	public BridgeDriving(SensorPort lightPort, SensorPort ultraSoundPort) {
 		track = new TrackSuspension();
 		arm = new SensorArm();
-		light = new LightSensor(SensorPort.S4);
+		light = new LightSensor(lightPort);
 		arm.setSpeed(SWEEPING_SPEED);
 		track.setSpeed(MOVING_SPEED);
-		sweeper = new LightSweeper(SensorPort.S3);
+		sweeper = new LightSweeper(ultraSoundPort);
+		running = true;
 	}
 
 	@Override
@@ -64,23 +64,21 @@ public class BridgeDriving implements Program {
 	}
 
 	protected void findBridge() {
-		running = true;
 		boolean foundBridge = false;
 		track.setSpeed(1000);
 		// Find the Bridge
-	while (!foundBridge) {
+		while (running && !foundBridge) {
 			if (!track.motorsMoving()) {
 				track.forward();
 			}
 			if (light.getLightValue() >= BLACKGROUND) {
 				foundBridge = true;
-				track.forward(250);
+				track.forward(1300);
 			}
 			sleep(50);
 		}
 	}
-	
-	
+
 	protected void driveOverBridge() {
 		track.setSpeed(MOVING_SPEED);
 		Thread sweeping = new Thread(sweeper);
@@ -95,30 +93,30 @@ public class BridgeDriving implements Program {
 				int position = arm.getArmPosition();
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
-				if(position > -40 && position < 40) {
-					track.stop();
-					halt();
-				} else {
-				if (position < 0) {
-					turnLeft(20);
-					// Problem if found Cliff direcetly in Front
-				} else if (position == 0) {
-					if (last == null) {
-						turnLeft(10);
-					} else if (last == Last.RIGHT) {
-						turnRight(10);
+					if (position < 0) {
+						turnLeft(20);
+						// Problem if found Cliff direcetly in Front
+					} else if (position == 0) {
+						if (last == null) {
+								turnLeft(10);
+							} else if (last == Last.RIGHT) {
+								turnRight(10);
+							} else {
+								turnLeft(10);
+							turnLeft(10);
+						}
 					} else {
-						turnLeft(10);
+						turnRight(20);
 					}
-				} else {
-					turnRight(20);
+					track.setSpeed(MOVING_SPEED);
 				}
-				track.setSpeed(MOVING_SPEED);
-				}
-			}
 		}
-		running = false;
+		sweeper.stopSweeping();
+		track.stop();
 		sweeper.halt();
+		track.stop();
+		arm.turnToCenter();
+		running = false;
 	}
 	
 	private void sleep(int millis) {
