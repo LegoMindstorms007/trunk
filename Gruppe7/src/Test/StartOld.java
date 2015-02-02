@@ -3,7 +3,7 @@ package Test;
 import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
-import RobotMovement.UltrasoundSensor;
+import Sensors.UltrasoundSensor;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;

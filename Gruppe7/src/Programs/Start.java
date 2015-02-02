@@ -2,7 +2,7 @@ package Programs;
 
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
-import RobotMovement.UltrasoundSensor;
+import Sensors.UltrasoundSensor;
 import Sensors.BumpSensor;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;

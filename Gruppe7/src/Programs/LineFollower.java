@@ -4,8 +4,14 @@ import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
-import RobotMovement.UltrasoundSensor;
+import Sensors.UltrasoundSensor;
 
+/**
+ * line follower program
+ * 
+ * @author Dominik Muth
+ * 
+ */
 public class LineFollower implements Program {
 
 	protected static final int LINE_VALUE = 35;
@@ -23,11 +29,30 @@ public class LineFollower implements Program {
 	protected boolean lineFinished;
 	private long setSpeedBackAt;
 
+	/**
+	 * Constructs a line follower
+	 * 
+	 * @param portOfLightSensor
+	 *            SensorPort of the light sensor
+	 * @param portOfUsSensor
+	 *            SensorPort of the ultrasonic sensor
+	 */
 	public LineFollower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
 		init(portOfLightSensor, portOfUsSensor);
 		deltaSpeed = 0;
 	}
 
+	/**
+	 * Constructs a line follower including driving speed alteration
+	 * 
+	 * @param portOfLightSensor
+	 *            SensorPort of the light sensor
+	 * @param portOfUsSensor
+	 *            SensorPort of the ultrasonic sensor
+	 * @param deltaSpeed
+	 *            alteration of driving speed (negative = slower, postive =
+	 *            faster)
+	 */
 	public LineFollower(SensorPort portOfLightSensor,
 			SensorPort portOfUsSensor, int deltaSpeed) {
 		init(portOfLightSensor, portOfUsSensor);
@@ -56,7 +81,7 @@ public class LineFollower implements Program {
 		track.setSpeed(MOVING_SPEED + deltaSpeed);
 
 		while (running && !lineFinished) {
-			// testing:
+			// check if robot is on the line
 			if (lightSweeper.isLine()) {
 				if (!track.motorsMoving())
 					track.forward();
@@ -64,17 +89,18 @@ public class LineFollower implements Program {
 				if (setSpeedBackAt > 0
 						&& setSpeedBackAt < System.currentTimeMillis())
 					track.equalSpeed();
-				// if (isLine()) {
-			} else {
+			} else { // search line if robot is off course
 				track.stop();
 				lightSweeper.setMoving(false);
+				// search track with the sensor arm
 				if (searchTrack()) {
 					lightSweeper.setMoving(true);
-				} else {
+				} else { // if no line is found, check if there are walls left
+							// and right (end of second level)
 					if (checkWalls()) {
 						sensorArm.turnToCenter();
 						lineFinished = true;
-					} else {
+					} else { // else do a fallback search
 						fallBack();
 					}
 
@@ -85,6 +111,7 @@ public class LineFollower implements Program {
 			}
 		}
 
+		// drive straight to the barcode
 		getToBarcode();
 
 		running = false;
@@ -118,6 +145,7 @@ public class LineFollower implements Program {
 		}
 	}
 
+	@Override
 	public void halt() {
 		if (lightSweeper != null) {
 			lightSweeper.halt();
@@ -135,12 +163,12 @@ public class LineFollower implements Program {
 		track.setSpeed(ROTATING_SPEED);
 		int angle = 50;
 
-		while (!found && angle <= 100) {
-			if (checkRight(angle)) {
+		while (running && !found && angle <= 100) {
+			if (checkRight(angle)) { // check right side
 				sensorArm.turnToCenter();
 				track.pivotAngleRight(angle);
 				found = true;
-			} else if (checkLeft(angle)) {
+			} else if (checkLeft(angle)) { // check left side
 				sensorArm.turnToCenter();
 				track.pivotAngleLeft(angle);
 				found = true;
@@ -157,6 +185,11 @@ public class LineFollower implements Program {
 		return found;
 	}
 
+	/**
+	 * checks whether the robot is on the line or not
+	 * 
+	 * @return is the robot on the line
+	 */
 	public boolean isLine() {
 		return light.getLightValue() >= LINE_VALUE;
 	}
@@ -262,11 +295,17 @@ public class LineFollower implements Program {
 		}
 	}
 
+	/**
+	 * gear left while driving
+	 */
 	public void gearLeft() {
 		track.manipulateRight(MANIPULATION_SPEED);
 		setSpeedBackAt = System.currentTimeMillis() + MANIPULATION_TIME;
 	}
 
+	/**
+	 * gear right while driving
+	 */
 	public void gearRight() {
 		track.manipulateLeft(MANIPULATION_SPEED);
 		setSpeedBackAt = System.currentTimeMillis() + MANIPULATION_TIME;
@@ -346,5 +385,4 @@ public class LineFollower implements Program {
 											// is out of bounds
 		}
 	}
-
 }

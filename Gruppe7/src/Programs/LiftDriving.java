@@ -9,6 +9,12 @@ import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.BumpSensor;
 
+/**
+ * program for driving a lift
+ * 
+ * @author Dominik Muth
+ * 
+ */
 public class LiftDriving implements Program {
 
 	private static final String LIFT = "Lift";
@@ -26,6 +32,16 @@ public class LiftDriving implements Program {
 	private BumpSensor bump;
 	private Aligner aligner;
 
+	/**
+	 * constructs a new lift driver
+	 * 
+	 * @param portOfLightSensor
+	 *            self explaining
+	 * @param leftBumpSensor
+	 *            self explaining
+	 * @param rightBumpSensor
+	 *            self explaining
+	 */
 	public LiftDriving(SensorPort portOfLightSensor, SensorPort leftBumpSensor,
 			SensorPort rightBumpSensor) {
 
@@ -53,12 +69,14 @@ public class LiftDriving implements Program {
 
 		track.stop();
 
+		// sort of join, tough not blocking -> checking of running variable is
+		// possible
 		while (running && connector.isRunning()) {
 			sleep(50);
 		}
 
 		while (running && !isGreen())
-			sleep(100);
+			sleep(50);
 
 		if (running)
 			driveIntoLift();
@@ -67,7 +85,7 @@ public class LiftDriving implements Program {
 			goDown();
 
 		while (running && !canExit())
-			sleep(100);
+			sleep(50);
 
 		if (running)
 			driveOut();
@@ -129,6 +147,10 @@ public class LiftDriving implements Program {
 		return running;
 	}
 
+	/**
+	 * 
+	 * @return whether the panel is green or not
+	 */
 	public boolean isGreen() {
 		return light.getLightValue() >= GREENLIGHT;
 	}
@@ -194,6 +216,13 @@ public class LiftDriving implements Program {
 		}
 	}
 
+	/**
+	 * inner class, made for connecting to the lift while not blocking the
+	 * program
+	 * 
+	 * @author Dominik Muth
+	 * 
+	 */
 	private class BTConnector extends Thread {
 		private BluetoothCommunication com;
 		private boolean running;
@@ -211,10 +240,17 @@ public class LiftDriving implements Program {
 			running = false;
 		}
 
+		/**
+		 * stops the bluetooth connector
+		 */
 		public void halt() {
 			running = false;
 		}
 
+		/**
+		 * 
+		 * @return whether the connector is running or not
+		 */
 		public boolean isRunning() {
 			return running;
 		}
