@@ -19,7 +19,7 @@ public class Start implements Program {
 	private LightSensor light;
 	private boolean linefound;
 	final static int MOVINGSPEED = 2000;
-	final static int TURNINGSPEED = 600;
+	final static int TURNINGSPEED = 500;
 	private final static int backward = 110;
 	private final static int NEAREST = 17;
 	private final static int TONEAREST = 8;
