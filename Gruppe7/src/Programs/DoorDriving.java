@@ -42,14 +42,14 @@ public class DoorDriving implements Program {
 		}
 
 		// wait until door is open
-		while (running && usSensor.getMeasurment() < 35) {
+		while (running && usSensor.getMeasurment() < 50) {
 			sleep(10);
 		}
 
 		// drive through the door
 		if (running)
 			track.forward();
-		sleep(3000);
+		sleep(6000);
 
 		track.stop();
 
@@ -58,6 +58,8 @@ public class DoorDriving implements Program {
 
 		// disconnect from server
 		com.disconnect();
+
+		running = false;
 	}
 
 	@Override

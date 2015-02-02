@@ -1,18 +1,10 @@
 package Communication;
 
-
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-
-import javax.bluetooth.RemoteDevice;
-
-import lejos.nxt.comm.BTConnection;
-import lejos.nxt.comm.Bluetooth;
 
 public class TurnTable {
 	private BluetoothCommunication bluetooth;
+
 	private enum TurnTableCommand {
 		HELLO, TURN, DONE, CYA, UNKNOWN;
 
@@ -27,13 +19,13 @@ public class TurnTable {
 	public TurnTable() {
 		bluetooth = new BluetoothCommunication();
 	}
-	
+
 	public boolean connect() {
 		String deviceName = "TurnTable";
 		bluetooth.connect(deviceName);
 		return true;
 	}
-	
+
 	public boolean turn() {
 		try {
 			sendCommand(TurnTableCommand.TURN);
@@ -44,17 +36,17 @@ public class TurnTable {
 		}
 		return true;
 	}
-	
+
 	public boolean register() {
 		try {
-		TurnTableCommand command = receiveCommand();
+			TurnTableCommand command = receiveCommand();
 			assertCommand(command, TurnTableCommand.HELLO);
 		} catch (IOException e) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	public boolean deregister() {
 		try {
 			sendCommand(TurnTableCommand.CYA);
@@ -63,7 +55,7 @@ public class TurnTable {
 		}
 		bluetooth.disconnect();
 		return true;
-	}	
+	}
 
 	private void assertCommand(TurnTableCommand command,
 			TurnTableCommand assertetedCommand) throws IOException {
