@@ -10,8 +10,10 @@ public class BridgeDriving implements Program {
 	public static final int MOVING_SPEED = 200;
 	public static final int SWEEPING_SPEED = 400;
 	public static final int ROTATINGSPEED = 500;
-	public static final int NOGROUND = 25;
+	public static final int PANEL = 55;
+	public static final int NOGROUND = 42;
 	public static final int BLACKGROUND = 26;
+	public static final int GREEN  = 35;
 	protected TrackSuspension track;
 	protected SensorArm arm;
 	protected LightSensor light;
@@ -88,8 +90,8 @@ public class BridgeDriving implements Program {
 			if (!track.motorsMoving()) {
 				track.forward();
 			}
-			int measurement = light.getLightValue();
-			if (measurement <= NOGROUND) {
+			Ground currentGround = checkGround(measure());
+			if (currentGround == Ground.AIR) {
 				int position = arm.getArmPosition();
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
@@ -109,7 +111,14 @@ public class BridgeDriving implements Program {
 						turnRight(20);
 					}
 					track.setSpeed(MOVING_SPEED);
-				}
+			}
+			else if(currentGround == Ground.PANEL) {
+				track.stop();
+				sweeper.stopSweeping();
+				sweeper.halt();
+				arm.turnToCenter();
+				halt();
+			}
 		}
 		sweeper.stopSweeping();
 		track.stop();
@@ -126,5 +135,29 @@ public class BridgeDriving implements Program {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private int measure() {
+		//WithLight
+		light.setFloodlight(true);
+		int lightValue = light.getLightValue();
+		light.setFloodlight(false);
+		sleep(10);
+		lightValue += light.getLightValue();
+		sleep(10);
+		return lightValue;
+	}
+	
+	private Ground checkGround(int measurement) {
+		if(measurement < NOGROUND) {
+			return Ground.AIR;
+		} else if(measure() > PANEL) {
+			return Ground.PANEL;
+		} else {
+			return Ground.WOOD;
+		}
+	}
+	private enum Ground {
+		AIR, WOOD, PANEL;
 	}
 }
