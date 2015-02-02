@@ -7,6 +7,7 @@ import Programs.BridgeDriving;
 import Programs.LiftDriving;
 import Programs.LineFollower;
 import Programs.Program;
+import Programs.Start;
 import RobotMovement.Aligner;
 import RobotMovement.BarcodeReader;
 
@@ -25,6 +26,7 @@ public class Demo {
 		LineFollower follower = new LineFollower(LIGHT, ULTRA_SOUND);
 		BridgeDriving bridge = new BridgeDriving(LIGHT, ULTRA_SOUND);
 		LiftDriving lift = new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
+		Start startProgram = new Start(LIGHT, ULTRA_SOUND);
 		Program current = null;
 		BarcodeReader barcode = new BarcodeReader(LIGHT);
 
@@ -38,6 +40,9 @@ public class Demo {
 			}
 
 			switch (program) {
+			case 0:
+				current = startProgram;
+				LCD.drawString("Start", 0, 0);
 			case 1:
 				current = follower;
 				LCD.drawString("Line", 0, 0);
@@ -68,9 +73,16 @@ public class Demo {
 					}
 				}
 				if (!buttonPressed) {
-					LCD.drawString("Barcode value: " + barcode.readBarcode(),
-							0, 1);
-					Aligner aligner = new Aligner(LIGHT, 35, false);
+					switch (program) {
+					case 1:
+					case 4:
+					case 5:
+						LCD.drawString(
+								"Barcode value: " + barcode.readBarcode(), 0, 1);
+						Aligner aligner = new Aligner(LIGHT, 35, false);
+						aligner.align();
+						break;
+					}
 				}
 			}
 
