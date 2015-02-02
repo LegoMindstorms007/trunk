@@ -16,6 +16,7 @@ public class TurnTableProgram implements Program {
 		us = new UltrasoundSensor(portOfUsSensor);
 		tracks = new TrackSuspension();
 		table = new TurnTable();
+		running = true;
 	}
 	@Override
 	public void run() {
