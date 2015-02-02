@@ -29,6 +29,24 @@ public class TurnTableProgram implements Program {
 		while (running) {
 			new Thread(upwards).start();
 			sleep(100);
+<<<<<<< HEAD
+		}
+		table.connect();
+		driveInTable();
+		while(!table.isConnected() && running) {
+			sleep(100);
+		}
+		while(!table.turn() && running) {
+			sleep(100);
+		}
+		driveOutTable();
+		new Thread(upwards).start();
+		sleep(100);
+		while(upwards.isRunning() && running) {
+			sleep(100);
+		}
+		halt();
+=======
 			while (upwards.isRunning() && running) {
 				sleep(100);
 			}
@@ -40,24 +58,19 @@ public class TurnTableProgram implements Program {
 			while (!table.turn() && running) {
 				sleep(100);
 			}
-		driveOutTable();
+			halt();
 			new Thread(upwards).start();
 			sleep(100);
 			while (upwards.isRunning() && running) {
 				sleep(100);
 			}
-		new Thread(upwards).start();
-		sleep(100);
-		while(upwards.isRunning() && running) {
-			sleep(100);
-		}
-		halt();
+>>>>>>> e5884f413e35ec9d43195acfb101fd76f0b15bca
 		}
 	}
 
 	@Override
 	public void halt() {
-		if(table.isConnected()) {
+		if (table.isConnected()) {
 			table.deregister();
 		}
 		running = false;
@@ -68,7 +81,6 @@ public class TurnTableProgram implements Program {
 		return running;
 	}
 
-	
 	private void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
@@ -77,20 +89,28 @@ public class TurnTableProgram implements Program {
 		}
 	}
 
-	
 	private void driveInTable() {
 		arm.turnToCenter();
 		tracks.stop();
-		while(us.getMeasurment() >= 10 && running) {
-			if(!tracks.motorsMoving()) {
+		while (us.getMeasurment() >= 10 && running) {
+			if (!tracks.motorsMoving()) {
 				tracks.forward();
 			}
 			sleep(10);
 		}
 		tracks.stop();
 	}
-	
+
 	private void driveOutTable() {
+<<<<<<< HEAD
+=======
+		while (us.getMeasurment() < 30) {
+			if (!tracks.motorsMoving()) {
+				tracks.backward();
+			}
+			sleep(10);
+		}
+>>>>>>> e5884f413e35ec9d43195acfb101fd76f0b15bca
 		tracks.stop();
 		tracks.backward(190);
 		table.deregister();
