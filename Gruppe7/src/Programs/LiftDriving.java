@@ -201,7 +201,7 @@ public class LiftDriving implements Program {
 	 */
 	private void closeConnection() {
 		com.writeInt(CLOSE_CONNECTION);
-		com.disConnect();
+		com.disconnect();
 	}
 
 	/**

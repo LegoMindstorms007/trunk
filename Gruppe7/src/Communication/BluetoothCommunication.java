@@ -86,6 +86,22 @@ public class BluetoothCommunication {
 	}
 
 	/**
+	 * method for sending a boolean to the lift
+	 * 
+	 * @param value
+	 *            boolean to send
+	 */
+	public void writeBool(boolean value) {
+		try {
+			dos.writeBoolean(value);
+			dos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * method to read a boolean variable
 	 * 
 	 * @return answer of the lift
@@ -119,7 +135,7 @@ public class BluetoothCommunication {
 	/**
 	 * this method's name should be self explaining
 	 */
-	public void disConnect() {
+	public void disconnect() {
 		if (connection != null) {
 			try {
 				connection.close();
