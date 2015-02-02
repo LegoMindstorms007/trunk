@@ -1,10 +1,10 @@
 package Programs;
 
+import lejos.nxt.SensorPort;
 import Communication.TurnTable;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.UltrasoundSensor;
-import lejos.nxt.SensorPort;
 
 public class TurnTableProgram implements Program {
 	private TurnTableFollower upwards;
@@ -13,7 +13,9 @@ public class TurnTableProgram implements Program {
 	TrackSuspension tracks;
 	private TurnTable table;
 	SensorArm arm;
-	public TurnTableProgram(SensorPort  portOfLightSensor, SensorPort portOfUsSensor) {
+
+	public TurnTableProgram(SensorPort portOfLightSensor,
+			SensorPort portOfUsSensor) {
 		upwards = new TurnTableFollower(portOfLightSensor, portOfUsSensor);
 		us = new UltrasoundSensor(portOfUsSensor);
 		tracks = new TrackSuspension();
@@ -21,34 +23,35 @@ public class TurnTableProgram implements Program {
 		running = true;
 		arm = new SensorArm();
 	}
+
 	@Override
 	public void run() {
-		while(running) {
-		new Thread(upwards).start();
-		sleep(100);
-		while(upwards.isRunning() && running) {
+		while (running) {
+			new Thread(upwards).start();
 			sleep(100);
-		}
-		table.connect();
-		driveInTable();
-		while(!table.isConnected() && running) {
+			while (upwards.isRunning() && running) {
+				sleep(100);
+			}
+			table.connect();
+			driveInTable();
+			while (!table.isConnected() && running) {
+				sleep(100);
+			}
+			while (!table.turn() && running) {
+				sleep(100);
+			}
+			halt();
+			new Thread(upwards).start();
 			sleep(100);
-		}
-		while(!table.turn() && running) {
-			sleep(100);
-		}
-		halt();
-		new Thread(upwards).start();
-		sleep(100);
-		while(upwards.isRunning() && running) {
-			sleep(100);
-		}
+			while (upwards.isRunning() && running) {
+				sleep(100);
+			}
 		}
 	}
 
 	@Override
 	public void halt() {
-		if(table.isConnected()) {
+		if (table.isConnected()) {
 			table.deregister();
 		}
 		running = false;
@@ -58,7 +61,7 @@ public class TurnTableProgram implements Program {
 	public boolean isRunning() {
 		return running;
 	}
-	
+
 	private void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
@@ -66,22 +69,22 @@ public class TurnTableProgram implements Program {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void driveInTable() {
 		arm.turnToCenter();
 		tracks.stop();
-		while(us.getMeasurment() >= 10 && running) {
-			if(!tracks.motorsMoving()) {
+		while (us.getMeasurment() >= 10 && running) {
+			if (!tracks.motorsMoving()) {
 				tracks.forward();
 			}
 			sleep(10);
 		}
 		tracks.stop();
 	}
-	
+
 	private void driveOutTable() {
-		while(us.getMeasurment() < 30) {
-			if(!tracks.motorsMoving()) {
+		while (us.getMeasurment() < 30) {
+			if (!tracks.motorsMoving()) {
 				tracks.backward();
 			}
 			sleep(10);
