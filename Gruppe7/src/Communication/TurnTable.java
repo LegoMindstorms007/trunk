@@ -61,7 +61,7 @@ public class TurnTable {
 		} catch (IOException e) {
 			return false;
 		}
-		bluetooth.disConnect();
+		bluetooth.disconnect();
 		return true;
 	}	
 

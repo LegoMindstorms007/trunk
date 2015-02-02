@@ -10,6 +10,7 @@ public class TurnTableFollower extends LineFollower {
 	}
 	@Override
 	protected void fallBack() {
+		
 		lineFinished = true;
 	}
 	@Override

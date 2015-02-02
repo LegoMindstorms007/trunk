@@ -5,6 +5,7 @@ import lejos.nxt.comm.RConsole;
 
 public class PlankBridgeDriving extends BridgeDriving {
 private int frontcounter;
+public static final int NOGROUND = 25;
 	public PlankBridgeDriving(SensorPort lightPort, SensorPort ultraSoundPort) {
 		super(lightPort, ultraSoundPort);		
 		frontcounter = 0;

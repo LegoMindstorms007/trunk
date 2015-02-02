@@ -25,6 +25,7 @@ public class LineFollower implements Program {
 	private LightSweeper lightSweeper;
 	private int deltaSpeed;
 	protected boolean lineFinished;
+	private boolean ramp = true;
 
 	/**
 	 * Constructs a line follower
@@ -91,11 +92,16 @@ public class LineFollower implements Program {
 					lightSweeper.setMoving(true);
 				} else { // if no line is found, check if there are walls left
 							// and right (end of second level)
-					if (checkWalls()) {
-						sensorArm.turnToCenter();
-						lineFinished = true;
-					} else { // else do a fallback search
-						fallBack();
+					if(ramp) {
+					track.forward(20);
+					ramp = false;
+					} else {
+						if (checkWalls()) {
+							sensorArm.turnToCenter();
+							lineFinished = true;
+						} else { // else do a fallback search
+							fallBack();
+						}
 					}
 
 				}

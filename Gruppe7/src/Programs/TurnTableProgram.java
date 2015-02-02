@@ -37,12 +37,13 @@ public class TurnTableProgram implements Program {
 		while(!table.turn() && running) {
 			sleep(100);
 		}
-		halt();
+		driveOutTable();
 		new Thread(upwards).start();
 		sleep(100);
 		while(upwards.isRunning() && running) {
 			sleep(100);
 		}
+		halt();
 		}
 	}
 
@@ -80,15 +81,10 @@ public class TurnTableProgram implements Program {
 	}
 	
 	private void driveOutTable() {
-		while(us.getMeasurment() < 30) {
-			if(!tracks.motorsMoving()) {
-				tracks.backward();
-			}
-			sleep(10);
-		}
 		tracks.stop();
+		tracks.backward(190);
 		table.deregister();
-		tracks.pivotAngleLeft(180);
+		tracks.pivotAngleRight(180);
 		tracks.waitForMotors();
 	}
 }
