@@ -43,6 +43,7 @@ public class Demo {
 			case 0:
 				current = startProgram;
 				LCD.drawString("Start", 0, 0);
+				break;
 			case 1:
 				current = follower;
 				LCD.drawString("Line", 0, 0);
