@@ -19,7 +19,7 @@ public class Start implements Program {
 	private LightSensor light;
 	private boolean linefound;
 	final static int MOVINGSPEED = 2000;
-	final static int TURNINGSPEED = 500;
+	final static int TURNINGSPEED = 600;
 	private final static int backward = 110;
 	private final static int NEAREST = 17;
 	private final static int TONEAREST = 8;
@@ -86,7 +86,7 @@ public class Start implements Program {
 			if(bumped && !linefound) {
 				tracks.stop();
 				tracks.backward(backward);
-				tracks.pivotAngleRight(90);
+				tracks.pivotAngleRight(95);
 				tracks.waitForMotors();
 			}
 		    if(!tracks.motorsMoving()) {
@@ -136,7 +136,7 @@ public class Start implements Program {
 			if(bumped  && !linefound) {
 				tracks.stop();
 				tracks.backward(backward);
-				tracks.pivotAngleLeft(90);
+				tracks.pivotAngleLeft(95);
 				tracks.waitForMotors();
 			}
 		    if(!tracks.motorsMoving() && !bumped  && !linefound) {
@@ -218,11 +218,12 @@ public class Start implements Program {
 				tracks.forward();
 			}
 		}
-		if(!linefound) {
 		tracks.stop();
+		if(!linefound) {
 		tracks.backward(backward - 30);
 		tracks.pivotAngleRight(90);
 		tracks.waitForMotors();
+		arm.turnToCenter();
 		}
 		while(!linefound) {
 			if( light.getLightValue() <= 35) {
@@ -230,6 +231,7 @@ public class Start implements Program {
 					tracks.forward();	
 				}
 			} else {
+				tracks.stop();
 				linefound();
 				halt();
 			}
