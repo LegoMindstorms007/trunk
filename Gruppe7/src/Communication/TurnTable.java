@@ -14,7 +14,7 @@ import lejos.nxt.comm.Bluetooth;
 import lejos.robotics.navigation.DifferentialPilot;
 
 public class TurnTable {
-
+	private BTConnection connection = null;
 	private enum TurnTableCommand {
 		HELLO, TURN, DONE, CYA, UNKNOWN;
 
@@ -28,17 +28,27 @@ public class TurnTable {
 
 	public static void main(String[] args) {
 		TurnTable turnTable = new TurnTable();
+		if(turnTable.connect()) {
 		turnTable.use();
+		} 
 	}
 
 	private DataOutputStream dataOutputStream;
 	private DataInputStream dataInputStream;
-
-	private void use() {
-    
+	
+	public boolean connect() {
 		String deviceName = "TurnTable";
 		RemoteDevice device = lookupDevice(deviceName);
-		BTConnection connection = Bluetooth.connect(device);
+		connection = Bluetooth.connect(device);
+		if(connection != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void use() {
+		if(connection != null) {
 		try {
 			dataOutputStream = connection.openDataOutputStream();
 			dataInputStream = connection.openDataInputStream();
@@ -70,6 +80,7 @@ public class TurnTable {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
 		}
 	}
 
