@@ -1,5 +1,6 @@
 package Programs;
 
+import Communication.TurnTable;
 import RobotMovement.TrackSuspension;
 import Sensors.UltrasoundSensor;
 import lejos.nxt.SensorPort;
@@ -9,10 +10,12 @@ public class TurnTableProgram implements Program {
 	private boolean running;
 	UltrasoundSensor us;
 	TrackSuspension tracks;
+	private TurnTable table;
 	public TurnTableProgram(SensorPort  portOfLightSensor, SensorPort portOfUsSensor) {
 		upwards = new UpwardsFollower(portOfLightSensor, portOfUsSensor);
 		us = new UltrasoundSensor(portOfUsSensor);
 		tracks = new TrackSuspension();
+		table = new TurnTable();
 	}
 	@Override
 	public void run() {
@@ -20,6 +23,10 @@ public class TurnTableProgram implements Program {
 		while(upwards.isRunning() && running) {
 			sleep(100);
 		}
+		/*while(!table.connect() && running) {
+			table.connect();
+			sleep(1000);	
+		} */
 		while(us.getMeasurment() >= 6 && running) {
 			if(tracks.motorsMoving()) {
 				tracks.forward();
@@ -27,6 +34,7 @@ public class TurnTableProgram implements Program {
 		}
 		tracks.stop();
 		halt();
+//		table.use();
 	}
 
 	@Override
