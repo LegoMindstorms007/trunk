@@ -20,6 +20,7 @@ public class BluetoothCommunication {
 	private DataInputStream dis;
 	private DataOutputStream dos;
 	private BTConnection connection;
+	private BTConnector btConnector;
 
 	/**
 	 * opens a connection to a server
@@ -27,9 +28,24 @@ public class BluetoothCommunication {
 	 * @param server
 	 *            name of the server (hope you already paired your device with
 	 *            the server)
-	 * @return if the connection could be established or not
 	 */
-	public boolean openConnection(String server) {
+	public void connect(String server) {
+		btConnector = new BTConnector(this, server);
+		btConnector.start();
+		while (!btConnector.isRunning()) {
+			sleep(10);
+		}
+	}
+
+	/**
+	 * 
+	 * @return whether a bluetooth connection is held or not
+	 */
+	public boolean isConnected() {
+		return btConnector != null && btConnector.isConnected();
+	}
+
+	private boolean openConnection(String server) {
 		RemoteDevice btrd = Bluetooth.getKnownDevice(server);
 
 		if (btrd == null) {
@@ -88,7 +104,7 @@ public class BluetoothCommunication {
 	/**
 	 * this method's name should be self explaining
 	 */
-	public void closeConnection() {
+	public void disConnect() {
 		if (connection != null) {
 			try {
 				connection.close();
@@ -98,6 +114,9 @@ public class BluetoothCommunication {
 				// ignore
 			}
 		}
+
+		if (btConnector != null)
+			btConnector.setDisconnected();
 		LCD.drawString("Disconnected", 0, 0);
 	}
 
@@ -113,6 +132,76 @@ public class BluetoothCommunication {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * halts a connection try, if a connector is trying to astablish a
+	 * connection right now
+	 */
+	public void halt() {
+		if (btConnector != null)
+			btConnector.halt();
+	}
+
+	/**
+	 * inner class, made for connecting to the lift while not blocking the
+	 * program
+	 * 
+	 * @author Dominik Muth
+	 * 
+	 */
+	private class BTConnector extends Thread {
+		private BluetoothCommunication com;
+		private boolean running;
+		private boolean connected;
+		private String serverName;
+
+		public BTConnector(BluetoothCommunication com, String serverName) {
+			this.com = com;
+			this.serverName = serverName;
+			connected = false;
+		}
+
+		@Override
+		public void run() {
+			running = true;
+			connected = com.openConnection(serverName);
+			while (running && !connected) {
+				com.sleep(100);
+				connected = com.openConnection(serverName);
+			}
+			running = false;
+		}
+
+		/**
+		 * stops the bluetooth connector
+		 */
+		public void halt() {
+			running = false;
+		}
+
+		/**
+		 * 
+		 * @return whether the connector is running or not
+		 */
+		public boolean isRunning() {
+			return running;
+		}
+
+		/**
+		 * 
+		 * @return should be self explaining...
+		 */
+		public boolean isConnected() {
+			return connected;
+		}
+
+		/**
+		 * set this class as disconnected
+		 */
+		public void setDisconnected() {
+			this.connected = false;
 		}
 	}
 }
