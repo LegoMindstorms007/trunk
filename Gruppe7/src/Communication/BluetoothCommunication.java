@@ -102,6 +102,21 @@ public class BluetoothCommunication {
 	}
 
 	/**
+	 * method to read an integer variable
+	 * 
+	 * @return answer of the lift
+	 */
+	public int readInt() {
+		int value  = 0;
+		try {
+			value = dis.readInt();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return value;
+	}
+	/**
 	 * this method's name should be self explaining
 	 */
 	public void disConnect() {

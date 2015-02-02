@@ -8,13 +8,11 @@ import java.io.IOException;
 
 import javax.bluetooth.RemoteDevice;
 
-import lejos.nxt.Motor;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
-import lejos.robotics.navigation.DifferentialPilot;
 
 public class TurnTable {
-	private BTConnection connection = null;
+	private BluetoothCommunication bluetooth;
 	private enum TurnTableCommand {
 		HELLO, TURN, DONE, CYA, UNKNOWN;
 
@@ -26,72 +24,46 @@ public class TurnTable {
 		}
 	}
 
-	public static void main(String[] args) {
-		TurnTable turnTable = new TurnTable();
-		if(turnTable.connect()) {
-		turnTable.use();
-		} 
+	public TurnTable() {
+		bluetooth = new BluetoothCommunication();
 	}
-
-	private DataOutputStream dataOutputStream;
-	private DataInputStream dataInputStream;
 	
 	public boolean connect() {
 		String deviceName = "TurnTable";
-		RemoteDevice device = lookupDevice(deviceName);
-		connection = Bluetooth.connect(device);
-		if(connection != null) {
-			return true;
-		} else {
+		bluetooth.connect(deviceName);
+		return true;
+	}
+	
+	public boolean turn() {
+		try {
+			sendCommand(TurnTableCommand.TURN);
+			TurnTableCommand command = receiveCommand();
+			assertCommand(command, TurnTableCommand.DONE);
+		} catch (IOException e) {
 			return false;
 		}
+		return true;
 	}
-
-	public void use() {
-		if(connection != null) {
+	
+	public boolean register() {
 		try {
-			dataOutputStream = connection.openDataOutputStream();
-			dataInputStream = connection.openDataInputStream();
-
-			TurnTableCommand command = receiveCommand();
+		TurnTableCommand command = receiveCommand();
 			assertCommand(command, TurnTableCommand.HELLO);
-
-			// drive forward
-
-			sendCommand(TurnTableCommand.TURN);
-
-			command = receiveCommand();
-			assertCommand(command, TurnTableCommand.DONE);
-
-			// drive backward
-
-			sendCommand(TurnTableCommand.CYA);
-
 		} catch (IOException e) {
-			System.out.println("IOException");
-		} finally {
-			if (connection != null) {
-				connection.close();
-			}
+			return false;
 		}
-
+		return true;
+	}
+	
+	public boolean deregister() {
 		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			sendCommand(TurnTableCommand.CYA);
+		} catch (IOException e) {
+			return false;
 		}
-		}
-	}
-
-	private RemoteDevice lookupDevice(String deviceName) {
-		RemoteDevice device = Bluetooth.getKnownDevice(deviceName);
-		if (device == null) {
-			log("unknown device" + deviceName);
-			log("cannot connect to TurnTable");
-		}
-		return device;
-	}
+		bluetooth.disConnect();
+		return true;
+	}	
 
 	private void assertCommand(TurnTableCommand command,
 			TurnTableCommand assertetedCommand) throws IOException {
@@ -103,7 +75,7 @@ public class TurnTable {
 	}
 
 	private TurnTableCommand receiveCommand() throws IOException {
-		int commandOrdinal = dataInputStream.readInt();
+		int commandOrdinal = bluetooth.readInt();
 		TurnTableCommand command = TurnTableCommand
 				.getByOrdinal(commandOrdinal);
 		log("Receive:" + command.name());
@@ -111,13 +83,16 @@ public class TurnTable {
 	}
 
 	private void sendCommand(TurnTableCommand command) throws IOException {
-		dataOutputStream.writeInt(command.ordinal());
-		dataOutputStream.flush();
+		bluetooth.writeInt(command.ordinal());
 		log("Send: " + command.name());
 	}
 
 	private void log(String message) {
 		System.out.println(message);
+	}
+
+	public boolean isConnected() {
+		return bluetooth.isConnected();
 	}
 
 }
