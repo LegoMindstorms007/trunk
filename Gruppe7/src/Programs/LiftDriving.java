@@ -57,13 +57,8 @@ public class LiftDriving implements Program {
 
 	@Override
 	public void run() {
-		BTConnector connector = new BTConnector(com);
-		// wait till connector is started
-		connector.start();
-		while (!connector.isRunning() && !connector.isConnected()) {
-			sleep(10);
-		}
 		running = true;
+		com.connect(LIFT);
 
 		alignRobotOnPlate();
 
@@ -71,7 +66,7 @@ public class LiftDriving implements Program {
 
 		// sort of join, tough not blocking -> checking of running variable is
 		// possible
-		while (running && !connector.isConnected()) {
+		while (running && !com.isConnected()) {
 			sleep(50);
 			LCD.drawString("Waiting for connection", 0, 1);
 		}
@@ -103,7 +98,7 @@ public class LiftDriving implements Program {
 			closeConnection();
 
 		// halt connector if this program is premature interrupted via halt()
-		connector.halt();
+		com.halt();
 	}
 
 	private void alignRobotOnPlate() {
@@ -206,7 +201,7 @@ public class LiftDriving implements Program {
 	 */
 	private void closeConnection() {
 		com.writeInt(CLOSE_CONNECTION);
-		com.closeConnection();
+		com.disConnect();
 	}
 
 	/**
@@ -221,69 +216,6 @@ public class LiftDriving implements Program {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * inner class, made for connecting to the lift while not blocking the
-	 * program
-	 * 
-	 * @author Dominik Muth
-	 * 
-	 */
-	private class BTConnector extends Thread {
-		private BluetoothCommunication com;
-		private boolean running;
-		private boolean connected;
-
-		public BTConnector(BluetoothCommunication com) {
-			this.com = com;
-			connected = false;
-		}
-
-		@Override
-		public void run() {
-			running = true;
-			connected = com.openConnection(LIFT);
-			while (running && !connected) {
-				sleep(100);
-				connected = com.openConnection(LIFT);
-			}
-			running = false;
-		}
-
-		/**
-		 * stops the bluetooth connector
-		 */
-		public void halt() {
-			running = false;
-		}
-
-		/**
-		 * 
-		 * @return whether the connector is running or not
-		 */
-		public boolean isRunning() {
-			return running;
-		}
-
-		public boolean isConnected() {
-			return connected;
-		}
-
-		/**
-		 * sleep method
-		 * 
-		 * @param milliseconds
-		 *            milliseconds to sleep
-		 */
-		public void sleep(int milliseconds) {
-			try {
-				Thread.sleep(milliseconds);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 }
