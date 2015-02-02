@@ -28,27 +28,36 @@ public class DoorDriving implements Program {
 		com.connect(DOOR);
 		arm.turnToCenter();
 		track.forward();
+		track.setSpeed(1000);
 
-		while (running && usSensor.getMeasurment() > 10) {
+		// drive while door is not reached
+		while (running && usSensor.getMeasurment() > 20 && !com.isConnected()) {
 			sleep(10);
 		}
-
 		track.stop();
 
+		// wait until brick is connected
 		while (running && !com.isConnected()) {
 			sleep(50);
 		}
 
-		sleep(1000);
+		// wait until door is open
+		while (running && usSensor.getMeasurment() < 35) {
+			sleep(10);
+		}
+
+		// drive through the door
 		if (running)
 			track.forward();
-		sleep(4000);
+		sleep(3000);
+
+		track.stop();
 
 		// we are through the door, at least we hope so
 		com.writeBool(true);
 
+		// disconnect from server
 		com.disconnect();
-		track.stop();
 	}
 
 	@Override
