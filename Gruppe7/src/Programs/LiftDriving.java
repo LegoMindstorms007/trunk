@@ -21,7 +21,7 @@ public class LiftDriving implements Program {
 	private static final int GO_DOWN = 0;
 	private static final int IS_DOWN = 1;
 	private static final int CLOSE_CONNECTION = 2;
-	private static final int GREENLIGHT = 40;
+	private static final int GREENLIGHT = 35;
 	private static final int RIFT_LIMIT = 25;
 	private BluetoothCommunication com;
 	private SensorPort portOfLightSensor;
@@ -59,10 +59,10 @@ public class LiftDriving implements Program {
 	public void run() {
 		BTConnector connector = new BTConnector(com);
 		// wait till connector is started
-		while (!connector.isRunning()) {
+		connector.start();
+		while (!connector.isRunning() && !connector.isConnected()) {
 			sleep(10);
 		}
-		connector.start();
 		running = true;
 
 		alignRobotOnPlate();
@@ -71,21 +71,30 @@ public class LiftDriving implements Program {
 
 		// sort of join, tough not blocking -> checking of running variable is
 		// possible
-		while (running && connector.isRunning()) {
+		while (running && !connector.isConnected()) {
 			sleep(50);
+			LCD.drawString("Waiting for connection", 0, 1);
 		}
 
-		while (running && !isGreen())
+		while (running && !isGreen()) {
 			sleep(50);
+			LCD.drawString("Waiting for green panel", 0, 1);
+		}
 
-		if (running)
+		if (running) {
+			LCD.drawString("Driving into Lift", 0, 1);
 			driveIntoLift();
+		}
 
-		if (running)
+		if (running) {
+			LCD.drawString("Going down", 0, 1);
 			goDown();
+		}
 
-		while (running && !canExit())
+		while (running && !canExit()) {
+			LCD.drawString("Waiting for Lift", 0, 1);
 			sleep(50);
+		}
 
 		if (running)
 			driveOut();
@@ -102,7 +111,7 @@ public class LiftDriving implements Program {
 
 		initLight(true);
 
-		track.forward(250);
+		track.forward(200);
 		// turn right
 		track.pivotAngleRight(90);
 		track.waitForMotors();
@@ -110,15 +119,14 @@ public class LiftDriving implements Program {
 		// find rift
 		track.setSpeed(400);
 		while (running && !isRift()) {
-			LCD.drawInt(light.getLightValue(), 0, 1);
 			track.forward();
 		}
 		track.stop();
 		// back up a little
 		while (running && isRift()) {
-			LCD.drawInt(light.getLightValue(), 0, 2);
 			track.backward();
 		}
+		track.backward(25);
 		track.stop();
 
 		// turn back left
@@ -226,16 +234,20 @@ public class LiftDriving implements Program {
 	private class BTConnector extends Thread {
 		private BluetoothCommunication com;
 		private boolean running;
+		private boolean connected;
 
 		public BTConnector(BluetoothCommunication com) {
 			this.com = com;
+			connected = false;
 		}
 
 		@Override
 		public void run() {
 			running = true;
-			while (running && !com.openConnection(LIFT)) {
+			connected = com.openConnection(LIFT);
+			while (running && !connected) {
 				sleep(100);
+				connected = com.openConnection(LIFT);
 			}
 			running = false;
 		}
@@ -253,6 +265,10 @@ public class LiftDriving implements Program {
 		 */
 		public boolean isRunning() {
 			return running;
+		}
+
+		public boolean isConnected() {
+			return connected;
 		}
 
 		/**
