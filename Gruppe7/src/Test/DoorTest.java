@@ -18,7 +18,6 @@ public class DoorTest {
 		BarcodeReader barcode = new BarcodeReader(SensorPort.S4);
 		TurnTableProgram turntable = new TurnTableProgram(SensorPort.S4,
 				SensorPort.S3);
-
 		Button.waitForAnyPress();
 		aligner.align();
 
@@ -41,9 +40,12 @@ public class DoorTest {
 			// nothing
 		}
 		bridge.halt();
-
 		barcode.readBarcode();
 		aligner.align();
-
+		new Thread(turntable).start();
+		while (Button.waitForAnyPress(100) < 1 && turntable.isRunning()) {
+			// nothing
+		}
+		turntable.halt();
 	}
 }
