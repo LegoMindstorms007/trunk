@@ -21,6 +21,7 @@ public class LiftDriving implements Program {
 	private static final int GO_DOWN = 0;
 	private static final int IS_DOWN = 1;
 	private static final int CLOSE_CONNECTION = 2;
+	private static final int IS_UP = 3;
 	private static final int GREENLIGHT = 35;
 	private static final int RIFT_LIMIT = 25;
 	private BluetoothCommunication com;
@@ -155,7 +156,9 @@ public class LiftDriving implements Program {
 	 * @return whether the panel is green or not
 	 */
 	public boolean isGreen() {
-		return light.getLightValue() >= GREENLIGHT;
+		// return light.getLightValue() >= GREENLIGHT;
+		com.writeInt(IS_UP);
+		return com.readBool();
 	}
 
 	private void driveIntoLift() {
