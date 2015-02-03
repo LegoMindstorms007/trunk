@@ -24,5 +24,4 @@ public class LineTest {
 
 		lf.halt();
 	}
-
 }

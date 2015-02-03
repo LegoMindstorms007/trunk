@@ -8,7 +8,6 @@ import Programs.LiftDriving;
 import Programs.LineFollower;
 import Programs.Program;
 import Programs.Start;
-import Programs.TurnTableProgram;
 import RobotMovement.Aligner;
 import RobotMovement.BarcodeReader;
 
@@ -24,10 +23,11 @@ public class Demo {
 	public static void main(String[] args) {
 
 		int program = 0;
-		Start startProgram = null; 
-		LineFollower follower = null; 
+		Start startProgram = null;
+		LineFollower follower = null;
 		BridgeDriving bridge = null;
-		LiftDriving lift = null; new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
+		LiftDriving lift = null;
+		new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
 		Program current = null;
 		BarcodeReader barcode = new BarcodeReader(LIGHT);
 
@@ -42,23 +42,19 @@ public class Demo {
 
 			switch (program) {
 			case 0:
-				startProgram = new Start(LIGHT, ULTRA_SOUND);
-				current = startProgram;
+				current = new Start(LIGHT, ULTRA_SOUND);
 				LCD.drawString("Start", 0, 0);
 				break;
 			case 1:
-				follower = new LineFollower(LIGHT, ULTRA_SOUND);
-				current = follower;
+				current = new LineFollower(LIGHT, ULTRA_SOUND);
 				LCD.drawString("Line", 0, 0);
 				break;
 			case 2:
-				bridge =  new BridgeDriving(LIGHT, ULTRA_SOUND);
-				current = bridge;
+				current = new BridgeDriving(LIGHT, ULTRA_SOUND);
 				LCD.drawString("Bridge", 0, 0);
 				break;
 			case 3:
-				lift = new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
-				current = lift;
+				current = new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
 				LCD.drawString("Lift ", 0, 0);
 				break;
 			default:

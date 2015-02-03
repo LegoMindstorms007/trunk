@@ -49,6 +49,7 @@ public class BluetoothCommunication {
 		RemoteDevice btrd = Bluetooth.getKnownDevice(server);
 
 		if (btrd == null) {
+			LCD.drawString("No such device", 0, 2);
 			// no such device, you should pair your devices first or check the
 			// Devices name
 			return false;
@@ -57,6 +58,7 @@ public class BluetoothCommunication {
 		connection = Bluetooth.connect(btrd);
 
 		if (connection == null) {
+			LCD.drawString("Connection failed", 0, 2);
 			// connection failed, try again...
 			return false;
 		}
@@ -123,7 +125,7 @@ public class BluetoothCommunication {
 	 * @return answer of the lift
 	 */
 	public int readInt() {
-		int value  = 0;
+		int value = 0;
 		try {
 			value = dis.readInt();
 		} catch (IOException e) {
@@ -132,6 +134,7 @@ public class BluetoothCommunication {
 		}
 		return value;
 	}
+
 	/**
 	 * this method's name should be self explaining
 	 */
