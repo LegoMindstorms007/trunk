@@ -15,7 +15,7 @@ public class Start implements Program {
 	UltrasoundSensor us;
 	TrackSuspension tracks;
 	private boolean bumped;
-	private Bumper bump;
+	protected Bumper bump;
 	SensorArm arm;
 	private LightSensor light;
 	private boolean linefound;
@@ -66,7 +66,7 @@ public class Start implements Program {
 		tracks.waitForMotors();
 	}
 	
-	private void findRightWall() {
+	protected void findRightWall() {
 		arm.turnToPosition(SensorArm.MAXRIGHT - 15);
 		tracks.pivotAngleRight(90);
 		tracks.waitForMotors();
@@ -131,7 +131,7 @@ public class Start implements Program {
 		}
 		bump.halt();
 	}
-	private void driveAlongRightWall() {
+	protected void driveAlongRightWall() {
 		int distance = 0;
 		while(running) {
 			if(bumped  && !linefound) {
@@ -175,7 +175,7 @@ public class Start implements Program {
 			  }
 			  if(distance > (FAREST  + 10) && (distance < TURNRIGHT) && !bumped  && !linefound) {
 				  tracks.setSpeedRight(MOVINGSPEED);
-				  tracks.setSpeedLeft(TURNINGSPEED);
+				  tracks.setSpeedLeft(TURNINGSPEED - 100);
 				  while(distance > FAREST && (distance < TURNRIGHT) && !bumped  && !linefound) {
 					  distance = us.getMeasurment(); 
 					  sleep(10);
@@ -192,11 +192,11 @@ public class Start implements Program {
 		return running;
 	}
 	
-	private void bumped() {
+	protected void bumped() {
 		bumped = true;
 	}
 	
-	private void released() {
+	protected void released() {
 		bumped = false;
 	}
 	
@@ -205,7 +205,7 @@ public class Start implements Program {
 		halt();
 	}
 	
-	private void sleep(int millis) {
+	protected void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
@@ -213,7 +213,7 @@ public class Start implements Program {
 		}
 	}
 	
-	private void hitWallTurnRight() {
+	protected void hitWallTurnRight() {
 		while(running && !bumped && !linefound) {
 			if(!tracks.motorsMoving()) {
 				tracks.forward();
@@ -239,9 +239,9 @@ public class Start implements Program {
 		}
 	}
 	
-	private class Bumper implements Program {
+	protected class Bumper implements Program {
 		BumpSensor bumper;
-		private boolean running;
+		protected boolean running;
 		public Bumper() {
 			 bumper = new BumpSensor(SensorPort.S1, SensorPort.S2);
 			 running = true;
