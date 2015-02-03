@@ -55,7 +55,7 @@ public class Labyrinth implements Program {
 						movement.waitForMotors();
 						movement.forward(50);
 					} else if (usSensor.getMeasurment() > 23) {
-						movement.pivotAngleRight(15);
+						movement.pivotAngleRight(10);
 						movement.waitForMotors();
 						movement.forward(50);
 					}
@@ -66,6 +66,7 @@ public class Labyrinth implements Program {
 				running = false;
 			}
 		}
+		
 		movement.stop();
 		sArm.turnToCenter();
 	}
@@ -86,10 +87,23 @@ public class Labyrinth implements Program {
 	}
 
 	private void searchHolzByCollision() {
+		boolean turn=false;
 		movement.backward(90);
 		movement.pivotAngleLeft(90);
 		movement.waitForMotors();
 		movement.forward(20);
+		if(usSensor.getMeasurment() > 23 && usSensor.getMeasurment() < 50){
+			turn=true;
+		}
+		while(turn){
+			movement.backward(50);
+			movement.pivotAngleLeft(50);
+			movement.waitForMotors();
+			movement.forward(20);
+			if(isRightHolz()){
+				turn = false;
+			}
+		}
 	}
 
 	@Override
