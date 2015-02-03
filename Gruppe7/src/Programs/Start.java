@@ -4,6 +4,7 @@ import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.UltrasoundSensor;
 import Sensors.BumpSensor;
+import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
@@ -32,7 +33,7 @@ public class Start implements Program {
 		 bumped = false;
 		 arm = new SensorArm();
 		 bump = new Bumper();
-		 light = new LightSensor(SensorPort.S4);
+		 light = new LightSensor(lightPort);
 		 new Thread(bump).start();
 		 linefound = false;
 	}
@@ -154,7 +155,7 @@ public class Start implements Program {
 			  }
 		  if(distance <= (NEAREST -  TONEAREST)&& !bumped  && !linefound) {
 				  tracks.setSpeedLeft(MOVINGSPEED);
-				  tracks.setSpeedRight(TURNINGSPEED - 200);
+				  tracks.setSpeedRight(TURNINGSPEED - 150);
 				  while(distance < (NEAREST -  TONEAREST) && !bumped  && !linefound) {
 					  distance = us.getMeasurment(); 
 					  sleep(10);

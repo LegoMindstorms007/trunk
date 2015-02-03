@@ -8,6 +8,7 @@ import Programs.LiftDriving;
 import Programs.LineFollower;
 import Programs.Program;
 import Programs.Start;
+import Programs.TurnTableProgram;
 import RobotMovement.Aligner;
 import RobotMovement.BarcodeReader;
 
@@ -23,10 +24,10 @@ public class Demo {
 	public static void main(String[] args) {
 
 		int program = 0;
-		LineFollower follower = new LineFollower(LIGHT, ULTRA_SOUND);
-		BridgeDriving bridge = new BridgeDriving(LIGHT, ULTRA_SOUND);
-		LiftDriving lift = new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
-		Start startProgram = new Start(LIGHT, ULTRA_SOUND);
+		Start startProgram = null; 
+		LineFollower follower = null; 
+		BridgeDriving bridge = null;
+		LiftDriving lift = null; new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
 		Program current = null;
 		BarcodeReader barcode = new BarcodeReader(LIGHT);
 
@@ -41,18 +42,22 @@ public class Demo {
 
 			switch (program) {
 			case 0:
+				startProgram = new Start(LIGHT, ULTRA_SOUND);
 				current = startProgram;
 				LCD.drawString("Start", 0, 0);
 				break;
 			case 1:
+				follower = new LineFollower(LIGHT, ULTRA_SOUND);
 				current = follower;
 				LCD.drawString("Line", 0, 0);
 				break;
 			case 2:
+				bridge =  new BridgeDriving(LIGHT, ULTRA_SOUND);
 				current = bridge;
 				LCD.drawString("Bridge", 0, 0);
 				break;
 			case 3:
+				lift = new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
 				current = lift;
 				LCD.drawString("Lift ", 0, 0);
 				break;
@@ -64,7 +69,7 @@ public class Demo {
 				new Thread(current).start();
 
 				while (!current.isRunning()) {
-					sleep(10);
+					sleep(100);
 				}
 				boolean buttonPressed = false;
 				while (current.isRunning()) {

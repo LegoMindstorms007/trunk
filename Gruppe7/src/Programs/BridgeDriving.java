@@ -10,7 +10,7 @@ public class BridgeDriving implements Program {
 	public static final int MOVING_SPEED = 200;
 	public static final int SWEEPING_SPEED = 400;
 	public static final int ROTATINGSPEED = 500;
-	public static final int PANEL = 55;
+	public static final int PANEL = 57;
 	public static final int NOGROUND = 42;
 	public static final int BLACKGROUND = 26;
 	public static final int GREEN  = 35;
