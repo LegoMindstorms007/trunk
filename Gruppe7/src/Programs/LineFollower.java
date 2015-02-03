@@ -2,6 +2,7 @@ package Programs;
 
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
+import RobotMovement.LineAligner;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.UltrasoundSensor;
@@ -16,8 +17,8 @@ public class LineFollower implements Program {
 
 	protected static final int LINE_VALUE = 35;
 	private static final int MOVING_SPEED = 600;
-	private static final int ROTATING_SPEED = 300;
-	private static final int ARM_SPEED = 150;
+	private static final int ROTATING_SPEED = 350;
+	private static final int ARM_SPEED = 225;
 	LightSensor light;
 	TrackSuspension track;
 	private boolean running;
@@ -26,8 +27,9 @@ public class LineFollower implements Program {
 	private LightSweeper lightSweeper;
 	private int deltaSpeed;
 	protected boolean lineFinished;
-	private boolean ramp = true;
+	private boolean ramp = false;
 	private boolean lastLeft = false;
+	private LineAligner lineAligner;
 
 	/**
 	 * Constructs a line follower
@@ -67,6 +69,7 @@ public class LineFollower implements Program {
 		sensorArm = new SensorArm();
 		sensorArm.setSpeed(ARM_SPEED);
 		lightSweeper = new LightSweeper(sensorArm, this);
+		lineAligner = new LineAligner(portOfLightSensor);
 	}
 
 	@Override
@@ -113,8 +116,12 @@ public class LineFollower implements Program {
 			}
 		}
 
+		if (running)
+			lineAligner.align();
+
 		// drive straight to the barcode
-		getToBarcode();
+		if (running)
+			getToBarcode();
 
 		running = false;
 	}
@@ -166,23 +173,25 @@ public class LineFollower implements Program {
 		boolean found = false;
 		track.setSpeed(ROTATING_SPEED);
 		int angle = 90;
-		int i = lastLeft ? 1 : 0;
 
 		while (running && !found && angle <= 90) {
-			if (i == 0 && checkRight(angle)) { // check right side
-				// sensorArm.turnToCenter();
+			if (lastLeft && checkLeft(angle)) { // check left side
+				sensorArm.turnToCenter();
+				track.pivotAngleLeft(angle);
+				found = true;
+				lastLeft = true;
+			} else if (checkRight(angle)) { // check right side
+				sensorArm.turnToCenter();
 				track.pivotAngleRight(angle);
 				found = true;
 				lastLeft = false;
-			} else if (i == 0 && checkLeft(angle)) { // check left side
-				// sensorArm.turnToCenter();
+			} else if (!lastLeft && checkLeft(angle)) { // check left side
+				sensorArm.turnToCenter();
 				track.pivotAngleLeft(angle);
 				found = true;
 				lastLeft = true;
 			}
-			i++;
-			i %= 2;
-			// angle += 45;
+			angle += 45;
 		}
 
 		while (running && track.motorsMoving()) {
@@ -255,7 +264,6 @@ public class LineFollower implements Program {
 			}
 		}
 		sensorArm.stop();
-		sensorArm.turnToCenter();
 		return found;
 	}
 
@@ -270,7 +278,6 @@ public class LineFollower implements Program {
 			}
 		}
 		sensorArm.stop();
-		sensorArm.turnToCenter();
 		return found;
 	}
 
