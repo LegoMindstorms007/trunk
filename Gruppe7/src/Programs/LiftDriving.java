@@ -22,8 +22,8 @@ public class LiftDriving implements Program {
 	private static final int IS_DOWN = 1;
 	private static final int CLOSE_CONNECTION = 2;
 	private static final int IS_UP = 3;
-	private static final int GREENLIGHT = 35;
-	private static final int RIFT_LIMIT = 25;
+	// private static final int GREENLIGHT = 35;
+	private static final int RIFT_LIMIT = 35;
 	private BluetoothCommunication com;
 	private SensorPort portOfLightSensor;
 	private boolean running;
@@ -71,6 +71,7 @@ public class LiftDriving implements Program {
 			sleep(50);
 			LCD.drawString("Waiting for connection", 0, 1);
 		}
+		LCD.drawString("Connected", 0, 1);
 
 		while (running && !isGreen()) {
 			sleep(50);
