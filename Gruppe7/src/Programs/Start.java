@@ -147,20 +147,20 @@ public class Start implements Program {
 			  hitWallTurnRight();
 		  }
 		  if(distance < NEAREST && !bumped  && !linefound) {
-			  tracks.setSpeedLeft(TURNINGSPEED - 50);
+			  tracks.setSpeedLeft(TURNINGSPEED);
 			  while(distance < NEAREST && !bumped  && !linefound){
 				  distance = us.getMeasurment();
 				  sleep(10);
 			  }
-		 /*  if(distance <= (NEAREST -  TONEAREST)&& !bumped  && !linefound) {
+		  if(distance <= (NEAREST -  TONEAREST)&& !bumped  && !linefound) {
 				  tracks.setSpeedLeft(MOVINGSPEED);
-				  tracks.setSpeedRight(TURNINGSPEED);
+				  tracks.setSpeedRight(TURNINGSPEED - 200);
 				  while(distance < (NEAREST -  TONEAREST) && !bumped  && !linefound) {
 					  distance = us.getMeasurment(); 
 					  sleep(10);
 				  }
 				  tracks.setSpeed(MOVINGSPEED);
-			  }*/
+			  }
 			  tracks.setSpeed(MOVINGSPEED);
 		  } 
 		  if(distance > FAREST && !bumped  && !linefound) {
