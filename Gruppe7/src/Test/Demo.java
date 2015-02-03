@@ -98,7 +98,6 @@ public class Demo {
 					switch (program) {
 					case 1:
 					case 4:
-					case 5:
 						LCD.drawString(
 								"Barcode value: " + barcode.readBarcode(), 0, 1);
 						Aligner aligner = new Aligner(LIGHT, 35, false);
