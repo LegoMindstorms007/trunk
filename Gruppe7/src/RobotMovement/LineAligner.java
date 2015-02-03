@@ -17,37 +17,47 @@ public class LineAligner {
 		track = new TrackSuspension();
 	}
 
+	/**
+	 * this is fucking crazy, hope it works well...
+	 */
 	public void align() {
 		arm.turnArmLeft(90, true);
 		track.backward(50);
-		while (arm.isMoving()) {
-			sleep(25);
+		int delta = 90;
+
+		while (arm.isMoving())
+			;
+		while (delta >= 5) {
+			track.backward(15);
+			int angle1 = checkAngle();
+			track.forward(15);
+			int angle2 = checkAngle();
+
+			delta = angle2 - angle1;
+
+			if (delta < 0)
+				track.pivotAngleRight(-delta / 2);
+			else
+				track.pivotAngleLeft(delta / 2);
+			track.waitForMotors();
 		}
-		arm.setSpeed(ARM_SPEED);
-		int min = 90;
-		int max = -90;
-
-		arm.turnToPosition(-90, true);
-
-		while (arm.isMoving()) {
-			if (isLine()) {
-				int angle = arm.getArmPosition();
-				min = Math.min(min, angle);
-				max = Math.max(max, angle);
-			}
-		}
-
-		int delta = (max + min) / 2;
-
-		if (delta < 0) {
-			track.pivotAngleLeft(-delta);
-		} else
-			track.pivotAngleRight(delta);
-
-		track.waitForMotors();
 		track.forward(50);
 		arm.turnToCenter();
 
+	}
+
+	private int checkAngle() {
+		arm.turnArmLeft(90);
+		arm.turnArmRight(90, true);
+		int angle = 0;
+
+		while (arm.isMoving()) {
+			if (isLine()) {
+				angle = arm.getArmPosition();
+				arm.stop();
+			}
+		}
+		return angle;
 	}
 
 	private boolean isLine() {

@@ -16,20 +16,20 @@ import Sensors.UltrasoundSensor;
 public class LineFollower implements Program {
 
 	protected static final int LINE_VALUE = 35;
-	private static final int MOVING_SPEED = 600;
-	private static final int ROTATING_SPEED = 350;
-	private static final int ARM_SPEED = 225;
-	LightSensor light;
-	TrackSuspension track;
-	private boolean running;
-	private SensorArm sensorArm;
-	private UltrasoundSensor usSensor;
-	private LightSweeper lightSweeper;
-	private int deltaSpeed;
+	protected static final int MOVING_SPEED = 600;
+	protected static final int ROTATING_SPEED = 350;
+	protected static final int ARM_SPEED = 225;
+	protected LightSensor light;
+	protected TrackSuspension track;
+	protected boolean running;
+	protected SensorArm sensorArm;
+	protected UltrasoundSensor usSensor;
+	protected LightSweeper lightSweeper;
+	protected int deltaSpeed;
 	protected boolean lineFinished;
-	private boolean ramp = false;
-	private boolean lastLeft = false;
-	private LineAligner lineAligner;
+	protected boolean ramp = false;
+	protected boolean lastLeft = false;
+	protected LineAligner lineAligner;
 
 	/**
 	 * Constructs a line follower
@@ -169,7 +169,7 @@ public class LineFollower implements Program {
 		return running;
 	}
 
-	private boolean searchTrack() {
+	protected boolean searchTrack() {
 		boolean found = false;
 		track.setSpeed(ROTATING_SPEED);
 		int angle = 90;
@@ -212,7 +212,7 @@ public class LineFollower implements Program {
 		return light.getLightValue() >= LINE_VALUE;
 	}
 
-	private boolean fallbackSearch() {
+	protected boolean fallbackSearch() {
 		boolean foundLine = false;
 		track.setSpeed(ROTATING_SPEED);
 
@@ -253,7 +253,7 @@ public class LineFollower implements Program {
 		return foundLine;
 	}
 
-	private boolean checkLeft(int angle) {
+	protected boolean checkLeft(int angle) {
 		boolean found = false;
 		sensorArm.turnToPosition(angle, true);
 		while (sensorArm.getArmPosition() <= 0)
@@ -267,7 +267,7 @@ public class LineFollower implements Program {
 		return found;
 	}
 
-	private boolean checkRight(int angle) {
+	protected boolean checkRight(int angle) {
 		boolean found = false;
 		sensorArm.turnToPosition(-angle, true);
 		while (running && sensorArm.getArmPosition() >= 0)
@@ -281,7 +281,7 @@ public class LineFollower implements Program {
 		return found;
 	}
 
-	private boolean checkWalls() {
+	protected boolean checkWalls() {
 		boolean wallLeft = false;
 		boolean wallRight = false;
 		sensorArm.turnToPosition(100, true);
@@ -307,7 +307,7 @@ public class LineFollower implements Program {
 
 	}
 
-	private void sleep(int millis) {
+	protected void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
@@ -315,7 +315,7 @@ public class LineFollower implements Program {
 		}
 	}
 
-	private class LightSweeper implements Runnable {
+	protected class LightSweeper implements Runnable {
 
 		private SensorArm arm;
 		private boolean moving;
