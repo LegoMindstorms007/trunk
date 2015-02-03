@@ -8,10 +8,15 @@ public class DownwardFollower extends LineFollower {
 			SensorPort portOfUsSensor) {
 		super(portOfLightSensor, portOfUsSensor);
 	}
+
 	@Override
 	protected void findLineStart() {
 	}
+
 	protected void getToBarcode() {
+		track.backward(50);
+		searchTrack();
+		track.forward(50);
 	}
 
 }
