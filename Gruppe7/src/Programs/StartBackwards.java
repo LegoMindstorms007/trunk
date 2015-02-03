@@ -15,7 +15,10 @@ public class StartBackwards  extends Start{
 	}
 	protected void hitWallTurnRight() {
 		tracks.setSpeed(MOVINGSPEED - 1000);
+		tracks.stop();
+		tracks.forward(50);
 		tracks.turnRight(120);
+		tracks.waitForMotors();
 	}
 
 	private class BumperWithOutLight extends Bumper {
