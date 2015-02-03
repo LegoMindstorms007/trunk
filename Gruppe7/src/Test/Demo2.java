@@ -1,11 +1,11 @@
 package Test;
 
- import Programs.Labyrinth1;
+ import Programs.Labyrinth;
 	import lejos.nxt.Button;
 	
 	public class Demo2 {
 		public static void main(String[] args) {
-			Labyrinth1 labydrive = new Labyrinth1();
+			Labyrinth labydrive = new Labyrinth();
 			new Thread(labydrive).start();
 			Button.waitForAnyPress();
 		}

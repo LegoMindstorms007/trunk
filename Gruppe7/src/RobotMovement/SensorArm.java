@@ -4,8 +4,8 @@ import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 
 public class SensorArm {
-	public static final int MAXLEFT = 90;
-	public static final int MAXRIGHT = -90;
+	public static final int MAXLEFT = 89;
+	public static final int MAXRIGHT = -89;
 	public static final int CENTER = 0;
 	private NXTRegulatedMotor motor;
 	private boolean tilting;

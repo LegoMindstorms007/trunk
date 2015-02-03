@@ -4,17 +4,21 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import Programs.BridgeDriving;
+import Programs.DoorDriving;
+import Programs.Labyrinth;
 import Programs.LiftDriving;
 import Programs.LineFollower;
+import Programs.PlankBridge;
 import Programs.Program;
 import Programs.Start;
 import Programs.TurnTableProgram;
 import RobotMovement.Aligner;
 import RobotMovement.BarcodeReader;
+import RobotMovement.SensorArm;
 
 public class Demo {
 
-	private static final int NUM_PROGRAMS = 4;
+	private static final int NUM_PROGRAMS = 9;
 
 	private static final SensorPort BUMP_RIGHT = SensorPort.S1;
 	private static final SensorPort BUMP_LEFT = SensorPort.S2;
@@ -23,11 +27,8 @@ public class Demo {
 
 	public static void main(String[] args) {
 
-		int program = 0;
-		Start startProgram = null; 
-		LineFollower follower = null; 
-		BridgeDriving bridge = null;
-		LiftDriving lift = null; new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
+		int program = 4;
+		new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
 		Program current = null;
 		BarcodeReader barcode = new BarcodeReader(LIGHT);
 
@@ -42,24 +43,39 @@ public class Demo {
 
 			switch (program) {
 			case 0:
-				startProgram = new Start(LIGHT, ULTRA_SOUND);
-				current = startProgram;
+				current = new Start(LIGHT, ULTRA_SOUND);
 				LCD.drawString("Start", 0, 0);
 				break;
 			case 1:
-				follower = new LineFollower(LIGHT, ULTRA_SOUND);
-				current = follower;
+				current = new LineFollower(LIGHT, ULTRA_SOUND);
 				LCD.drawString("Line", 0, 0);
 				break;
 			case 2:
-				bridge =  new BridgeDriving(LIGHT, ULTRA_SOUND);
-				current = bridge;
+				current = new BridgeDriving(LIGHT, ULTRA_SOUND);
 				LCD.drawString("Bridge", 0, 0);
 				break;
 			case 3:
-				lift = new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
-				current = lift;
+				current = new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
 				LCD.drawString("Lift ", 0, 0);
+				break;
+			case 4:
+				current = new Labyrinth(LIGHT, ULTRA_SOUND, BUMP_LEFT,
+						BUMP_RIGHT);
+				LCD.drawString("Labyrinth", 0, 0);
+				break;
+			case 5:
+				current = new DoorDriving(ULTRA_SOUND, BUMP_LEFT, BUMP_RIGHT);
+				break;
+			case 6:
+				current = new PlankBridge(LIGHT, ULTRA_SOUND);
+				break;
+			case 7:
+				current = new TurnTableProgram(LIGHT, ULTRA_SOUND);
+				break;
+			case 8:
+				// TODO : Boss
+				new SensorArm().shootLeft();
+				new SensorArm().shootRight();
 				break;
 			default:
 				current = null;
