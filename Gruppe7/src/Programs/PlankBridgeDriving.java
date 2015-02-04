@@ -1,22 +1,23 @@
 package Programs;
 
 import lejos.nxt.SensorPort;
-import lejos.nxt.comm.RConsole;
 
 public class PlankBridgeDriving extends BridgeDriving {
-private int frontcounter;
-public static final int NOGROUND = 25;
+	private int frontcounter;
+	public static final int NOGROUND = 25;
+
 	public PlankBridgeDriving(SensorPort lightPort, SensorPort ultraSoundPort) {
-		super(lightPort, ultraSoundPort);		
+		super(lightPort, ultraSoundPort);
 		frontcounter = 0;
 	}
+
 	@Override
-	protected void findBridge(){
+	protected void findBridge() {
 		track.setSpeed(2000);
 		track.forward(250);
 	}
-	
-	@Override 
+
+	@Override
 	protected void driveOverBridge() {
 		track.setSpeed(MOVING_SPEED);
 		Thread sweeping = new Thread(sweeper);
@@ -32,19 +33,19 @@ public static final int NOGROUND = 25;
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
 				if (position > -40 && position < 40) {
-						sweeper.stopSweeping();
-						arm.turnToCenter();
-						track.forward(5);
-						if(light.getLightValue() >= NOGROUND) {
-							//Keine Lücke
-							frontcounter++;
-						} 
-						if(frontcounter == 2) {
-							sweeper.halt();
-							track.stop();
-							halt();
-						}
-						sweeper.startSweeping();
+					sweeper.stopSweeping();
+					arm.turnToCenter();
+					track.forward(10);
+					if (light.getLightValue() >= NOGROUND) {
+						// Keine Lï¿½cke
+						frontcounter++;
+					}
+					if (frontcounter == 2) {
+						sweeper.halt();
+						track.stop();
+						halt();
+					}
+					sweeper.startSweeping();
 				} else {
 					if (position < 0) {
 						turnLeft(10);

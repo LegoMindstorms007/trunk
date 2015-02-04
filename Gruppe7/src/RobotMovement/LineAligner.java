@@ -21,7 +21,6 @@ public class LineAligner {
 	 * this is fucking crazy, hope it works well...
 	 */
 	public void align() {
-		arm.turnArmLeft(90, true);
 		track.backward(50);
 		int delta = 90;
 

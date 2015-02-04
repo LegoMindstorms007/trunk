@@ -13,10 +13,4 @@ public class DownwardFollower extends LineFollower {
 	protected void findLineStart() {
 	}
 
-	protected void getToBarcode() {
-		track.backward(50);
-		searchTrack();
-		track.forward(50);
-	}
-
 }
