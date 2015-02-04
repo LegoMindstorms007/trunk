@@ -18,8 +18,8 @@ public class LineFollower implements Program {
 	protected static final int LINE_VALUE = 35;
 	protected static final int MOVING_SPEED = 600;
 	protected static final int ROTATING_SPEED = 350;
-	protected static final int ARM_SPEED = 250;
-	protected static final int WALL_VALUE = 15;
+	protected static final int ARM_SPEED = 350;
+	protected static final int BUFFERSIZE = 40;
 	protected LightSensor light;
 	protected TrackSuspension track;
 	protected boolean running;
@@ -68,7 +68,7 @@ public class LineFollower implements Program {
 		track = new TrackSuspension();
 		sensorArm = new SensorArm();
 		sensorArm.setSpeed(ARM_SPEED);
-		lightSweeper = new LightSweeper(sensorArm, this);
+		lightSweeper = new LightSweeper(sensorArm, this, BUFFERSIZE);
 		lineAligner = new LineAligner(portOfLightSensor);
 	}
 
@@ -108,6 +108,7 @@ public class LineFollower implements Program {
 					track.setSpeed(MOVING_SPEED + deltaSpeed);
 				}
 			}
+			sleep(50);
 		}
 
 		if (running)
@@ -177,26 +178,37 @@ public class LineFollower implements Program {
 	protected boolean searchTrack() {
 		boolean found = false;
 		track.setSpeed(ROTATING_SPEED);
-		int angle = 90;
+		int angle = 50;
+
+		// search small angle where track was last seen
+		if (lightSweeper.wasLastLeft() && checkLeft(25)) {
+			track.pivotAngleLeft(15);
+			found = true;
+			lastLeft = true;
+		} else if (!lightSweeper.wasLastLeft() && checkRight(25)) {
+			track.pivotAngleRight(15);
+			found = true;
+			lastLeft = false;
+		}
 
 		while (running && !found && angle <= 90) {
 			if (lastLeft && checkLeft(angle)) { // check left side
-				sensorArm.turnToCenter();
 				track.pivotAngleLeft(angle);
 				found = true;
 				lastLeft = true;
 			} else if (checkRight(angle)) { // check right side
-				sensorArm.turnToCenter();
 				track.pivotAngleRight(angle);
 				found = true;
 				lastLeft = false;
 			} else if (!lastLeft && checkLeft(angle)) { // check left side
-				sensorArm.turnToCenter();
 				track.pivotAngleLeft(angle);
 				found = true;
 				lastLeft = true;
 			}
-			angle += 45;
+			angle += 40;
+		}
+		if (found) {
+			sensorArm.turnToCenter();
 		}
 
 		while (running && track.motorsMoving()) {
@@ -329,15 +341,17 @@ public class LineFollower implements Program {
 		private LineFollower follower;
 		private boolean measurements[];
 		private int head;
+		private boolean lastLeft;
 
-		public LightSweeper(SensorArm arm, LineFollower follower) {
-			measurements = new boolean[200];
+		public LightSweeper(SensorArm arm, LineFollower follower, int bufferSize) {
+			measurements = new boolean[bufferSize];
 			this.follower = follower;
 			this.arm = arm;
 			moving = true;
 			moveLeft = true;
 			head = 0;
 			push(follower.isLine());
+			lastLeft = true;
 		}
 
 		@Override
@@ -351,7 +365,16 @@ public class LineFollower implements Program {
 						arm.turnToPosition(-9, true);
 					}
 					while (running && moving && arm.isMoving()) {
-						push(follower.isLine());
+						boolean isLine = follower.isLine();
+						int angle = arm.getArmPosition();
+						push(isLine);
+						if (isLine) {
+							if (angle > 0)
+								lastLeft = true;
+							else
+								lastLeft = false;
+						}
+						sleep(10);
 					}
 					moveLeft = !moveLeft;
 				}
@@ -378,6 +401,10 @@ public class LineFollower implements Program {
 					return true;
 
 			return false;
+		}
+
+		public boolean wasLastLeft() {
+			return lastLeft;
 		}
 
 		private void push(boolean value) {
