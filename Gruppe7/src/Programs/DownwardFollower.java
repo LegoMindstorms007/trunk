@@ -1,7 +1,10 @@
 package Programs;
 
-
 public class DownwardFollower extends LineFollower {
+
+	public DownwardFollower() {
+		super(-50);
+	}
 
 	@Override
 	protected void findLineStart() {
@@ -9,6 +12,7 @@ public class DownwardFollower extends LineFollower {
 
 	@Override
 	protected void alignOnEnd() {
+		track.pivotAngleLeft(25);
 		/*
 		 * track.forward(100); track.pivotAngleRight(180);
 		 * track.waitForMotors(); while (!searchTrack()) { track.forward(10); }

@@ -47,6 +47,7 @@ public class Aligner {
 	public Aligner(int threshold, boolean frontIsBrighter, boolean useFlashlight) {
 		init(threshold, frontIsBrighter);
 		light = Light.getInstanceOf();
+		light.setFloodlight(useFlashlight);
 	}
 
 	private void init(int threshold, boolean frontIsBrighter) {
@@ -166,7 +167,7 @@ public class Aligner {
 		while (isBackLine()) {
 		}
 		track.stop();
-		track.forward(20);
+		track.forward(40);
 	}
 
 	private boolean isFrontLine() {
