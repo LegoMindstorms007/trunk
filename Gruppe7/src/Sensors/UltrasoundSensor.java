@@ -10,7 +10,7 @@ import lejos.robotics.objectdetection.RangeFeatureDetector;
 public class UltrasoundSensor {
 
 	public static int MAX_DISTANCE = 255;
-	private static int PERIOD = 50;
+	private static int PERIOD = 10;
 	private static int WALL_VALUE = 30;
 	FeatureDetector sensor;
 
@@ -22,10 +22,34 @@ public class UltrasoundSensor {
 	public int getMeasurment() {
 		Feature scan = sensor.scan();
 		RangeReading fdscan = scan != null ? scan.getRangeReading() : null;
-
 		return fdscan != null ? (int) fdscan.getRange() : MAX_DISTANCE;
 	}
 
+	public int getAverageMeasurement(int numberMeasurements) {
+		Feature scan = sensor.scan();
+		RangeReading fdscan = scan != null ? scan.getRangeReading() : null;
+		int[] scanData = new int[numberMeasurements];
+		scanData[0] = fdscan != null ? (int) fdscan.getRange() : MAX_DISTANCE;
+		for(int i = 1; i < numberMeasurements; i++) {
+			scanData[i] = fdscan != null ? (int) fdscan.getRange() : MAX_DISTANCE;
+		}
+		int result = scanData[0];
+		int max = scanData[0];
+		int min = scanData[0];
+		for(int i = 1; i < numberMeasurements; i++) {
+			int current = scanData[i];
+			if(current > max) {
+				max = current;
+			}
+			if(current < min) {
+				min  = current;
+			}
+			result += current;
+		}
+		result -= max;
+		result -= min;
+		return (int) (result / (float) (numberMeasurements -2) );
+	}
 	public boolean isWall() {
 		return getMeasurment() < WALL_VALUE;
 	}

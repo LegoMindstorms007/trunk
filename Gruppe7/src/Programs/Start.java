@@ -4,6 +4,7 @@ import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.UltrasoundSensor;
 import Sensors.BumpSensor;
+import lejos.nxt.Battery;
 import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
@@ -20,12 +21,13 @@ public class Start implements Program {
 	private LightSensor light;
 	private boolean linefound;
 	final static int MOVINGSPEED = 2000;
-	final static int TURNINGSPEED = 550;
+	final static int TURNINGSPEED =(int) (74 * Battery.getVoltage());
 	protected final static int backward = 110;
 	private final static int NEAREST = 17;
 	private final static int TONEAREST = 8;
 	private final static int FAREST = 20;
 	private final static int TURNRIGHT = 60;
+	private final static int NUMBERMEASUREMENTS = 8;
 	public Start(SensorPort lightPort, SensorPort ultraSoundPort) {
 		 us = new UltrasoundSensor(ultraSoundPort);
 		 tracks = new TrackSuspension();
@@ -43,6 +45,7 @@ public class Start implements Program {
 		tracks.setSpeed(MOVINGSPEED);
 		findLeftWall();
 		driveAlongLeftWall();
+		adjustToWallRight();
 	}
 
 	@Override
@@ -52,8 +55,8 @@ public class Start implements Program {
 	}
 
 	private void findLeftWall() {
-		arm.turnToPosition(SensorArm.MAXLEFT);
-		tracks.pivotAngleLeft(90);
+		arm.turnToPosition(SensorArm.MAXRIGHT);
+		tracks.pivotAngleLeft(95);
 		tracks.waitForMotors();
 		while(running && !bumped) {
 			if(!tracks.motorsMoving()) {
@@ -62,8 +65,10 @@ public class Start implements Program {
 		}
 		tracks.stop();
 		tracks.backward(backward);
-		tracks.pivotAngleRight(90);
+		tracks.pivotAngleRight(95);
 		tracks.waitForMotors();
+		arm.turnToCenter();
+		adjustToWallLeft();
 	}
 	
 	protected void findRightWall() {
@@ -93,21 +98,28 @@ public class Start implements Program {
 		    if(!tracks.motorsMoving() && !bumped  && !linefound) {
 		    	tracks.forward();
 		    }
-		  distance =  us.getMeasurment();
-		  if(distance >= TURNRIGHT && !linefound) {
+		  distance =  us.getAverageMeasurement(NUMBERMEASUREMENTS);
+		  if(distance >= TURNRIGHT && !linefound && running  && !bumped) {
 			  hitWallTurnLeft();
 		  }
-		  if(distance < NEAREST && !bumped  && !linefound) {
+		  if(distance < (NEAREST) && !bumped  && !linefound) {
 			  tracks.setSpeedRight(TURNINGSPEED);
-			  while(distance < NEAREST && !bumped  && !linefound){
-				  distance = us.getMeasurment();
+			  while(distance < NEAREST  &&  distance > (NEAREST -  TONEAREST) && !bumped  && !linefound){
+				  distance =  us.getAverageMeasurement(NUMBERMEASUREMENTS);
+				  sleep(10);
+		   }
+		  if(distance < (NEAREST -  TONEAREST) && !bumped  && !linefound) {
+			  tracks.setSpeedRight(TURNINGSPEED - 150);
+			  while(distance < NEAREST  && !bumped  && !linefound){
+				  distance =  us.getAverageMeasurement(NUMBERMEASUREMENTS);
 				  sleep(10);
 			  }
-		  if(distance <= (NEAREST -  TONEAREST)&& !bumped  && !linefound) {
-				  tracks.setSpeedLeft(MOVINGSPEED);
-				  tracks.setSpeedRight(TURNINGSPEED - 150);
+		  }
+		    if(distance > (NEAREST)&& !bumped  && !linefound) {
+				  tracks.setSpeedRight(MOVINGSPEED);
+				  tracks.setSpeedLeft(TURNINGSPEED);
 				  while(distance < (NEAREST -  TONEAREST) && !bumped  && !linefound) {
-					  distance = us.getMeasurment(); 
+					  distance =  us.getAverageMeasurement(NUMBERMEASUREMENTS); 
 					  sleep(10);
 				  }
 				  tracks.setSpeed(MOVINGSPEED);
@@ -117,17 +129,17 @@ public class Start implements Program {
 		  if(distance > FAREST && !bumped  && !linefound) {
 			  tracks.setSpeedLeft(TURNINGSPEED);
 			  while(distance > FAREST && distance < (FAREST + 10) && !bumped  && !linefound){
-				  distance = us.getMeasurment(); 
+				  distance =  us.getAverageMeasurement(NUMBERMEASUREMENTS); 
 				  sleep(10);
 			  }
-			  if(distance >= TURNRIGHT  && !linefound) {
+			  if(distance >= TURNRIGHT  && !linefound && running  && !bumped) {
 				  hitWallTurnLeft();
 			  }
 			  if(distance > (FAREST  + 10) && (distance < TURNRIGHT) && !bumped  && !linefound) {
 				  tracks.setSpeedLeft(MOVINGSPEED);
 				  tracks.setSpeedRight(TURNINGSPEED - 100);
 				  while(distance > FAREST && (distance < TURNRIGHT) && !bumped  && !linefound) {
-					  distance = us.getMeasurment(); 
+					  distance =  us.getAverageMeasurement(NUMBERMEASUREMENTS); 
 					  sleep(10);
 				  }
 				  tracks.setSpeed(MOVINGSPEED);
@@ -140,8 +152,8 @@ public class Start implements Program {
 	private void hitWallTurnLeft() {
 		tracks.setSpeed(MOVINGSPEED - 1000);
 		tracks.stop();
-		tracks.forward(120);
-		tracks.pivotAngleLeft(90);
+		tracks.forward(140);
+		tracks.pivotAngleLeft(95);
 		tracks.waitForMotors();
 		while(!bumped && running) {
 			if(!tracks.motorsMoving()) {
@@ -150,9 +162,10 @@ public class Start implements Program {
 		}
 		tracks.stop();
 		tracks.backward(backward);
-		tracks.pivotAngleLeft(90);
+		tracks.pivotAngleLeft(95);
 		tracks.waitForMotors();
 		arm.turnToCenter();
+		adjustToWallRight();
 		arm.turnToPosition(SensorArm.MAXRIGHT - 15);
 		driveAlongRightWall();
 		
@@ -169,21 +182,28 @@ public class Start implements Program {
 		    if(!tracks.motorsMoving() && !bumped  && !linefound) {
 		    	tracks.forward();
 		    }
-		  distance =  us.getMeasurment();
-		  if(distance >= TURNRIGHT && !linefound) {
+		  distance =   us.getAverageMeasurement(NUMBERMEASUREMENTS);
+		  if(distance >= TURNRIGHT && !linefound && running  && !bumped) {
 			  hitWallTurnRight();
 		  }
-		  if(distance < NEAREST && !bumped  && !linefound) {
+		  if(distance < (NEAREST) && !bumped  && !linefound) {
 			  tracks.setSpeedLeft(TURNINGSPEED);
-			  while(distance < NEAREST && !bumped  && !linefound){
-				  distance = us.getMeasurment();
+			  while(distance < NEAREST  &&  distance > (NEAREST -  TONEAREST) && !bumped  && !linefound){
+				  distance =  us.getAverageMeasurement(NUMBERMEASUREMENTS);
 				  sleep(10);
 			  }
-		  if(distance <= (NEAREST -  TONEAREST)&& !bumped  && !linefound) {
+		   }
+		  if(distance < (NEAREST -  TONEAREST) && !bumped  && !linefound) {
+			  tracks.setSpeedLeft(TURNINGSPEED - 150);
+			  while(distance < NEAREST  && !bumped  && !linefound){
+				  distance =  us.getAverageMeasurement(NUMBERMEASUREMENTS);
+				  sleep(10);
+			  }
+		    if(distance > (NEAREST)&& !bumped  && !linefound) {
 				  tracks.setSpeedLeft(MOVINGSPEED);
-				  tracks.setSpeedRight(TURNINGSPEED - 150);
+				  tracks.setSpeedRight(TURNINGSPEED);
 				  while(distance < (NEAREST -  TONEAREST) && !bumped  && !linefound) {
-					  distance = us.getMeasurment(); 
+					  distance =  us.getAverageMeasurement(NUMBERMEASUREMENTS); 
 					  sleep(10);
 				  }
 				  tracks.setSpeed(MOVINGSPEED);
@@ -193,17 +213,17 @@ public class Start implements Program {
 		  if(distance > FAREST && !bumped  && !linefound) {
 			  tracks.setSpeedRight(TURNINGSPEED);
 			  while(distance > FAREST && distance < (FAREST + 10) && !bumped  && !linefound){
-				  distance = us.getMeasurment(); 
+				  distance = us.getAverageMeasurement(NUMBERMEASUREMENTS); 
 				  sleep(10);
 			  }
-			  if(distance >= TURNRIGHT  && !linefound) {
+			  if(distance >= TURNRIGHT  && !linefound && running && !bumped) {
 				  hitWallTurnRight();
 			  }
 			  if(distance > (FAREST  + 10) && (distance < TURNRIGHT) && !bumped  && !linefound) {
 				  tracks.setSpeedRight(MOVINGSPEED);
 				  tracks.setSpeedLeft(TURNINGSPEED - 100);
 				  while(distance > FAREST && (distance < TURNRIGHT) && !bumped  && !linefound) {
-					  distance = us.getMeasurment(); 
+					  distance = us.getAverageMeasurement(NUMBERMEASUREMENTS); 
 					  sleep(10);
 				  }
 				  tracks.setSpeed(MOVINGSPEED);
@@ -252,7 +272,8 @@ public class Start implements Program {
 		tracks.waitForMotors();
 		arm.turnToCenter();
 		}
-		while(!linefound) {
+		tracks.stop();
+		while(!linefound && running) {
 			if( light.getLightValue() <= 35) {
 				if(!tracks.motorsMoving()) {
 					tracks.forward();	
@@ -299,6 +320,36 @@ public class Start implements Program {
 			return running;
 		}
 		
+	}
+	private void adjustToWallRight() {
+		int min = us.getMeasurment();
+		int minPosition = 0;
+		arm.turnToPosition(SensorArm.MAXRIGHT, true);
+		while(arm.isMoving() && running && !linefound && !bumped) {
+			int value = us.getMeasurment();
+			int currentPosition = arm.getArmPosition();
+			if(value < min) {
+			 	min = value;
+			 	minPosition = currentPosition;
+			}
+		}
+		tracks.pivotAngleLeft((int)((90 - Math.abs(minPosition) * 1.05)));
+		tracks.waitForMotors();
+	}
+	private void adjustToWallLeft() {
+		int min = us.getMeasurment();
+		int minPosition = 0;
+		arm.turnToPosition(SensorArm.MAXLEFT, true);
+		while(arm.isMoving() && running && !linefound && !bumped) {
+			int value = us.getMeasurment();
+			int currentPosition = arm.getArmPosition();
+			if(value < min) {
+			 	min = value;
+			 	minPosition = currentPosition;
+			}
+		}
+		tracks.pivotAngleRight((int)((90 - Math.abs(minPosition) * 1.05)));
+		tracks.waitForMotors();
 	}
 
 }
