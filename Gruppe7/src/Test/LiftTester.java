@@ -8,8 +8,7 @@ import Programs.LiftDriving;
 public class LiftTester {
 	public static void main(String args[]) {
 		BridgeDriving bridge = new BridgeDriving(SensorPort.S4,SensorPort.S3);
-		LiftDriving lift = new LiftDriving(SensorPort.S4, SensorPort.S2,
-				SensorPort.S1);
+		LiftDriving lift = new LiftDriving(SensorPort.S4);
 		new Thread(bridge).start();
 		sleep(100);
 		while(bridge.isRunning()) {

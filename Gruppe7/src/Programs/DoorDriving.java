@@ -22,7 +22,7 @@ public class DoorDriving implements Program {
 	public DoorDriving(SensorPort portOfUltrasoundSensor, SensorPort leftBump,
 			SensorPort rightBump) {
 		usSensor = UltrasoundSensor.getInstanceOf();
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 		com = new BluetoothCommunication();
 		track = TrackSuspension.getInstance();
 		bump = BumpSensor.getInstanceOf();

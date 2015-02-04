@@ -26,7 +26,7 @@ public class StartNeu implements Program {
 		us = UltrasoundSensor.getInstanceOf();
 		light = new LightSensor(lightPort);
 		tracks = TrackSuspension.getInstance();
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 		bumped = false;
 		linefound = false;
 		bump = new Bumper();
@@ -225,7 +225,7 @@ public class StartNeu implements Program {
 		protected boolean running;
 
 		public Bumper() {
-			bumper = new BumpSensor(SensorPort.S1, SensorPort.S2);
+			bumper = BumpSensor.getInstanceOf();
 			running = true;
 		}
 

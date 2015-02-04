@@ -8,7 +8,7 @@ public class LightSweeper implements Runnable {
 	private SensorArm arm;
 
 	public LightSweeper(ADSensorPort port) {
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 	}
 
 	@Override
