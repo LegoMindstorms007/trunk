@@ -1,10 +1,9 @@
 package Programs;
 
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
-import RobotMovement.LineAligner;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
+import Sensors.Light;
 import Sensors.UltrasoundSensor;
 
 /**
@@ -29,7 +28,6 @@ public class LineFollower implements Program {
 	protected int deltaSpeed;
 	protected boolean lineFinished;
 	protected boolean lastLeft = false;
-	protected LineAligner lineAligner;
 
 	/**
 	 * Constructs a line follower
@@ -39,8 +37,8 @@ public class LineFollower implements Program {
 	 * @param portOfUsSensor
 	 *            SensorPort of the ultrasonic sensor
 	 */
-	public LineFollower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
-		init(portOfLightSensor, portOfUsSensor);
+	public LineFollower() {
+		init();
 		deltaSpeed = 0;
 	}
 
@@ -55,21 +53,19 @@ public class LineFollower implements Program {
 	 *            alteration of driving speed (negative = slower, postive =
 	 *            faster)
 	 */
-	public LineFollower(SensorPort portOfLightSensor,
-			SensorPort portOfUsSensor, int deltaSpeed) {
-		init(portOfLightSensor, portOfUsSensor);
+	public LineFollower(int deltaSpeed) {
+		init();
 		this.deltaSpeed = deltaSpeed;
 	}
 
-	private void init(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
-		light = new LightSensor(portOfLightSensor);
+	private void init() {
+		light = Light.getInstanceOf();
 		usSensor = UltrasoundSensor.getInstanceOf();
 
 		track = TrackSuspension.getInstance();
 		sensorArm = new SensorArm();
 		sensorArm.setSpeed(ARM_SPEED);
 		lightSweeper = new LightSweeper(sensorArm, this, BUFFERSIZE);
-		lineAligner = new LineAligner(portOfLightSensor);
 	}
 
 	@Override

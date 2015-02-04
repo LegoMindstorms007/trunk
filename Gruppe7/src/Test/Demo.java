@@ -43,33 +43,33 @@ public class Demo {
 
 			switch (program) {
 			case 0:
-				current = new StartNeu(LIGHT, ULTRA_SOUND);
+				current = new StartNeu();
 				LCD.drawString("Start", 0, 0);
 				break;
 			case 1:
-				current = new LineFollower(LIGHT, ULTRA_SOUND);
+				current = new LineFollower();
 				LCD.drawString("Line", 0, 0);
 				break;
 			case 2:
-				current = new BridgeDriving(LIGHT, ULTRA_SOUND);
+				current = new BridgeDriving();
 				LCD.drawString("Bridge", 0, 0);
 				break;
 			case 3:
-				current = new LiftDriving(LIGHT);
+				current = new LiftDriving();
 				LCD.drawString("Lift ", 0, 0);
 				break;
 			case 4:
-				current = new Labyrinth(LIGHT, ULTRA_SOUND);
+				current = new Labyrinth();
 				LCD.drawString("Labyrinth", 0, 0);
 				break;
 			case 5:
-				current = new DoorDriving(ULTRA_SOUND);
+				current = new DoorDriving();
 				break;
 			case 6:
-				current = new PlankBridge(LIGHT, ULTRA_SOUND);
+				current = new PlankBridge();
 				break;
 			case 7:
-				current = new TurnTableProgram(LIGHT, ULTRA_SOUND);
+				current = new TurnTableProgram();
 				break;
 			case 8:
 				// TODO : Boss

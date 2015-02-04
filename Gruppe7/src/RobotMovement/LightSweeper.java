@@ -1,13 +1,12 @@
 package RobotMovement;
 
-import lejos.nxt.ADSensorPort;
 
 public class LightSweeper implements Runnable {
 	boolean running;
 	boolean moving;
 	private SensorArm arm;
 
-	public LightSweeper(ADSensorPort port) {
+	public LightSweeper() {
 		arm = new SensorArm();
 	}
 

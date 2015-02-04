@@ -2,6 +2,7 @@ package RobotMovement;
 
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
+import Sensors.Light;
 
 /**
  * class containing an algorithm for aligning the robot on a line
@@ -45,10 +46,9 @@ public class Aligner {
 	 *            whether the flashlight of the light sensor should be used or
 	 *            not
 	 */
-	public Aligner(SensorPort portOfLight, int threshold,
-			boolean frontIsBrighter, boolean useFlashlight) {
+	public Aligner(int threshold, boolean frontIsBrighter, boolean useFlashlight) {
 		init(threshold, frontIsBrighter);
-		light = new LightSensor(portOfLight, useFlashlight);
+		light = Light.getInstanceOf();
 	}
 
 	private void init(int threshold, boolean frontIsBrighter) {

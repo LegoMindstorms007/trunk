@@ -2,10 +2,10 @@ package Programs;
 
 import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.BumpSensor;
+import Sensors.Light;
 import Sensors.UltrasoundSensor;
 
 public class StartNeu implements Program {
@@ -21,10 +21,10 @@ public class StartNeu implements Program {
 	private LightSensor light;
 	protected Bumper bump;
 
-	public StartNeu(SensorPort lightPort, SensorPort ultras) {
+	public StartNeu() {
 		running = true;
 		us = UltrasoundSensor.getInstanceOf();
-		light = new LightSensor(lightPort);
+		light = Light.getInstanceOf();
 		tracks = TrackSuspension.getInstance();
 		arm = new SensorArm();
 		bumped = false;
@@ -225,7 +225,7 @@ public class StartNeu implements Program {
 		protected boolean running;
 
 		public Bumper() {
-			bumper = new BumpSensor(SensorPort.S1, SensorPort.S2);
+			bumper = BumpSensor.getInstanceOf();
 			running = true;
 		}
 

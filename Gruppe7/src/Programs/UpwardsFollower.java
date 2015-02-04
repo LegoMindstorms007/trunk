@@ -1,14 +1,8 @@
 package Programs;
 
-import lejos.nxt.SensorPort;
 
 public class UpwardsFollower extends LineFollower {
 	protected static final int LINE_VALUE = 37;
-
-	public UpwardsFollower(SensorPort portOfLightSensor,
-			SensorPort portOfUsSensor) {
-		super(portOfLightSensor, portOfUsSensor);
-	}
 
 	@Override
 	protected void findLineStart() {

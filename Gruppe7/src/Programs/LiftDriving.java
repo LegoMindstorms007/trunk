@@ -43,10 +43,9 @@ public class LiftDriving implements Program {
 	 * @param rightBumpSensor
 	 *            self explaining
 	 */
-	public LiftDriving(SensorPort portOfLightSensor) {
+	public LiftDriving() {
 
-		this.portOfLightSensor = portOfLightSensor;
-		aligner = new Aligner(portOfLightSensor, 30, true, false);
+		aligner = new Aligner(30, true, false);
 		arm = new SensorArm();
 		bump = BumpSensor.getInstanceOf();
 		track = TrackSuspension.getInstance();

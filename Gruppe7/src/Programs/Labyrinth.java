@@ -1,10 +1,10 @@
 package Programs;
 
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.BumpSensor;
+import Sensors.Light;
 import Sensors.UltrasoundSensor;
 
 public class Labyrinth implements Program {
@@ -23,15 +23,14 @@ public class Labyrinth implements Program {
 
 	// private int distance = 0;
 
-	public Labyrinth(SensorPort lightPort, SensorPort ultraSoundPort,
-			SensorPort leftBumpPort, SensorPort rightBumpPort) {
+	public Labyrinth() {
 		sArm = new SensorArm();
 		sArm.setSpeed(ARM_SPEED);
 		usSensor = UltrasoundSensor.getInstanceOf();
 		movement = TrackSuspension.getInstance();
 		movement.setSpeed(MOVING_SPEED);
 		bump = BumpSensor.getInstanceOf();
-		light = new LightSensor(lightPort);
+		light = Light.getInstanceOf();
 	}
 
 	// @Override

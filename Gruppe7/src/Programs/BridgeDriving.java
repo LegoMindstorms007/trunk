@@ -1,10 +1,10 @@
 package Programs;
 
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
 import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
+import Sensors.Light;
 
 public class BridgeDriving implements Program {
 	public static final int MOVING_SPEED = 200;
@@ -13,7 +13,7 @@ public class BridgeDriving implements Program {
 	public static final int PANEL = 57;
 	public static final int NOGROUND = 42;
 	public static final int BLACKGROUND = 26;
-	public static final int GREEN  = 35;
+	public static final int GREEN = 35;
 	protected TrackSuspension track;
 	protected SensorArm arm;
 	protected LightSensor light;
@@ -21,13 +21,14 @@ public class BridgeDriving implements Program {
 	protected LightSweeper sweeper;
 	Last last;
 
-	public BridgeDriving(SensorPort lightPort, SensorPort ultraSoundPort) {
-		track = TrackSuspension.getInstance();;
+	public BridgeDriving() {
+		track = TrackSuspension.getInstance();
+		;
 		arm = new SensorArm();
-		light = new LightSensor(lightPort);
+		light = Light.getInstanceOf();
 		arm.setSpeed(SWEEPING_SPEED);
 		track.setSpeed(MOVING_SPEED);
-		sweeper = new LightSweeper(ultraSoundPort);
+		sweeper = new LightSweeper();
 		running = true;
 	}
 
@@ -95,24 +96,23 @@ public class BridgeDriving implements Program {
 				int position = arm.getArmPosition();
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
-					if (position < 0) {
-						turnLeft(20);
-						// Problem if found Cliff direcetly in Front
-					} else if (position == 0) {
-						if (last == null) {
-								turnLeft(10);
-							} else if (last == Last.RIGHT) {
-								turnRight(10);
-							} else {
-								turnLeft(10);
-							turnLeft(10);
-						}
+				if (position < 0) {
+					turnLeft(20);
+					// Problem if found Cliff direcetly in Front
+				} else if (position == 0) {
+					if (last == null) {
+						turnLeft(10);
+					} else if (last == Last.RIGHT) {
+						turnRight(10);
 					} else {
-						turnRight(20);
+						turnLeft(10);
+						turnLeft(10);
 					}
-					track.setSpeed(MOVING_SPEED);
-			}
-			else if(currentGround == Ground.PANEL) {
+				} else {
+					turnRight(20);
+				}
+				track.setSpeed(MOVING_SPEED);
+			} else if (currentGround == Ground.PANEL) {
 				track.stop();
 				sweeper.stopSweeping();
 				sweeper.halt();
@@ -127,7 +127,7 @@ public class BridgeDriving implements Program {
 		arm.turnToCenter();
 		running = false;
 	}
-	
+
 	private void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
@@ -136,9 +136,9 @@ public class BridgeDriving implements Program {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private int measure() {
-		//WithLight
+		// WithLight
 		light.setFloodlight(true);
 		int lightValue = light.getLightValue();
 		light.setFloodlight(false);
@@ -147,16 +147,17 @@ public class BridgeDriving implements Program {
 		sleep(10);
 		return lightValue;
 	}
-	
+
 	private Ground checkGround(int measurement) {
-		if(measurement < NOGROUND) {
+		if (measurement < NOGROUND) {
 			return Ground.AIR;
-		} else if(measure() > PANEL) {
+		} else if (measure() > PANEL) {
 			return Ground.PANEL;
 		} else {
 			return Ground.WOOD;
 		}
 	}
+
 	private enum Ground {
 		AIR, WOOD, PANEL;
 	}
