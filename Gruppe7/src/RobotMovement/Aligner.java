@@ -1,7 +1,6 @@
 package RobotMovement;
 
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
 import Sensors.Light;
 
 /**
@@ -27,10 +26,9 @@ public class Aligner {
 	 * @param frontIsBrighter
 	 *            whether the front is brighter then the back or not
 	 */
-	public Aligner(SensorPort portOfLight, int threshold,
-			boolean frontIsBrighter) {
+	public Aligner(int threshold, boolean frontIsBrighter) {
 		init(threshold, frontIsBrighter);
-		light = new LightSensor(portOfLight);
+		light = Light.getInstanceOf();
 	}
 
 	/**
