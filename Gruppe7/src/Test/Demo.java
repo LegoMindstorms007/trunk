@@ -104,7 +104,7 @@ public class Demo {
 					case 6:
 						LCD.drawString(
 								"Barcode value: " + barcode.readBarcode(), 0, 1);
-						Aligner aligner = new Aligner(LIGHT, 35, false);
+						Aligner aligner = new Aligner(35, false);
 						aligner.align();
 						break;
 					}
