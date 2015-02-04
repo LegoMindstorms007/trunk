@@ -15,6 +15,8 @@ public class DoorDriving implements Program {
 	private BluetoothCommunication com;
 	private TrackSuspension track;
 	private boolean running;
+
+	@SuppressWarnings("unused")
 	private BumpSensor bump;
 
 	public DoorDriving(SensorPort portOfUltrasoundSensor, SensorPort leftBump,
@@ -42,13 +44,18 @@ public class DoorDriving implements Program {
 		}
 		track.stop();
 
+		// dash on walls to align robot, pretty ugly, but it does its work...
+		arm.turnToPosition(90);
+		arm.turnToPosition(-90);
+		arm.turnToCenter();
+
 		// wait until brick is connected
 		while (running && !com.isConnected()) {
 			sleep(50);
 		}
 
 		// wait until door is open
-		while (running && usSensor.getMeasurment() < 50) {
+		while (running && usSensor.getMeasurment() < 60) {
 			sleep(10);
 		}
 

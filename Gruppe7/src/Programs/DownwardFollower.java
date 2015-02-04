@@ -13,4 +13,14 @@ public class DownwardFollower extends LineFollower {
 	protected void findLineStart() {
 	}
 
+	@Override
+	protected void alignOnEnd() {
+		/*
+		 * track.forward(100); track.pivotAngleRight(180);
+		 * track.waitForMotors(); while (!searchTrack()) { track.forward(10); }
+		 * track.forward(30); searchTrack(); track.pivotAngleLeft(180);
+		 * track.waitForMotors(); track.forward(300);
+		 */
+	}
+
 }
