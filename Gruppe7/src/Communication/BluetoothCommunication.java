@@ -142,8 +142,10 @@ public class BluetoothCommunication {
 		if (connection != null) {
 			try {
 				connection.close();
-				dis.close();
-				dos.close();
+				if (dis != null)
+					dis.close();
+				if (dos != null)
+					dos.close();
 			} catch (IOException e) {
 				// ignore
 			}

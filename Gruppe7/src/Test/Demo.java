@@ -30,7 +30,7 @@ public class Demo {
 
 		int program = 0;
 		Program current = null;
-		BarcodeReader barcode = new BarcodeReader(LIGHT);
+		BarcodeReader barcode = new BarcodeReader();
 
 		while (program < NUM_PROGRAMS) {
 
@@ -99,12 +99,18 @@ public class Demo {
 				}
 				if (!buttonPressed) {
 					switch (program) {
-					case 1:
 					case 4:
 					case 6:
+						Aligner aligner = new Aligner(35, false);
 						LCD.drawString(
 								"Barcode value: " + barcode.readBarcode(), 0, 1);
-						Aligner aligner = new Aligner(35, false);
+						aligner.align();
+						break;
+					case 1:
+						aligner = new Aligner(35, true);
+						LCD.drawString(
+								"Barcode value: " + barcode.readBarcode(), 0, 1);
+						TrackSuspension.getInstance().forward(50);
 						aligner.align();
 						break;
 					}
