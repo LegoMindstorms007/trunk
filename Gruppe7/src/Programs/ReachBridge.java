@@ -2,14 +2,14 @@ package Programs;
 
 import lejos.nxt.Button;
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
+import Sensors.Light;
 
 public class ReachBridge {
 
 	private static final int numPrograms = 2;
 
 	public static void main(String[] args) {
-		LightSensor light = new LightSensor(SensorPort.S4);
+		LightSensor light = Light.getInstanceOf();
 
 		int program = 0;
 		UpwardsFollower follower = new UpwardsFollower();
