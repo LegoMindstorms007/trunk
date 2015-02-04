@@ -331,7 +331,7 @@ public class LineFollower implements Program {
 		private int head;
 
 		public LightSweeper(SensorArm arm, LineFollower follower) {
-			measurements = new boolean[300];
+			measurements = new boolean[150];
 			this.follower = follower;
 			this.arm = arm;
 			moving = true;
@@ -346,9 +346,9 @@ public class LineFollower implements Program {
 			while (running) {
 				while (running && moving && isLine()) {
 					if (moveLeft) {
-						arm.turnToPosition(10, true);
+						arm.turnToPosition(9, true);
 					} else {
-						arm.turnToPosition(-10, true);
+						arm.turnToPosition(-9, true);
 					}
 					while (running && moving && arm.isMoving()) {
 						push(follower.isLine());
