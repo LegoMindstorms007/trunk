@@ -13,7 +13,7 @@ public class LineAligner {
 
 	public LineAligner(SensorPort lightPort) {
 		light = new LightSensor(lightPort);
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 		track = TrackSuspension.getInstance();
 	}
 

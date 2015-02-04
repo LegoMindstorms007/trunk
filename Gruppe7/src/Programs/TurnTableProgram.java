@@ -19,7 +19,7 @@ public class TurnTableProgram implements Program {
 		tracks = TrackSuspension.getInstance();
 		table = new TurnTable();
 		running = true;
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 	}
 
 	@Override

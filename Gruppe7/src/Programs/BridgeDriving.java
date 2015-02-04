@@ -23,8 +23,7 @@ public class BridgeDriving implements Program {
 
 	public BridgeDriving() {
 		track = TrackSuspension.getInstance();
-		;
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 		light = Light.getInstanceOf();
 		arm.setSpeed(SWEEPING_SPEED);
 		track.setSpeed(MOVING_SPEED);

@@ -9,8 +9,16 @@ public class SensorArm {
 	public static final int CENTER = 0;
 	private NXTRegulatedMotor motor;
 	private boolean tilting;
-
-	public SensorArm() {
+	private static SensorArm instance = null;
+	
+	public static SensorArm getInstance() {
+		if(instance == null) {
+			instance = new SensorArm();
+		} 
+		return instance;
+	}
+	
+	private SensorArm() {
 		motor = Motor.C;
 	}
 

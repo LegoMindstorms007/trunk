@@ -1,13 +1,12 @@
 package RobotMovement;
 
-
 public class LightSweeper implements Runnable {
 	boolean running;
 	boolean moving;
 	private SensorArm arm;
 
 	public LightSweeper() {
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 	}
 
 	@Override

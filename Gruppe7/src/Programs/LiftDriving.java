@@ -46,7 +46,7 @@ public class LiftDriving implements Program {
 	public LiftDriving() {
 
 		aligner = new Aligner(30, true, false);
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 		bump = BumpSensor.getInstanceOf();
 		track = TrackSuspension.getInstance();
 		track.setSpeed(1000);

@@ -26,7 +26,7 @@ public class StartNeu implements Program {
 		us = UltrasoundSensor.getInstanceOf();
 		light = Light.getInstanceOf();
 		tracks = TrackSuspension.getInstance();
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 		bumped = false;
 		linefound = false;
 		bump = new Bumper();

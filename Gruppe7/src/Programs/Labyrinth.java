@@ -24,7 +24,7 @@ public class Labyrinth implements Program {
 	// private int distance = 0;
 
 	public Labyrinth() {
-		sArm = new SensorArm();
+		sArm = SensorArm.getInstance();
 		sArm.setSpeed(ARM_SPEED);
 		usSensor = UltrasoundSensor.getInstanceOf();
 		movement = TrackSuspension.getInstance();
