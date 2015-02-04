@@ -63,9 +63,9 @@ public class LineFollower implements Program {
 
 	private void init(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
 		light = new LightSensor(portOfLightSensor);
-		usSensor = new UltrasoundSensor(portOfUsSensor);
+		usSensor = UltrasoundSensor.getInstanceOf();
 
-		track = new TrackSuspension();
+		track = TrackSuspension.getInstance();
 		sensorArm = new SensorArm();
 		sensorArm.setSpeed(ARM_SPEED);
 		lightSweeper = new LightSweeper(sensorArm, this, BUFFERSIZE);

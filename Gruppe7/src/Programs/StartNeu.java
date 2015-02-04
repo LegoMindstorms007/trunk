@@ -23,9 +23,9 @@ public class StartNeu implements Program {
 
 	public StartNeu(SensorPort lightPort, SensorPort ultras) {
 		running = true;
-		us = new UltrasoundSensor(ultras);
+		us = UltrasoundSensor.getInstanceOf();
 		light = new LightSensor(lightPort);
-		tracks = new TrackSuspension();
+		tracks = TrackSuspension.getInstance();
 		arm = new SensorArm();
 		bumped = false;
 		linefound = false;

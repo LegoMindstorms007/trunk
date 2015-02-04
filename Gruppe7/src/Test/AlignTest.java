@@ -46,7 +46,7 @@ public class AlignTest {
 
 		Sound.twoBeeps();
 
-		TrackSuspension track = new TrackSuspension();
+		TrackSuspension track = TrackSuspension.getInstance();
 		track.setSpeed(2000);
 
 		track.forward(1400);

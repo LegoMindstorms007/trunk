@@ -26,8 +26,8 @@ public class Labyrinth implements Program {
 			SensorPort leftBumpPort, SensorPort rightBumpPort) {
 		sArm = new SensorArm();
 		sArm.setSpeed(ARM_SPEED);
-		usSensor = new UltrasoundSensor(ultraSoundPort);
-		movement = new TrackSuspension();
+		usSensor = UltrasoundSensor.getInstanceOf();
+		movement = TrackSuspension.getInstance();
 		movement.setSpeed(MOVING_SPEED);
 		bump = new BumpSensor(leftBumpPort, rightBumpPort);
 		light = new LightSensor(lightPort);

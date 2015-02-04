@@ -75,7 +75,7 @@ public class Demo {
 				break;
 			case 8:
 				// TODO : Boss
-				TrackSuspension track = new TrackSuspension();
+				TrackSuspension track = TrackSuspension.getInstance();
 				track.setSpeed(5000);
 				track.forward();
 				new SensorArm().shootLeft();

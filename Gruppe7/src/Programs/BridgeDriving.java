@@ -22,7 +22,7 @@ public class BridgeDriving implements Program {
 	Last last;
 
 	public BridgeDriving(SensorPort lightPort, SensorPort ultraSoundPort) {
-		track = new TrackSuspension();
+		track = TrackSuspension.getInstance();;
 		arm = new SensorArm();
 		light = new LightSensor(lightPort);
 		arm.setSpeed(SWEEPING_SPEED);
