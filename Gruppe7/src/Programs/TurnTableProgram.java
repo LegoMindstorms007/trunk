@@ -17,8 +17,8 @@ public class TurnTableProgram implements Program {
 	public TurnTableProgram(SensorPort portOfLightSensor,
 			SensorPort portOfUsSensor) {
 		upwards = new TurnTableFollower(portOfLightSensor, portOfUsSensor);
-		us = new UltrasoundSensor(portOfUsSensor);
-		tracks = new TrackSuspension();
+		us = UltrasoundSensor.getInstanceOf();
+		tracks =TrackSuspension.getInstance();
 		table = new TurnTable();
 		running = true;
 		arm = new SensorArm();

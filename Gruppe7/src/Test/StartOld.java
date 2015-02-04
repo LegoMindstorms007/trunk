@@ -30,7 +30,7 @@ public class StartOld implements Runnable {
 	private boolean running;
 	public StartOld() {
 		arm = new SensorArm();
-		track = new TrackSuspension();
+		track = TrackSuspension.getInstance();
 		running = true;
 		sweeper = new LightSweeper(SensorPort.S4);
 		track.setSpeed(MAXSPEED);

@@ -48,8 +48,8 @@ public class LiftDriving implements Program {
 		this.portOfLightSensor = portOfLightSensor;
 		aligner = new Aligner(portOfLightSensor, 30, true, false);
 		arm = new SensorArm();
-		track = new TrackSuspension();
 		bump = BumpSensor.getInstanceOf();
+		track = TrackSuspension.getInstance();
 		track.setSpeed(1000);
 		arm.setSpeed(250);
 		com = new BluetoothCommunication();

@@ -26,7 +26,7 @@ public class BarcodeReader {
 	public BarcodeReader(SensorPort portOfLightSensor) {
 		light = new LightSensor(portOfLightSensor);
 		arm = new SensorArm();
-		track = new TrackSuspension();
+		track = TrackSuspension.getInstance();
 	}
 
 	/**

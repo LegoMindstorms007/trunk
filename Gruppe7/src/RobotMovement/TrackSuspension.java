@@ -8,8 +8,14 @@ public class TrackSuspension {
 	private NXTRegulatedMotor right;
 	private final float ROTATIONTRANSLATION = 5.3f;
 	private int speed;
-
-	public TrackSuspension() {
+	private static TrackSuspension instance = null;
+	public static TrackSuspension getInstance() {
+		if(instance == null) {
+			instance = new TrackSuspension();
+		}
+		return instance;
+	}
+	private TrackSuspension() {
 		left = Motor.B;
 		right = Motor.A;
 		speed = Motor.B.getSpeed();

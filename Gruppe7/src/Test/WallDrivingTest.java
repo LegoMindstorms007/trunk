@@ -16,9 +16,9 @@ public class WallDrivingTest {
 	private static USStuff us;
 
 	public static void main(String args[]) {
-		track = new TrackSuspension();
+		track = TrackSuspension.getInstance();
 		arm = new SensorArm();
-		usSensor = new UltrasoundSensor(SensorPort.S3);
+		usSensor = UltrasoundSensor.getInstanceOf();
 		us = new USStuff(usSensor);
 		us.start();
 

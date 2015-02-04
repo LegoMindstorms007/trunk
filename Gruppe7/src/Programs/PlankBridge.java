@@ -12,7 +12,7 @@ public class PlankBridge implements Program {
 	private PlankBridgeDriving bridgeDriving;
 	private LightSensor light;
 	private boolean running;
-	private TrackSuspension track = new TrackSuspension();
+	private TrackSuspension track = TrackSuspension.getInstance();
 
 	public PlankBridge(SensorPort lightSensorPort, SensorPort ultaSoundPort) {
 		firstFollower = new UpwardsFollower(lightSensorPort, ultaSoundPort);
