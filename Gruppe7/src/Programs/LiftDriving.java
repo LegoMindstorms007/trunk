@@ -47,7 +47,7 @@ public class LiftDriving implements Program {
 
 		this.portOfLightSensor = portOfLightSensor;
 		aligner = new Aligner(portOfLightSensor, 30, true, false);
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 		bump = BumpSensor.getInstanceOf();
 		track = TrackSuspension.getInstance();
 		track.setSpeed(1000);

@@ -76,9 +76,9 @@ public class Demo {
 				TrackSuspension track = TrackSuspension.getInstance();
 				track.setSpeed(5000);
 				track.forward();
-				new SensorArm().shootLeft();
-				new SensorArm().shootRight();
-				new SensorArm().turnToPosition(90);
+				SensorArm.getInstance().shootLeft();
+				SensorArm.getInstance().shootRight();
+				SensorArm.getInstance().turnToPosition(90);
 				break;
 			default:
 				current = null;

@@ -66,7 +66,7 @@ public class LineFollower implements Program {
 		usSensor = UltrasoundSensor.getInstanceOf();
 
 		track = TrackSuspension.getInstance();
-		sensorArm = new SensorArm();
+		sensorArm = SensorArm.getInstance();
 		sensorArm.setSpeed(ARM_SPEED);
 		lightSweeper = new LightSweeper(sensorArm, this, BUFFERSIZE);
 		lineAligner = new LineAligner(portOfLightSensor);

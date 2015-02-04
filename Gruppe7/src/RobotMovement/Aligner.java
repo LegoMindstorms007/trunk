@@ -52,7 +52,7 @@ public class Aligner {
 	}
 
 	private void init(int threshold, boolean frontIsBrighter) {
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 		track = TrackSuspension.getInstance();
 		this.threshold = threshold;
 		this.frontIsBrighter = frontIsBrighter;

@@ -29,7 +29,7 @@ public class StartOld implements Runnable {
 	private LightSweeper sweeper;
 	private boolean running;
 	public StartOld() {
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 		track = TrackSuspension.getInstance();
 		running = true;
 		sweeper = new LightSweeper(SensorPort.S4);
