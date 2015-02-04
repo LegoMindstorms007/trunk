@@ -17,8 +17,8 @@ public class LineFollower implements Program {
 
 	protected static final int LINE_VALUE = 35;
 	protected static final int MOVING_SPEED = 600;
-	protected static final int ROTATING_SPEED = 300;
-	protected static final int ARM_SPEED = 225;
+	protected static final int ROTATING_SPEED = 350;
+	protected static final int ARM_SPEED = 250;
 	protected static final int WALL_VALUE = 15;
 	protected LightSensor light;
 	protected TrackSuspension track;
@@ -331,7 +331,7 @@ public class LineFollower implements Program {
 		private int head;
 
 		public LightSweeper(SensorArm arm, LineFollower follower) {
-			measurements = new boolean[150];
+			measurements = new boolean[200];
 			this.follower = follower;
 			this.arm = arm;
 			moving = true;

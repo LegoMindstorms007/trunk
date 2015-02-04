@@ -79,7 +79,7 @@ public class LiftDriving implements Program {
 		}
 
 		if (running) {
-			LCD.drawString("Driving into Lift", 0, 1);
+			LCD.drawString("Driving into lift", 0, 1);
 			driveIntoLift();
 		}
 
@@ -89,18 +89,20 @@ public class LiftDriving implements Program {
 		}
 
 		while (running && !canExit()) {
-			LCD.drawString("Waiting for Lift", 0, 1);
+			LCD.drawString("Waiting for fift", 0, 1);
 			sleep(50);
 		}
 
-		if (running)
+		if (running) {
+			LCD.drawString("Driving out of lift", 0, 1);
 			driveOut();
+		}
 
-		if (running)
-			closeConnection();
+		closeConnection();
 
 		// halt connector if this program is premature interrupted via halt()
 		com.halt();
+		running = false;
 	}
 
 	private void alignRobotOnPlate() {

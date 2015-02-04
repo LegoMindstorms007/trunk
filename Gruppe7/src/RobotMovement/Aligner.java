@@ -160,17 +160,15 @@ public class Aligner {
 		if (isFrontLine()) {
 			track.backward();
 			while (isFrontLine()) {
-				sleep(10);
 			}
 			track.stop();
 		}
 
 		track.forward();
 		while (isBackLine()) {
-			sleep(10);
 		}
 		track.stop();
-		track.forward(25);
+		track.forward(20);
 	}
 
 	private boolean isFrontLine() {
