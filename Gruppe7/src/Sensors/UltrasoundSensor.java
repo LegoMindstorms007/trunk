@@ -11,7 +11,7 @@ public class UltrasoundSensor {
 
 	public static int MAX_DISTANCE = 255;
 	private static int PERIOD = 10;
-	private static int WALL_VALUE = 30;
+	private static int WALL_VALUE = 20;
 	FeatureDetector sensor;
 
 	public UltrasoundSensor(SensorPort portOfSensor) {
@@ -25,7 +25,7 @@ public class UltrasoundSensor {
 		return fdscan != null ? (int) fdscan.getRange() : MAX_DISTANCE;
 	}
 
-	public int getAverageMeasurement(int numberMeasurements) {
+h	public int getAverageMeasurement(int numberMeasurements) {
 		Feature scan = sensor.scan();
 		RangeReading fdscan = scan != null ? scan.getRangeReading() : null;
 		int[] scanData = new int[numberMeasurements];

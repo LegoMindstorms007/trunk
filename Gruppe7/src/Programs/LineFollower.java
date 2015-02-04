@@ -18,7 +18,8 @@ public class LineFollower implements Program {
 	protected static final int LINE_VALUE = 35;
 	protected static final int MOVING_SPEED = 600;
 	protected static final int ROTATING_SPEED = 350;
-	protected static final int ARM_SPEED = 225;
+	protected static final int ARM_SPEED = 250;
+	protected static final int WALL_VALUE = 15;
 	protected LightSensor light;
 	protected TrackSuspension track;
 	protected boolean running;
@@ -27,7 +28,6 @@ public class LineFollower implements Program {
 	protected LightSweeper lightSweeper;
 	protected int deltaSpeed;
 	protected boolean lineFinished;
-	protected boolean ramp = false;
 	protected boolean lastLeft = false;
 	protected LineAligner lineAligner;
 
@@ -95,18 +95,12 @@ public class LineFollower implements Program {
 				// search track with the sensor arm
 				if (searchTrack()) {
 					lightSweeper.setMoving(true);
-				} else { // if no line is found, check if there are walls left
-							// and right (end of second level)
-					if (ramp) {
-						track.forward(20);
-						ramp = false;
-					} else {
-						if (checkWalls()) {
-							sensorArm.turnToCenter();
-							lineFinished = true;
-						} else { // else do a fallback search
-							fallBack();
-						}
+				} else {
+					if (checkWalls()) {
+						sensorArm.turnToCenter();
+						lineFinished = true;
+					} else { // else do a fallback search
+						fallBack();
 					}
 
 				}
@@ -117,7 +111,7 @@ public class LineFollower implements Program {
 		}
 
 		if (running)
-			lineAligner.align();
+			alignOnEnd();
 
 		// drive straight to the barcode
 		if (running)
@@ -131,6 +125,17 @@ public class LineFollower implements Program {
 		lineFinished = !fallbackSearch();
 		if (!lineFinished)
 			lightSweeper.setMoving(true);
+	}
+
+	protected void alignOnEnd() {
+		int dist = 50;
+		track.backward(50);
+		if (!searchTrack()) {
+			track.backward(50);
+			dist += 50;
+		}
+		track.forward(dist);
+		track.stop();
 	}
 
 	protected void getToBarcode() {
@@ -326,7 +331,7 @@ public class LineFollower implements Program {
 		private int head;
 
 		public LightSweeper(SensorArm arm, LineFollower follower) {
-			measurements = new boolean[400];
+			measurements = new boolean[200];
 			this.follower = follower;
 			this.arm = arm;
 			moving = true;
@@ -341,16 +346,15 @@ public class LineFollower implements Program {
 			while (running) {
 				while (running && moving && isLine()) {
 					if (moveLeft) {
-						arm.turnToPosition(10, true);
+						arm.turnToPosition(9, true);
 					} else {
-						arm.turnToPosition(-10, true);
+						arm.turnToPosition(-9, true);
 					}
 					while (running && moving && arm.isMoving()) {
 						push(follower.isLine());
 					}
 					moveLeft = !moveLeft;
 				}
-				sleep(50);
 			}
 		}
 

@@ -27,7 +27,7 @@ public class Demo {
 
 	public static void main(String[] args) {
 
-		int program = 4;
+		int program = 0;
 		new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
 		Program current = null;
 		BarcodeReader barcode = new BarcodeReader(LIGHT);
