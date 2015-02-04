@@ -11,21 +11,21 @@ import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.comm.RConsole;
 
 public class Start implements Program {
-	private boolean running;
+	protected boolean running;
 	UltrasoundSensor us;
 	TrackSuspension tracks;
-	private boolean bumped;
+	protected boolean bumped;
 	protected Bumper bump;
 	SensorArm arm;
 	private LightSensor light;
 	private boolean linefound;
 	final static int MOVINGSPEED = 2000;
-	final static int TURNINGSPEED = 500;
-	private final static int backward = 110;
+	final static int TURNINGSPEED = 550;
+	protected final static int backward = 110;
 	private final static int NEAREST = 17;
 	private final static int TONEAREST = 8;
 	private final static int FAREST = 20;
-	private final static int TURNRIGHT = 50;
+	private final static int TURNRIGHT = 60;
 	public Start(SensorPort lightPort, SensorPort ultraSoundPort) {
 		 us = new UltrasoundSensor(ultraSoundPort);
 		 tracks = new TrackSuspension();
@@ -41,8 +41,8 @@ public class Start implements Program {
 	public void run() {
 		
 		tracks.setSpeed(MOVINGSPEED);
-		findRightWall();
-		driveAlongRightWall();
+		findLeftWall();
+		driveAlongLeftWall();
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class Start implements Program {
 	}
 
 	private void findLeftWall() {
-		arm.turnToPosition(SensorArm.MAXLEFT - 15);
+		arm.turnToPosition(SensorArm.MAXLEFT);
 		tracks.pivotAngleLeft(90);
 		tracks.waitForMotors();
 		while(running && !bumped) {
@@ -81,29 +81,32 @@ public class Start implements Program {
 		tracks.waitForMotors();
 	}
 
-	private void driveAlongLeftWall() {
+	protected void driveAlongLeftWall() {
 		int distance = 0;
 		while(running) {
-			if(bumped && !linefound) {
+			if(bumped  && !linefound) {
 				tracks.stop();
 				tracks.backward(backward);
 				tracks.pivotAngleRight(95);
 				tracks.waitForMotors();
 			}
-		    if(!tracks.motorsMoving()) {
+		    if(!tracks.motorsMoving() && !bumped  && !linefound) {
 		    	tracks.forward();
 		    }
 		  distance =  us.getMeasurment();
-		  if(distance < NEAREST && !bumped &&  !linefound) {
+		  if(distance >= TURNRIGHT && !linefound) {
+			  hitWallTurnLeft();
+		  }
+		  if(distance < NEAREST && !bumped  && !linefound) {
 			  tracks.setSpeedRight(TURNINGSPEED);
-			  while(distance < NEAREST && distance > (NEAREST - TONEAREST) && !bumped && !linefound){
+			  while(distance < NEAREST && !bumped  && !linefound){
 				  distance = us.getMeasurment();
 				  sleep(10);
 			  }
-			  if(distance <= (NEAREST -  TONEAREST) && !bumped && ! linefound) {
-				  tracks.setSpeedRight(MOVINGSPEED);
-				  tracks.setSpeedLeft(TURNINGSPEED);
-				  while(distance < (NEAREST -  TONEAREST) && !bumped && !linefound) {
+		  if(distance <= (NEAREST -  TONEAREST)&& !bumped  && !linefound) {
+				  tracks.setSpeedLeft(MOVINGSPEED);
+				  tracks.setSpeedRight(TURNINGSPEED - 150);
+				  while(distance < (NEAREST -  TONEAREST) && !bumped  && !linefound) {
 					  distance = us.getMeasurment(); 
 					  sleep(10);
 				  }
@@ -111,15 +114,18 @@ public class Start implements Program {
 			  }
 			  tracks.setSpeed(MOVINGSPEED);
 		  } 
-		  if(distance > FAREST && !bumped && !linefound) {
+		  if(distance > FAREST && !bumped  && !linefound) {
 			  tracks.setSpeedLeft(TURNINGSPEED);
 			  while(distance > FAREST && distance < (FAREST + 10) && !bumped  && !linefound){
 				  distance = us.getMeasurment(); 
 				  sleep(10);
 			  }
-			  if(distance > (FAREST + 10) && (distance < TURNRIGHT) && !bumped  && !linefound) {
+			  if(distance >= TURNRIGHT  && !linefound) {
+				  hitWallTurnLeft();
+			  }
+			  if(distance > (FAREST  + 10) && (distance < TURNRIGHT) && !bumped  && !linefound) {
 				  tracks.setSpeedLeft(MOVINGSPEED);
-				  tracks.setSpeedRight(TURNINGSPEED);
+				  tracks.setSpeedRight(TURNINGSPEED - 100);
 				  while(distance > FAREST && (distance < TURNRIGHT) && !bumped  && !linefound) {
 					  distance = us.getMeasurment(); 
 					  sleep(10);
@@ -130,6 +136,26 @@ public class Start implements Program {
 		  }
 		}
 		bump.halt();
+	}
+	private void hitWallTurnLeft() {
+		tracks.setSpeed(MOVINGSPEED - 1000);
+		tracks.stop();
+		tracks.forward(120);
+		tracks.pivotAngleLeft(90);
+		tracks.waitForMotors();
+		while(!bumped && running) {
+			if(!tracks.motorsMoving()) {
+			tracks.forward();
+			}
+		}
+		tracks.stop();
+		tracks.backward(backward);
+		tracks.pivotAngleLeft(90);
+		tracks.waitForMotors();
+		arm.turnToCenter();
+		arm.turnToPosition(SensorArm.MAXRIGHT - 15);
+		driveAlongRightWall();
+		
 	}
 	protected void driveAlongRightWall() {
 		int distance = 0;

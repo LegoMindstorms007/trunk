@@ -9,7 +9,7 @@ import lejos.nxt.comm.RConsole;
 
 public class StartTester {
 	public static void main(String[] args) {
-		StartBackwards start = new StartBackwards(SensorPort.S4, SensorPort.S3);
+		Start start = new Start(SensorPort.S4, SensorPort.S3);
 		new Thread(start).start();
 		Button.waitForAnyPress();
 		start.halt();

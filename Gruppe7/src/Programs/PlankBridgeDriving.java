@@ -31,7 +31,7 @@ public static final int NOGROUND = 25;
 				int position = arm.getArmPosition();
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
-				if (position > -40 && position < 40) {
+				if (position > -45 && position < 45) {
 						sweeper.stopSweeping();
 						arm.turnToCenter();
 						track.forward(5);

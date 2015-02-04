@@ -16,9 +16,21 @@ public class StartBackwards  extends Start{
 	protected void hitWallTurnRight() {
 		tracks.setSpeed(MOVINGSPEED - 1000);
 		tracks.stop();
-		tracks.forward(50);
-		tracks.turnRight(120);
+		tracks.forward(100);
+		tracks.pivotAngleRight(90);
 		tracks.waitForMotors();
+		while(!bumped && running) {
+			if(!tracks.motorsMoving()) {
+			tracks.forward();
+			}
+		}
+		tracks.stop();
+		tracks.backward(backward);
+		tracks.pivotAngleRight(90);
+		tracks.waitForMotors();
+		arm.turnToCenter();
+		arm.turnToPosition(SensorArm.MAXLEFT);
+		driveAlongLeftWall();
 	}
 
 	private class BumperWithOutLight extends Bumper {
