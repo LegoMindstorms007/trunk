@@ -10,20 +10,21 @@ import Programs.LiftDriving;
 import Programs.LineFollower;
 import Programs.PlankBridge;
 import Programs.Program;
-import Programs.Start;
+import Programs.StartNeu;
 import Programs.TurnTableProgram;
 import RobotMovement.Aligner;
 import RobotMovement.BarcodeReader;
 import RobotMovement.SensorArm;
+import RobotMovement.TrackSuspension;
 
 public class Demo {
 
 	private static final int NUM_PROGRAMS = 9;
 
-	private static final SensorPort BUMP_RIGHT = SensorPort.S1;
-	private static final SensorPort BUMP_LEFT = SensorPort.S2;
-	private static final SensorPort ULTRA_SOUND = SensorPort.S3;
-	private static final SensorPort LIGHT = SensorPort.S4;
+	public static final SensorPort BUMP_RIGHT = SensorPort.S1;
+	public static final SensorPort BUMP_LEFT = SensorPort.S2;
+	public static final SensorPort ULTRA_SOUND = SensorPort.S3;
+	public static final SensorPort LIGHT = SensorPort.S4;
 
 	public static void main(String[] args) {
 
@@ -43,7 +44,7 @@ public class Demo {
 
 			switch (program) {
 			case 0:
-				current = new Start(LIGHT, ULTRA_SOUND);
+				current = new StartNeu(LIGHT, ULTRA_SOUND);
 				LCD.drawString("Start", 0, 0);
 				break;
 			case 1:
@@ -74,8 +75,12 @@ public class Demo {
 				break;
 			case 8:
 				// TODO : Boss
+				TrackSuspension track = new TrackSuspension();
+				track.setSpeed(5000);
+				track.forward();
 				new SensorArm().shootLeft();
 				new SensorArm().shootRight();
+				new SensorArm().turnToPosition(90);
 				break;
 			default:
 				current = null;
@@ -109,7 +114,9 @@ public class Demo {
 			}
 
 			program++;
+			LCD.clear();
 		}
+		Button.waitForAnyPress();
 	}
 
 	private static void sleep(int millis) {

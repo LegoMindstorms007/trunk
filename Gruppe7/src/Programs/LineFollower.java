@@ -154,7 +154,7 @@ public class LineFollower implements Program {
 	protected void findLineStart() {
 		track.forward();
 		track.setSpeed(MOVING_SPEED + deltaSpeed);
-		sleep(1000);
+		sleep(2000);
 
 		while (running && !isLine()) {
 			sleep(10);

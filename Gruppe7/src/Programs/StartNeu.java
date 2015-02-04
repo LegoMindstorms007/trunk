@@ -1,13 +1,12 @@
 package Programs;
 
-import Programs.Start.Bumper;
+import lejos.nxt.LCD;
+import lejos.nxt.LightSensor;
+import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.BumpSensor;
 import Sensors.UltrasoundSensor;
-import lejos.nxt.LCD;
-import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
 
 public class StartNeu implements Program {
 	private static final int MOVINGSPEED = 2000;
@@ -21,7 +20,8 @@ public class StartNeu implements Program {
 	private SensorArm arm;
 	private LightSensor light;
 	protected Bumper bump;
-	public StartNeu(SensorPort lightPort, SensorPort ultras)  {
+
+	public StartNeu(SensorPort lightPort, SensorPort ultras) {
 		running = true;
 		us = new UltrasoundSensor(ultras);
 		light = new LightSensor(lightPort);
@@ -30,8 +30,9 @@ public class StartNeu implements Program {
 		bumped = false;
 		linefound = false;
 		bump = new Bumper();
-		 new Thread(bump).start();
+		new Thread(bump).start();
 	}
+
 	@Override
 	public void run() {
 		tracks.setSpeed(MOVINGSPEED);
@@ -39,8 +40,8 @@ public class StartNeu implements Program {
 		driveAlongLeftWall();
 		findRightWall();
 		driveAlongRightWall();
-		while(!bumped && running) {
-			if(!tracks.motorsMoving()) {
+		while (!bumped && running) {
+			if (!tracks.motorsMoving()) {
 				tracks.forward();
 			}
 		}
@@ -52,30 +53,30 @@ public class StartNeu implements Program {
 		arm.turnToCenter();
 		adjustToWallLeft();
 		arm.turnToCenter();
-		while(!linefound && running) {
-			if(!tracks.motorsMoving()) {
+		while (!linefound && running) {
+			if (!tracks.motorsMoving()) {
 				tracks.forward();
 			}
 		}
 		tracks.stop();
 	}
-	
+
 	private void driveAlongRightWall() {
 		boolean moving = true;
 		tracks.setSpeed(MOVINGSPEED);
-		while(running && moving) {
-			if(!tracks.motorsMoving()) {
+		while (running && moving) {
+			if (!tracks.motorsMoving()) {
 				tracks.forward();
 			}
 			sleep(50);
 			Orientation orientation = CalculateAngle();
 			LCD.clear();
 			LCD.drawString(orientation.toString(), 0, 1);
-			if(orientation == orientation.STOP) {
+			if (orientation == orientation.STOP) {
 				moving = false;
 				tracks.stop();
 			}
-			if(orientation == orientation.TONEAR) {
+			if (orientation == orientation.TONEAR) {
 				tracks.stop();
 				tracks.setSpeed(MOVINGSPEED);
 				tracks.pivotAngleLeft(45);
@@ -86,10 +87,10 @@ public class StartNeu implements Program {
 				adjustToWallRight();
 				arm.turnToCenter();
 			}
-			if(orientation == Orientation.TOLEFT) {
+			if (orientation == Orientation.TOLEFT) {
 				tracks.setSpeedLeft(MOVINGSPEED);
 				tracks.setSpeedRight(TURNINGSPEED);
-			} else if(orientation == Orientation.TORIGHT) {
+			} else if (orientation == Orientation.TORIGHT) {
 				tracks.setSpeedRight(MOVINGSPEED);
 				tracks.setSpeedLeft(TURNINGSPEED);
 			} else {
@@ -97,22 +98,23 @@ public class StartNeu implements Program {
 			}
 		}
 	}
+
 	private void driveAlongLeftWall() {
 		boolean moving = true;
 		tracks.setSpeed(MOVINGSPEED);
-		while(running && moving) {
-			if(!tracks.motorsMoving()) {
+		while (running && moving) {
+			if (!tracks.motorsMoving()) {
 				tracks.forward();
 			}
 			sleep(50);
 			Orientation orientation = CalculateAngle();
 			LCD.clear();
 			LCD.drawString(orientation.toString(), 0, 1);
-			if(orientation == orientation.STOP) {
+			if (orientation == orientation.STOP) {
 				moving = false;
 				tracks.stop();
 			}
-			if(orientation == orientation.TONEAR) {
+			if (orientation == orientation.TONEAR) {
 				tracks.stop();
 				tracks.setSpeed(MOVINGSPEED);
 				tracks.pivotAngleRight(45);
@@ -123,24 +125,25 @@ public class StartNeu implements Program {
 				arm.turnToCenter();
 				adjustToWallLeft();
 			}
-			if(orientation == Orientation.TOLEFT) {
+			if (orientation == Orientation.TOLEFT) {
 				tracks.setSpeedRight(MOVINGSPEED);
 				tracks.setSpeedLeft(TURNINGSPEED);
-			} else if(orientation == Orientation.TORIGHT) {
+			} else if (orientation == Orientation.TORIGHT) {
 				tracks.setSpeedLeft(MOVINGSPEED);
 				tracks.setSpeedRight(TURNINGSPEED);
 			} else {
 				tracks.setSpeed(MOVINGSPEED);
 			}
 		}
-		
+
 	}
+
 	private void findLeftWall() {
 		arm.turnToPosition(SensorArm.MAXRIGHT);
 		tracks.pivotAngleLeft(95);
 		tracks.waitForMotors();
-		while(running && !bumped) {
-			if(!tracks.motorsMoving()) {
+		while (running && !bumped) {
+			if (!tracks.motorsMoving()) {
 				tracks.forward();
 			}
 		}
@@ -151,14 +154,14 @@ public class StartNeu implements Program {
 		arm.turnToCenter();
 		adjustToWallLeft();
 	}
-	
+
 	private void findRightWall() {
 		tracks.forward(100);
 		arm.turnToPosition(SensorArm.MAXRIGHT);
 		tracks.pivotAngleLeft(95);
 		tracks.waitForMotors();
-		while(running && !bumped) {
-			if(!tracks.motorsMoving()) {
+		while (running && !bumped) {
+			if (!tracks.motorsMoving()) {
 				tracks.forward();
 			}
 		}
@@ -174,35 +177,36 @@ public class StartNeu implements Program {
 	@Override
 	public void halt() {
 		running = false;
-		
+
 	}
 
 	@Override
 	public boolean isRunning() {
 		return running;
 	}
-	
+
 	private Orientation CalculateAngle() {
 		int firstMeasure = us.getAverageMeasurement(5);
 		sleep(50);
 		int secondMeasure = us.getAverageMeasurement(5);
 		int sum = firstMeasure + secondMeasure;
-		if(firstMeasure + secondMeasure > 120) {
+		if (firstMeasure + secondMeasure > 120) {
 			return Orientation.STOP;
 		}
-		if(sum < 20) {
+		if (sum < 20) {
 			return Orientation.TONEAR;
 		}
 		int position = firstMeasure - secondMeasure;
-		if(position > 0) {
+		if (position > 0) {
 			return Orientation.TORIGHT;
-		} else if(position < 0) {
+		} else if (position < 0) {
 			return Orientation.TOLEFT;
 		} else {
 			return Orientation.OK;
 		}
-		
+
 	}
+
 	private void sleep(int i) {
 		try {
 			Thread.sleep(i);
@@ -211,88 +215,92 @@ public class StartNeu implements Program {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected enum Orientation {
 		TOLEFT, TORIGHT, OK, STOP, TONEAR;
 	}
-	
+
 	protected class Bumper implements Program {
 		BumpSensor bumper;
 		protected boolean running;
+
 		public Bumper() {
-			 bumper = new BumpSensor(SensorPort.S1, SensorPort.S2);
-			 running = true;
+			bumper = new BumpSensor(SensorPort.S1, SensorPort.S2);
+			running = true;
 		}
+
 		@Override
 		public void run() {
-			while(running) {
-				if(light.getLightValue() >= 40) {
+			while (running) {
+				if (light.getLightValue() >= 40) {
 					linefound();
 				}
-				while(bumper.touchedFront()) {
+				while (bumper.touchedFront()) {
 					bumped();
 					sleep(50);
 				}
 				released();
 				sleep(50);
 			}
-			
+
 		}
 
 		@Override
 		public void halt() {
-			 running = false;
-			
+			running = false;
+
 		}
 
 		@Override
 		public boolean isRunning() {
 			return running;
 		}
-		
+
 	}
+
 	protected void bumped() {
 		bumped = true;
 	}
-	
+
 	protected void released() {
 		bumped = false;
 	}
-	
-	private void linefound(){
+
+	private void linefound() {
 		linefound = true;
 		halt();
 	}
+
 	private void adjustToWallRight() {
 		int min = us.getMeasurment();
 		int minPosition = 0;
 		arm.turnToPosition(SensorArm.MAXRIGHT, true);
-		while(arm.isMoving() && running && !linefound && !bumped) {
+		while (arm.isMoving() && running && !linefound && !bumped) {
 			int value = us.getMeasurment();
 			int currentPosition = arm.getArmPosition();
-			if(value < min) {
-			 	min = value;
-			 	minPosition = currentPosition;
+			if (value < min) {
+				min = value;
+				minPosition = currentPosition;
 			}
 		}
-		tracks.pivotAngleLeft((int)((90 - Math.abs(minPosition) * 1.05)));
+		tracks.pivotAngleLeft((int) ((90 - Math.abs(minPosition) * 1.05)));
 		tracks.waitForMotors();
 	}
+
 	private void adjustToWallLeft() {
 		int min = us.getMeasurment();
 		int minPosition = 0;
 		arm.turnToPosition(SensorArm.MAXLEFT, true);
-		while(arm.isMoving() && running && !linefound && !bumped) {
+		while (arm.isMoving() && running && !linefound && !bumped) {
 			int value = us.getMeasurment();
 			int currentPosition = arm.getArmPosition();
-			if(value < min) {
-			 	min = value;
-			 	minPosition = currentPosition;
+			if (value < min) {
+				min = value;
+				minPosition = currentPosition;
 			}
 		}
-		tracks.pivotAngleRight((int)((90 - Math.abs(minPosition) * 1.05)));
+		tracks.pivotAngleRight((int) ((90 - Math.abs(minPosition) * 1.05)));
 		tracks.waitForMotors();
 	}
 
 }
-
