@@ -23,9 +23,9 @@ public class SensorArm {
 		motor.rotateTo(turn);
 	}
 
-	public void turnArmLeft(int angle, boolean immidiateReturn) {
+	public void turnArmLeft(int angle, boolean immediateReturn) {
 		int turn = Math.min(MAXLEFT, motor.getTachoCount() + angle);
-		motor.rotateTo(turn, immidiateReturn);
+		motor.rotateTo(turn, immediateReturn);
 	}
 
 	public void turnArmRight(int angle) {
@@ -33,9 +33,9 @@ public class SensorArm {
 		motor.rotateTo(turn);
 	}
 
-	public void turnArmRight(int angle, boolean immidiateReturn) {
+	public void turnArmRight(int angle, boolean immediateReturn) {
 		int turn = Math.max(MAXRIGHT, motor.getTachoCount() - angle);
-		motor.rotateTo(turn, immidiateReturn);
+		motor.rotateTo(turn, immediateReturn);
 	}
 
 	public int getArmPosition() {
@@ -46,16 +46,20 @@ public class SensorArm {
 		motor.rotateTo(CENTER);
 	}
 
+	public void turnToCenter(boolean immediateReturn) {
+		motor.rotateTo(CENTER, immediateReturn);
+	}
+
 	public void turnToPosition(int angle) {
 		angle = Math.min(MAXLEFT, angle);
 		angle = Math.max(MAXRIGHT, angle);
 		motor.rotateTo(angle);
 	}
 
-	public void turnToPosition(int angle, boolean immidiateReturn) {
+	public void turnToPosition(int angle, boolean immediateReturn) {
 		angle = Math.min(MAXLEFT, angle);
 		angle = Math.max(MAXRIGHT, angle);
-		motor.rotateTo(angle, immidiateReturn);
+		motor.rotateTo(angle, immediateReturn);
 	}
 
 	public boolean isMoving() {
@@ -81,5 +85,9 @@ public class SensorArm {
 	public void shootRight() {
 		motor.rotateTo(-110);
 		turnToCenter();
+	}
+
+	public void waitForArm() {
+		motor.waitComplete();
 	}
 }

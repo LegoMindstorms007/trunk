@@ -129,14 +129,15 @@ public class LineFollower implements Program {
 	}
 
 	protected void alignOnEnd() {
-		int dist = 50;
-		track.backward(50);
+		int dist = 75;
+		track.backward(dist);
 		if (!searchTrack()) {
-			track.backward(50);
-			dist += 50;
+			track.backward(25);
+			dist += 25;
 		}
+		sensorArm.turnToCenter();
 		track.forward(dist);
-		track.stop();
+		sensorArm.waitForArm();
 	}
 
 	protected void getToBarcode() {
@@ -158,7 +159,6 @@ public class LineFollower implements Program {
 		while (running && !isLine()) {
 			sleep(10);
 		}
-		track.stop();
 
 	}
 
@@ -181,11 +181,11 @@ public class LineFollower implements Program {
 		int angle = 50;
 
 		// search small angle where track was last seen
-		if (lightSweeper.wasLastLeft() && checkLeft(25)) {
+		if (!lastLeft && lightSweeper.wasLastLeft() && checkLeft(25)) {
 			track.pivotAngleLeft(15);
 			found = true;
 			lastLeft = true;
-		} else if (!lightSweeper.wasLastLeft() && checkRight(25)) {
+		} else if (lastLeft && !lightSweeper.wasLastLeft() && checkRight(25)) {
 			track.pivotAngleRight(15);
 			found = true;
 			lastLeft = false;
@@ -232,31 +232,25 @@ public class LineFollower implements Program {
 	protected boolean fallbackSearch() {
 		boolean foundLine = false;
 		track.setSpeed(ROTATING_SPEED);
+		sensorArm.turnToPosition(20, true);
+		track.backward(25);
+		sensorArm.waitForArm();
 
 		// checkLeft
-		track.pivotAngleLeft(50);
-		track.waitForMotors();
 		if (checkLeft(90)) {
 			foundLine = true;
-			sensorArm.turnToCenter();
 			track.pivotAngleLeft(90);
 		}
 
+		sensorArm.turnToPosition(-20, true);
 		// checkRight
 		if (!foundLine) {
-			track.pivotAngleRight(100);
 			track.waitForMotors();
 			if (checkRight(90)) {
 				foundLine = true;
-				sensorArm.turnToCenter();
 				track.pivotAngleRight(90);
 			}
 
-		}
-
-		if (!foundLine) {
-			track.pivotAngleLeft(50);
-			track.waitForMotors();
 		}
 
 		while (foundLine && running && track.motorsMoving()) {
@@ -264,7 +258,9 @@ public class LineFollower implements Program {
 				track.stop();
 			}
 		}
-		sensorArm.turnToCenter();
+		sensorArm.turnToCenter(true);
+		track.forward(25);
+		sensorArm.waitForArm();
 
 		track.setSpeed(MOVING_SPEED + deltaSpeed);
 		return foundLine;
