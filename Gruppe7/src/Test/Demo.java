@@ -29,7 +29,6 @@ public class Demo {
 	public static void main(String[] args) {
 
 		int program = 0;
-		new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
 		Program current = null;
 		BarcodeReader barcode = new BarcodeReader(LIGHT);
 
@@ -56,16 +55,15 @@ public class Demo {
 				LCD.drawString("Bridge", 0, 0);
 				break;
 			case 3:
-				current = new LiftDriving(LIGHT, BUMP_LEFT, BUMP_RIGHT);
+				current = new LiftDriving(LIGHT);
 				LCD.drawString("Lift ", 0, 0);
 				break;
 			case 4:
-				current = new Labyrinth(LIGHT, ULTRA_SOUND, BUMP_LEFT,
-						BUMP_RIGHT);
+				current = new Labyrinth(LIGHT, ULTRA_SOUND);
 				LCD.drawString("Labyrinth", 0, 0);
 				break;
 			case 5:
-				current = new DoorDriving(ULTRA_SOUND, BUMP_LEFT, BUMP_RIGHT);
+				current = new DoorDriving(ULTRA_SOUND);
 				break;
 			case 6:
 				current = new PlankBridge(LIGHT, ULTRA_SOUND);

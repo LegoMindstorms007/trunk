@@ -19,13 +19,12 @@ public class DoorDriving implements Program {
 	@SuppressWarnings("unused")
 	private BumpSensor bump;
 
-	public DoorDriving(SensorPort portOfUltrasoundSensor, SensorPort leftBump,
-			SensorPort rightBump) {
+	public DoorDriving(SensorPort portOfUltrasoundSensor) {
 		usSensor = new UltrasoundSensor(portOfUltrasoundSensor);
 		arm = new SensorArm();
 		com = new BluetoothCommunication();
 		track = new TrackSuspension();
-		bump = new BumpSensor(leftBump, rightBump);
+		bump = BumpSensor.getInstanceOf();
 	}
 
 	@Override

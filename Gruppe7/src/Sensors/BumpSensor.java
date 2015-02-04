@@ -2,6 +2,7 @@ package Sensors;
 
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
+import Test.Demo;
 
 /**
  * class representing the front bump sensor
@@ -13,6 +14,7 @@ public class BumpSensor {
 
 	private TouchSensor leftSensor;
 	private TouchSensor rightSensor;
+	private static BumpSensor instance;
 
 	/**
 	 * 
@@ -21,9 +23,16 @@ public class BumpSensor {
 	 * @param rightSensorPort
 	 *            port of right bump sensor
 	 */
-	public BumpSensor(SensorPort leftSensorPort, SensorPort rightSensorPort) {
+	private BumpSensor(SensorPort leftSensorPort, SensorPort rightSensorPort) {
 		leftSensor = new TouchSensor(leftSensorPort);
 		rightSensor = new TouchSensor(rightSensorPort);
+	}
+
+	public static BumpSensor getInstanceOf() {
+		if (instance == null) {
+			instance = new BumpSensor(Demo.BUMP_LEFT, Demo.BUMP_RIGHT);
+		}
+		return instance;
 	}
 
 	/**

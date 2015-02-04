@@ -43,14 +43,13 @@ public class LiftDriving implements Program {
 	 * @param rightBumpSensor
 	 *            self explaining
 	 */
-	public LiftDriving(SensorPort portOfLightSensor, SensorPort leftBumpSensor,
-			SensorPort rightBumpSensor) {
+	public LiftDriving(SensorPort portOfLightSensor) {
 
 		this.portOfLightSensor = portOfLightSensor;
 		aligner = new Aligner(portOfLightSensor, 30, true, false);
 		arm = new SensorArm();
 		track = new TrackSuspension();
-		bump = new BumpSensor(leftBumpSensor, rightBumpSensor);
+		bump = BumpSensor.getInstanceOf();
 		track.setSpeed(1000);
 		arm.setSpeed(250);
 		com = new BluetoothCommunication();
