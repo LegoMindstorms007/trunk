@@ -213,6 +213,11 @@ public class StartNeu implements Program {
 		int firstMeasure = us.getAverageMeasurement(5);
 		sleep(50);
 		int secondMeasure = us.getAverageMeasurement(5);
+		if(firstMeasure == 255 || secondMeasure == 255) {
+			firstMeasure = us.getAverageMeasurement(5);
+			sleep(50);
+			secondMeasure = us.getAverageMeasurement(5);
+		}
 		int sum = firstMeasure + secondMeasure;
 		if (firstMeasure + secondMeasure > 180) {
 			return Orientation.STOP;
