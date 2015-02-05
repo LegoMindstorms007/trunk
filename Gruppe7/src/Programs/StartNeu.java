@@ -47,7 +47,7 @@ public class StartNeu implements Program {
 			}
 		}
 		tracks.stop();
-		tracks.backward(backward - 70);
+		tracks.backward(backward - 90);
 		tracks.stop();
 		tracks.pivotAngleRight(95);
 		tracks.waitForMotors();
