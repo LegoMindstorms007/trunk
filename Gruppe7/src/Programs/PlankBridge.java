@@ -38,7 +38,7 @@ public class PlankBridge implements Program {
 		LCD.clear();
 		LCD.drawString("SecondFollower", 0, 1);
 		track.setSpeed(2000);
-		track.forward(100);
+		track.forward(200);
 		track.stop();
 		sleep(100);
 		halt();

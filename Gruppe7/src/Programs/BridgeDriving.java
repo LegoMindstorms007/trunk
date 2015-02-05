@@ -78,6 +78,7 @@ public class BridgeDriving implements Program {
 				arm.turnToPosition(SensorArm.MAXRIGHT);
 				int currentTacho = track.getLeftTachoCount();
 				int distance = 0;
+				track.forward(50);
 				while(light.getLightValue() >= NOGROUND && running && (distance < 5000)) {
 					if(!track.motorsMoving()) {
 						track.forward();
