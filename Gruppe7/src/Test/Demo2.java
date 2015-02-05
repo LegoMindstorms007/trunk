@@ -1,6 +1,6 @@
 package Test;
 
-import Programs.Labyrinthleft;
+import Programs.Labyrinth;
 
 import Programs.Program;
 
@@ -19,7 +19,7 @@ public class Demo2 {
 	private static Program current = null;
 
 	public static void main(String[] args) {
-		current = new Labyrinthleft();
+		current = new Labyrinth();
 		new Thread(current).start();
 	}
 }

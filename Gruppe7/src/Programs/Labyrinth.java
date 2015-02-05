@@ -17,9 +17,7 @@ public class Labyrinth implements Program {
 	private boolean running;
 	private BumpSensor bump;
 	private LightSensor light;
-	// private int leftvalue=0;
-	// private int rightvalue=0;
-	private boolean adjust = true;
+	//private boolean adjust = true;
 
 	// private int distance = 0;
 
@@ -37,7 +35,8 @@ public class Labyrinth implements Program {
 	public void run() {
 		running = true;
 		sArm.turnArmRight(90);
-		movement.forward(40);
+		//movement.forward(40);
+		movement.forward();
 		while (running) {
 			if (!isLine()) {
 				if (bump.touchedAny()) {
@@ -61,20 +60,32 @@ public class Labyrinth implements Program {
 						movement.pivotAngleRight(5);
 						movement.waitForMotors();
 						movement.forward(60);
+						while(movement.motorsMoving()){
+							if(isLine()){
+								movement.stop();
+								halt();
+							}
+						}
 					} else if (measurment > 24) {
 						movement.pivotAngleRight(15);
 						movement.waitForMotors();
 						movement.forward(50);
+						while(movement.motorsMoving()){
+							if(isLine()){
+								movement.stop();
+								halt();
+							}
 					}
 				} else if (!isRightHolz()) {// air, turn to right
 					turntoHolz();
 				}
 			} else {
 				running = false;
+				movement.setSpeed(MOVING_SPEED);
 			}
 		}
 		movement.stop();
-		while (adjust) {
+		/*while (adjust) {
 			int measurment = usSensor.getMeasurment();
 			if (measurment >= 5 || measurment <= 7) {
 				adjust = false;
@@ -90,34 +101,15 @@ public class Labyrinth implements Program {
 				movement.forward(45);
 
 			}
-		}
+		}*/
 
 		sArm.turnToCenter();
-
-		/*
-		 * distance = getDistance(); while(change){ if(distance<=3 &&
-		 * distance>=-3){ change = false; } else if(distance >3){
-		 * movement.pivotAngleLeft(10); movement.waitForMotors();
-		 * movement.backward(40); movement.pivotAngleRight(10);
-		 * movement.waitForMotors(); movement.forward(35); distance =
-		 * getDistance(); } else if(distance<-3){ movement.pivotAngleRight(10);
-		 * movement.waitForMotors(); movement.backward(40);
-		 * movement.pivotAngleLeft(10); movement.waitForMotors();
-		 * movement.forward(35); distance = getDistance(); } }
-		 */
-
+		}
 	}
 
 	private boolean isLine() {
 		return light.getLightValue() >= 35;
 	}
-
-	/*
-	 * private int getDistance(){ int dis; sArm.turnArmRight(90); rightvalue =
-	 * usSensor.getMeasurment(); sArm.turnToCenter(); sArm.turnArmLeft(90);
-	 * leftvalue = usSensor.getMeasurment(); sArm.turnToCenter(); dis =
-	 * rightvalue - leftvalue; return dis; }
-	 */
 
 	private boolean isRightHolz() {
 		return usSensor.getMeasurment() <= 31;
@@ -131,24 +123,12 @@ public class Labyrinth implements Program {
 	}
 
 	private void searchHolzByCollision() {
-		/*
-		 * int angle=0; movement.backward(70); sArm.turnArmLeft(180);
-		 * while(sArm.isMoving()){ if(usSensor.getMeasurment()>60){ sArm.stop();
-		 * angle=sArm.getArmPosition(); } } if(angle>0){
-		 * movement.pivotAngleLeft(angle); movement.waitForMotors();
-		 * sArm.turnToCenter(); sArm.turnArmRight(angle); } else if(angle ==0){
-		 * movement.pivotAngleLeft(45); movement.waitForMotors();
-		 * sArm.turnArmRight(90); } else if(angle < 0){
-		 * movement.pivotAngleLeft(45); movement.waitForMotors();
-		 * sArm.turnArmRight(90+angle); }
-		 */
-
-		boolean turn = false;
+	//	boolean turn = false;
 		movement.backward(80);
 		movement.pivotAngleLeft(90);
 		movement.waitForMotors();
-		movement.forward(40);
-		int measurment = usSensor.getMeasurment();
+		movement.forward(50);
+		/*int measurment = usSensor.getMeasurment();
 		if (measurment > 25 && measurment < 50) {
 			turn = true;
 		}
@@ -160,7 +140,7 @@ public class Labyrinth implements Program {
 			if (isRightHolz()) {
 				turn = false;
 			}
-		}
+		}*/
 	}
 
 	@Override
