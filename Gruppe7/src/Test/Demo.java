@@ -132,10 +132,12 @@ public class Demo {
 				LCD.drawString("Lift ", 0, 0);
 				break;
 			case 4:
-				if (goLeftInLabyrinth)
+				if (goLeftInLabyrinth) {
 					current = new Labyrinthleft();
-				else
+				}
+				else {
 					current = new Labyrinthright();
+				}
 				LCD.drawString("Labyrinth", 0, 0);
 				break;
 			case 5:
