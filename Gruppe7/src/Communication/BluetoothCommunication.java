@@ -48,13 +48,6 @@ public class BluetoothCommunication {
 	private boolean openConnection(String server, String address) {
 		RemoteDevice btrd = new RemoteDevice(server, address, 0);
 
-		if (btrd == null) {
-			LCD.drawString("No such device", 0, 2);
-			// no such device, you should pair your devices first or check the
-			// Devices name
-			return false;
-		}
-
 		connection = Bluetooth.connect(btrd);
 
 		if (connection == null) {
@@ -78,13 +71,14 @@ public class BluetoothCommunication {
 	 *            integer to send
 	 */
 	public void writeInt(int value) {
-		try {
-			dos.writeInt(value);
-			dos.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (dos != null)
+			try {
+				dos.writeInt(value);
+				dos.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 
 	/**
@@ -94,13 +88,14 @@ public class BluetoothCommunication {
 	 *            boolean to send
 	 */
 	public void writeBool(boolean value) {
-		try {
-			dos.writeBoolean(value);
-			dos.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (dos != null)
+			try {
+				dos.writeBoolean(value);
+				dos.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 
 	/**
@@ -110,12 +105,13 @@ public class BluetoothCommunication {
 	 */
 	public boolean readBool() {
 		boolean value = false;
-		try {
-			value = dis.readBoolean();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (dis != null)
+			try {
+				value = dis.readBoolean();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return value;
 	}
 
@@ -126,12 +122,13 @@ public class BluetoothCommunication {
 	 */
 	public int readInt() {
 		int value = 0;
-		try {
-			value = dis.readInt();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (dis != null)
+			try {
+				value = dis.readInt();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return value;
 	}
 
