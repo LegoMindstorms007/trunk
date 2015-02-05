@@ -53,7 +53,7 @@ public class DoorDriving implements Program {
 		}
 
 		// wait until door is open
-		while (running && usSensor.getMeasurment() < 60) {
+		while (running && usSensor.getMeasurment() < 40) {
 			sleep(10);
 		}
 

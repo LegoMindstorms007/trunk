@@ -29,8 +29,8 @@ public class BluetoothCommunication {
 	 *            name of the server (hope you already paired your device with
 	 *            the server)
 	 */
-	public void connect(String server) {
-		btConnector = new BTConnector(this, server);
+	public void connect(String server, String address) {
+		btConnector = new BTConnector(this, server, address);
 		btConnector.start();
 		while (!btConnector.isRunning()) {
 			sleep(10);
@@ -45,8 +45,8 @@ public class BluetoothCommunication {
 		return btConnector != null && btConnector.isConnected();
 	}
 
-	private boolean openConnection(String server) {
-		RemoteDevice btrd = Bluetooth.getKnownDevice(server);
+	private boolean openConnection(String server, String address) {
+		RemoteDevice btrd = new RemoteDevice(server, address, 0);
 
 		if (btrd == null) {
 			LCD.drawString("No such device", 0, 2);
@@ -192,8 +192,10 @@ public class BluetoothCommunication {
 		private boolean running;
 		private boolean connected;
 		private String serverName;
+		private String address;
 
-		public BTConnector(BluetoothCommunication com, String serverName) {
+		public BTConnector(BluetoothCommunication com, String serverName,
+				String address) {
 			this.com = com;
 			this.serverName = serverName;
 			connected = false;
@@ -202,10 +204,10 @@ public class BluetoothCommunication {
 		@Override
 		public void run() {
 			running = true;
-			connected = com.openConnection(serverName);
+			connected = com.openConnection(serverName, address);
 			while (running && !connected) {
 				com.sleep(100);
-				connected = com.openConnection(serverName);
+				connected = com.openConnection(serverName, address);
 			}
 			running = false;
 		}

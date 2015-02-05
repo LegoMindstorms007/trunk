@@ -193,7 +193,7 @@ public class StartNeu implements Program {
 		sleep(50);
 		int secondMeasure = us.getAverageMeasurement(5);
 		int sum = firstMeasure + secondMeasure;
-		if (firstMeasure + secondMeasure > 160) {
+		if (firstMeasure + secondMeasure > 180) {
 			return Orientation.STOP;
 		}
 		if (sum < 25) {

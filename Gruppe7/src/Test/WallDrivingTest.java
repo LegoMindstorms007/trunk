@@ -1,7 +1,6 @@
 package Test;
 
 import lejos.nxt.LCD;
-import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.UltrasoundSensor;
@@ -17,7 +16,7 @@ public class WallDrivingTest {
 
 	public static void main(String args[]) {
 		track = TrackSuspension.getInstance();
-		arm = new SensorArm();
+		arm = SensorArm.getInstance();
 		usSensor = UltrasoundSensor.getInstanceOf();
 		us = new USStuff(usSensor);
 		us.start();
