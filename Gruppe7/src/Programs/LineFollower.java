@@ -138,9 +138,9 @@ public class LineFollower implements Program {
 	protected void alignOnEnd() {
 		int dist = 75;
 		track.backward(dist);
-		if (!searchTrack()) {
-			track.backward(25);
-			dist += 25;
+		if (checkRight(90)) {
+			track.pivotAngleRight(10);
+			track.waitForMotors();
 		}
 		sensorArm.turnToCenter();
 		track.forward(dist);
