@@ -8,7 +8,7 @@ import RobotMovement.SensorArm;
 public class ValueTester {
 
 	public static void main(String[] args) {
-			SensorArm arm = new SensorArm();
+			SensorArm arm= SensorArm.getInstance();
 		arm.setSpeed(50);
 		LightSensor light = new LightSensor(SensorPort.S4);
 		light.setFloodlight(false);

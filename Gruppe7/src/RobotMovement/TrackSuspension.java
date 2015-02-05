@@ -15,6 +15,9 @@ public class TrackSuspension {
 		}
 		return instance;
 	}
+	public int getLeftTachoCount() {
+		return left.getTachoCount();
+	}
 	private TrackSuspension() {
 		left = Motor.B;
 		right = Motor.A;

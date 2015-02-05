@@ -10,8 +10,8 @@ public class BridgeDriving implements Program {
 	public static final int MOVING_SPEED = 200;
 	public static final int SWEEPING_SPEED = 400;
 	public static final int ROTATINGSPEED = 500;
-	public static final int PANEL = 57;
-	public static final int NOGROUND = 42;
+	public static final int PANEL = 40;
+	public static final int NOGROUND = 28;
 	public static final int BLACKGROUND = 26;
 	public static final int GREEN = 35;
 	protected TrackSuspension track;
@@ -29,6 +29,7 @@ public class BridgeDriving implements Program {
 		track.setSpeed(MOVING_SPEED);
 		sweeper = new LightSweeper();
 		running = true;
+		light.setFloodlight(true);
 	}
 
 	@Override
@@ -75,7 +76,15 @@ public class BridgeDriving implements Program {
 			}
 			if (light.getLightValue() >= BLACKGROUND) {
 				foundBridge = true;
-				track.forward(1300);
+				arm.turnToPosition(SensorArm.MAXRIGHT);
+				int currentTacho = track.getLeftTachoCount();
+				int distance = 0;
+				while(light.getLightValue() >= NOGROUND && running && (distance < 1300)) {
+					if(!track.motorsMoving()) {
+						track.forward();
+					}
+					distance = currentTacho - track.getLeftTachoCount();
+				}
 			}
 			sleep(50);
 		}
@@ -138,13 +147,7 @@ public class BridgeDriving implements Program {
 
 	private int measure() {
 		// WithLight
-		light.setFloodlight(true);
-		int lightValue = light.getLightValue();
-		light.setFloodlight(false);
-		sleep(10);
-		lightValue += light.getLightValue();
-		sleep(10);
-		return lightValue;
+		return light.getLightValue();
 	}
 
 	private Ground checkGround(int measurement) {
