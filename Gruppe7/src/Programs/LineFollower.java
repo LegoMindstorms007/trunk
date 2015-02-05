@@ -80,6 +80,10 @@ public class LineFollower implements Program {
 
 		while (running && !lineFinished) {
 
+			while (lightSweeper.isMoving() && lightSweeper.isEnemy()) {
+				sleep(50);
+			}
+
 			// check if robot is on the line
 			if (lightSweeper.isLine()) {
 				if (!track.motorsMoving())
@@ -338,6 +342,7 @@ public class LineFollower implements Program {
 		private boolean measurements[];
 		private int head;
 		private boolean lastLeft;
+		private boolean isEnemy;
 
 		public LightSweeper(SensorArm arm, LineFollower follower, int bufferSize) {
 			measurements = new boolean[bufferSize];
@@ -348,6 +353,7 @@ public class LineFollower implements Program {
 			head = 0;
 			push(follower.isLine());
 			lastLeft = true;
+			isEnemy = false;
 		}
 
 		@Override
@@ -363,6 +369,10 @@ public class LineFollower implements Program {
 					while (running && moving && arm.isMoving()) {
 						boolean isLine = follower.isLine();
 						int angle = arm.getArmPosition();
+						int dist = UltrasoundSensor.getInstanceOf()
+								.getMeasurment();
+						isEnemy = dist < 7;
+
 						push(isLine);
 						if (isLine) {
 							if (angle > 0)
@@ -397,6 +407,14 @@ public class LineFollower implements Program {
 					return true;
 
 			return false;
+		}
+
+		public boolean isEnemy() {
+			return isEnemy;
+		}
+
+		public boolean isMoving() {
+			return moving;
 		}
 
 		public boolean wasLastLeft() {
