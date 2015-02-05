@@ -260,7 +260,6 @@ public class LineFollower implements Program {
 				track.stop();
 			}
 		}
-		track.forward(10);
 		sensorArm.turnToCenter();
 
 		track.setSpeed(MOVING_SPEED + deltaSpeed);
