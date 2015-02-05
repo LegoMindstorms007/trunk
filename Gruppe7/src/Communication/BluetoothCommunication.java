@@ -47,9 +47,12 @@ public class BluetoothCommunication {
 
 	private boolean openConnection(String server, String address) {
 		RemoteDevice btrd = new RemoteDevice(server, address, 0);
+		if (btrd == null) {
+			LCD.drawString("No such device", 0, 2);
+			return false;
+		}
 
 		connection = Bluetooth.connect(btrd);
-
 		if (connection == null) {
 			LCD.drawString("Connection failed", 0, 2);
 			// connection failed, try again...
@@ -61,7 +64,7 @@ public class BluetoothCommunication {
 		dis = connection.openDataInputStream();
 		dos = connection.openDataOutputStream();
 
-		return true;
+		return (dis != null && dos != null);
 	}
 
 	/**
@@ -195,6 +198,7 @@ public class BluetoothCommunication {
 				String address) {
 			this.com = com;
 			this.serverName = serverName;
+			this.address = address;
 			connected = false;
 		}
 
