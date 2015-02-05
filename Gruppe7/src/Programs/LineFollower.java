@@ -18,7 +18,7 @@ public class LineFollower implements Program {
 	protected static final int MOVING_SPEED = 600;
 	protected static final int ROTATING_SPEED = 350;
 	protected static final int ARM_SPEED = 350;
-	protected static final int BUFFERSIZE = 40;
+	protected static final int BUFFERSIZE = 30;
 	protected LightSensor light;
 	protected TrackSuspension track;
 	protected boolean running;
@@ -80,12 +80,11 @@ public class LineFollower implements Program {
 
 		while (running && !lineFinished) {
 
-			while (lightSweeper.isMoving() && lightSweeper.isEnemy()) {
-				sleep(50);
+			if (lightSweeper.isMoving() && lightSweeper.isEnemy()) {
+				track.stop();
 			}
-
 			// check if robot is on the line
-			if (lightSweeper.isLine()) {
+			else if (lightSweeper.isLine()) {
 				if (!track.motorsMoving())
 					track.forward();
 
@@ -342,7 +341,8 @@ public class LineFollower implements Program {
 		private boolean measurements[];
 		private int head;
 		private boolean lastLeft;
-		private boolean isEnemy;
+		private int enemyBuffer;
+		private int counter;
 
 		public LightSweeper(SensorArm arm, LineFollower follower, int bufferSize) {
 			measurements = new boolean[bufferSize];
@@ -353,7 +353,8 @@ public class LineFollower implements Program {
 			head = 0;
 			push(follower.isLine());
 			lastLeft = true;
-			isEnemy = false;
+			enemyBuffer = 0;
+			counter = 0;
 		}
 
 		@Override
@@ -369,10 +370,12 @@ public class LineFollower implements Program {
 					while (running && moving && arm.isMoving()) {
 						boolean isLine = follower.isLine();
 						int angle = arm.getArmPosition();
-						int dist = UltrasoundSensor.getInstanceOf()
-								.getMeasurment();
-						isEnemy = dist < 7;
-
+						if (counter == 0) {
+							enemyBuffer += UltrasoundSensor.getInstanceOf()
+									.getMeasurment() < 10 ? 1 : -1;
+							enemyBuffer = Math.max(0, enemyBuffer);
+							enemyBuffer = Math.min(10, enemyBuffer);
+						}
 						push(isLine);
 						if (isLine) {
 							if (angle > 0)
@@ -380,6 +383,8 @@ public class LineFollower implements Program {
 							else
 								lastLeft = false;
 						}
+						counter++;
+						counter %= 10;
 						sleep(10);
 					}
 					moveLeft = !moveLeft;
@@ -401,16 +406,16 @@ public class LineFollower implements Program {
 			running = false;
 		}
 
+		public boolean isEnemy() {
+			return enemyBuffer > 0;
+		}
+
 		public boolean isLine() {
 			for (boolean value : measurements)
 				if (value)
 					return true;
 
 			return false;
-		}
-
-		public boolean isEnemy() {
-			return isEnemy;
 		}
 
 		public boolean isMoving() {
