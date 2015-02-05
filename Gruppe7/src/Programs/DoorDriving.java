@@ -9,6 +9,7 @@ import Sensors.UltrasoundSensor;
 public class DoorDriving implements Program {
 
 	private static final String DOOR = "TestName";
+	private static final String DOOR_ADDRESS = "00165304779A";
 	private UltrasoundSensor usSensor;
 	private SensorArm arm;
 	private BluetoothCommunication com;
@@ -29,7 +30,7 @@ public class DoorDriving implements Program {
 	@Override
 	public void run() {
 		running = true;
-		com.connect(DOOR);
+		com.connect(DOOR, DOOR_ADDRESS);
 		arm.turnToCenter();
 
 		align();
