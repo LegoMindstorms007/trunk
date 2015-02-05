@@ -54,6 +54,7 @@ public class StartNeu implements Program {
 		arm.turnToCenter();
 		adjustToWallLeft();
 		arm.turnToCenter();
+		linefound = false;
 		while (!linefound && running) {
 			if (!tracks.motorsMoving()) {
 				tracks.forward();
