@@ -1,5 +1,6 @@
 package Test;
 
+import Sensors.UltrasoundSensor;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
@@ -18,11 +19,10 @@ public class UltraSonicTester {
 		new Thread(start).start();
 		Button.waitForAnyPress();
 		start.halt();*/
-		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S3);
-		sensor = new RangeFeatureDetector(us, MAXDISTANCE, 50);
+		UltrasoundSensor us = UltrasoundSensor.getInstanceOf();
 		boolean running = true;
 		while(running) {
-			int position = getMeasurment();
+			int position = us.getAverageMeasurement(5);
 			LCD.drawString(String.valueOf(position),0,1);
 			if (Button.waitForAnyPress(100) > 0) {
 				running = false;
