@@ -67,15 +67,8 @@ public class BridgeDriving implements Program {
 	}
 
 	protected void findBridge() {
-		boolean foundBridge = false;
-		track.setSpeed(1000);
+		track.setSpeed(2000);
 		// Find the Bridge
-		while (running && !foundBridge) {
-			if (!track.motorsMoving()) {
-				track.forward();
-			}
-			if (light.getLightValue() >= BLACKGROUND) {
-				foundBridge = true;
 				arm.turnToPosition(SensorArm.MAXRIGHT);
 				int currentTacho = track.getLeftTachoCount();
 				int distance = 0;
@@ -85,9 +78,6 @@ public class BridgeDriving implements Program {
 					}
 					distance = currentTacho - track.getLeftTachoCount();
 				}
-			}
-			sleep(50);
-		}
 	}
 
 	protected void driveOverBridge() {
