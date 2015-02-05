@@ -7,6 +7,8 @@ public class UpwardsFollower extends LineFollower {
 	@Override
 	protected void findLineStart() {
 	}
+	
+	protected void alignOnEnd() {};
 
 	@Override
 	protected void fallBack() {
