@@ -233,7 +233,7 @@ public class LineFollower implements Program {
 		boolean foundLine = false;
 		track.setSpeed(ROTATING_SPEED);
 		sensorArm.turnToPosition(20, true);
-		track.backward(30);
+		track.backward(20);
 		sensorArm.waitForArm();
 
 		// checkLeft
@@ -260,9 +260,8 @@ public class LineFollower implements Program {
 				track.stop();
 			}
 		}
-		sensorArm.turnToCenter(true);
-		track.forward(40);
-		sensorArm.waitForArm();
+		track.forward(10);
+		sensorArm.turnToCenter();
 
 		track.setSpeed(MOVING_SPEED + deltaSpeed);
 		return foundLine;

@@ -62,6 +62,9 @@ public class BarcodeReader {
 			}
 
 		}
+		track.backward();
+		sleep(AVG_NOLINE_TIME);
+		track.stop();
 
 		return code;
 	}
