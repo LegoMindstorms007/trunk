@@ -143,12 +143,12 @@ public class Labyrinthleft implements Program {
 		 * sArm.turnArmRight(90+angle); }
 		 */
 
-		boolean turn = false;
+		//boolean turn = false;
 		movement.backward(80);
 		movement.pivotAngleRight(90);
 		movement.waitForMotors();
 		movement.forward(40);
-		int measurment = usSensor.getMeasurment();
+		/*int measurment = usSensor.getMeasurment();
 		if (measurment > 25 && measurment < 50) {
 			turn = true;
 		}
@@ -160,7 +160,7 @@ public class Labyrinthleft implements Program {
 			if (isRightHolz()) {
 				turn = false;
 			}
-		}
+		}*/
 	}
 
 	@Override
