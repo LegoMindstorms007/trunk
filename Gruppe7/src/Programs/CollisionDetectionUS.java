@@ -44,12 +44,15 @@ public class CollisionDetectionUS implements Program{
 			collided = true;
 			LCD.clear();
 			LCD.drawString("Collision Detected", 0,1);
+			long startime = System.currentTimeMillis();
+			long endtime = startime;
 			while(collided && running) {
-				if(us.getAverageMeasurement(10) >= nextdistance) {
+				if(us.getAverageMeasurement(10) >= nextdistance && ((endtime - startime) > 5000)) {
 					collided = false;
 					possibleCollsion = false;
 				}
 				sleep(10);
+				endtime = System.currentTimeMillis();
 			}
 			LCD.clear();
 		} else {

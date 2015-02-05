@@ -15,10 +15,11 @@ import Sensors.UltrasoundSensor;
 public class LineFollower implements Program {
 
 	protected static final int LINE_VALUE = 35;
-	protected static final int MOVING_SPEED = 600;
-	protected static final int ROTATING_SPEED = 350;
+	protected static final int MOVING_SPEED = 650;
+	protected static final int ROTATING_SPEED = 400;
 	protected static final int ARM_SPEED = 350;
 	protected static final int BUFFERSIZE = 30;
+	protected static final int TIMEOUT = 5000;
 	protected LightSensor light;
 	protected TrackSuspension track;
 	protected boolean running;
@@ -78,14 +79,21 @@ public class LineFollower implements Program {
 		new Thread(lightSweeper).start();
 		track.setSpeed(MOVING_SPEED + deltaSpeed);
 
+		long timedOutAt = 0;
+
 		while (running && !lineFinished) {
 
-			if (lightSweeper.isMoving() && lightSweeper.isEnemy()) {
-				track.stop();
-			}
 			// check if robot is on the line
-			else if (lightSweeper.isLine()) {
-				if (!track.motorsMoving())
+			if (lightSweeper.isLine()) {
+				if (lightSweeper.isEnemy()) {
+					if (timedOutAt > 0) {
+						timedOutAt = System.currentTimeMillis() + TIMEOUT;
+					} else if (timedOutAt < System.currentTimeMillis()) {
+						timedOutAt = 0;
+						lightSweeper.resetEnemy();
+					}
+					track.stop();
+				} else if (!track.motorsMoving())
 					track.forward();
 
 			} else { // search line if robot is off course
@@ -153,7 +161,7 @@ public class LineFollower implements Program {
 	protected void findLineStart() {
 		track.forward();
 		track.setSpeed(MOVING_SPEED + deltaSpeed);
-		sleep(2000);
+		sleep(1000);
 
 		while (running && !isLine()) {
 			sleep(10);
@@ -231,22 +239,23 @@ public class LineFollower implements Program {
 	protected boolean fallbackSearch() {
 		boolean foundLine = false;
 		track.setSpeed(ROTATING_SPEED);
-		sensorArm.turnToPosition(20, true);
-		track.backward(25);
+		sensorArm.turnToPosition(40, true);
+		track.backward(20);
 		sensorArm.waitForArm();
 
 		// checkLeft
 		if (checkLeft(90)) {
 			foundLine = true;
+			sensorArm.turnToCenter();
 			track.pivotAngleLeft(90);
 		}
 
-		sensorArm.turnToPosition(-20, true);
 		// checkRight
 		if (!foundLine) {
-			track.waitForMotors();
+			sensorArm.turnToPosition(-40, false);
 			if (checkRight(90)) {
 				foundLine = true;
+				sensorArm.turnToCenter();
 				track.pivotAngleRight(90);
 			}
 
@@ -257,8 +266,7 @@ public class LineFollower implements Program {
 				track.stop();
 			}
 		}
-		sensorArm.turnToCenter(true);
-		track.forward(25);
+		track.forward(20);
 		sensorArm.waitForArm();
 
 		track.setSpeed(MOVING_SPEED + deltaSpeed);
@@ -368,7 +376,7 @@ public class LineFollower implements Program {
 						int angle = arm.getArmPosition();
 						if (counter == 0) {
 							enemyBuffer += UltrasoundSensor.getInstanceOf()
-									.getMeasurment() < 10 ? 1 : -1;
+									.getMeasurment() < 15 ? 1 : -1;
 							enemyBuffer = Math.max(0, enemyBuffer);
 							enemyBuffer = Math.min(10, enemyBuffer);
 						}
@@ -380,7 +388,7 @@ public class LineFollower implements Program {
 								lastLeft = false;
 						}
 						counter++;
-						counter %= 10;
+						counter %= 15;
 						sleep(10);
 					}
 					moveLeft = !moveLeft;
@@ -404,6 +412,10 @@ public class LineFollower implements Program {
 
 		public boolean isEnemy() {
 			return enemyBuffer > 0;
+		}
+
+		public void resetEnemy() {
+			enemyBuffer = 0;
 		}
 
 		public boolean isLine() {

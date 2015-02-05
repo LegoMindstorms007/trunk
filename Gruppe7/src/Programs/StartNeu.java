@@ -36,6 +36,7 @@ public class StartNeu implements Program {
 
 	@Override
 	public void run() {
+		sleep(1000);
 		tracks.setSpeed(MOVINGSPEED);
 		findLeftWall();
 		driveAlongLeftWall();
@@ -69,6 +70,16 @@ public class StartNeu implements Program {
 		while (running && moving) {
 			if (!tracks.motorsMoving()) {
 				tracks.forward();
+			}
+			if(bumped) {
+				tracks.setSpeed(MOVINGSPEED);
+				tracks.stop();
+				tracks.backward(backward);
+				tracks.stop();
+				tracks.pivotAngleLeft(95);
+				tracks.waitForMotors();
+				arm.turnToCenter();
+				adjustToWallRight();
 			}
 			sleep(50);
 			Orientation orientation = CalculateAngle();
@@ -108,6 +119,16 @@ public class StartNeu implements Program {
 		while (running && moving) {
 			if (!tracks.motorsMoving()) {
 				tracks.forward();
+			}
+			if(bumped) {
+				tracks.setSpeed(MOVINGSPEED);
+				tracks.stop();
+				tracks.backward(backward);
+				tracks.stop();
+				tracks.pivotAngleRight(95);
+				tracks.waitForMotors();
+				arm.turnToCenter();
+				adjustToWallLeft();
 			}
 			sleep(50);
 			Orientation orientation = CalculateAngle();
