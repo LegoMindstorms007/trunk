@@ -31,10 +31,10 @@ public class TurnTableProgram implements Program {
 				sleep(100);
 			}
 			table.connect();
-			driveInTable();
 			while (!table.isConnected() && running) {
 				sleep(100);
 			}
+			driveInTable();
 			while (!table.turn() && running) {
 				sleep(100);
 			}
@@ -87,6 +87,7 @@ public class TurnTableProgram implements Program {
 	}
 
 	private void driveOutTable() {
+		tracks.setSpeed(2000);
 		tracks.stop();
 		tracks.backward(190);
 		table.deregister();
