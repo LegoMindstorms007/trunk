@@ -130,13 +130,9 @@ public class LineFollower implements Program {
 	protected void alignOnEnd() {
 		int dist = 75;
 		track.backward(dist);
-		track.setSpeed(ROTATING_SPEED);
-		if (checkRight(50)) {
-			track.pivotRight();
-		}
-		while (track.motorsMoving()) {
-			if (isLine())
-				track.stop();
+		if (!searchTrack()) {
+			track.backward(25);
+			dist += 25;
 		}
 		sensorArm.turnToCenter();
 		track.forward(dist);
@@ -236,13 +232,12 @@ public class LineFollower implements Program {
 		boolean foundLine = false;
 		track.setSpeed(ROTATING_SPEED);
 		sensorArm.turnToPosition(20, true);
-		track.backward(20);
+		track.backward(25);
 		sensorArm.waitForArm();
 
 		// checkLeft
 		if (checkLeft(90)) {
 			foundLine = true;
-			sensorArm.turnToCenter();
 			track.pivotAngleLeft(90);
 		}
 
@@ -252,7 +247,6 @@ public class LineFollower implements Program {
 			track.waitForMotors();
 			if (checkRight(90)) {
 				foundLine = true;
-				sensorArm.turnToCenter();
 				track.pivotAngleRight(90);
 			}
 
@@ -263,7 +257,9 @@ public class LineFollower implements Program {
 				track.stop();
 			}
 		}
-		sensorArm.turnToCenter();
+		sensorArm.turnToCenter(true);
+		track.forward(25);
+		sensorArm.waitForArm();
 
 		track.setSpeed(MOVING_SPEED + deltaSpeed);
 		return foundLine;
