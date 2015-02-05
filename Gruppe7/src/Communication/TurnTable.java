@@ -21,8 +21,8 @@ public class TurnTable {
 	}
 
 	public boolean connect() {
-		String deviceName = "TurnTable";
-		bluetooth.connect(deviceName);
+		String deviceName = "TurnTablePTOP";
+		bluetooth.connect(deviceName, "00165306B259");
 		return true;
 	}
 

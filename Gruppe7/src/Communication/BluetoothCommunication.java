@@ -29,8 +29,8 @@ public class BluetoothCommunication {
 	 *            name of the server (hope you already paired your device with
 	 *            the server)
 	 */
-	public void connect(String server) {
-		btConnector = new BTConnector(this, server);
+	public void connect(String server, String address) {
+		btConnector = new BTConnector(this, server, address);
 		btConnector.start();
 		while (!btConnector.isRunning()) {
 			sleep(10);
@@ -45,18 +45,14 @@ public class BluetoothCommunication {
 		return btConnector != null && btConnector.isConnected();
 	}
 
-	private boolean openConnection(String server) {
-		RemoteDevice btrd = Bluetooth.getKnownDevice(server);
-
+	private boolean openConnection(String server, String address) {
+		RemoteDevice btrd = new RemoteDevice(server, address, 0);
 		if (btrd == null) {
 			LCD.drawString("No such device", 0, 2);
-			// no such device, you should pair your devices first or check the
-			// Devices name
 			return false;
 		}
 
 		connection = Bluetooth.connect(btrd);
-
 		if (connection == null) {
 			LCD.drawString("Connection failed", 0, 2);
 			// connection failed, try again...
@@ -68,7 +64,7 @@ public class BluetoothCommunication {
 		dis = connection.openDataInputStream();
 		dos = connection.openDataOutputStream();
 
-		return true;
+		return (dis != null && dos != null);
 	}
 
 	/**
@@ -78,13 +74,14 @@ public class BluetoothCommunication {
 	 *            integer to send
 	 */
 	public void writeInt(int value) {
-		try {
-			dos.writeInt(value);
-			dos.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (dos != null)
+			try {
+				dos.writeInt(value);
+				dos.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 
 	/**
@@ -94,13 +91,14 @@ public class BluetoothCommunication {
 	 *            boolean to send
 	 */
 	public void writeBool(boolean value) {
-		try {
-			dos.writeBoolean(value);
-			dos.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (dos != null)
+			try {
+				dos.writeBoolean(value);
+				dos.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 
 	/**
@@ -110,12 +108,13 @@ public class BluetoothCommunication {
 	 */
 	public boolean readBool() {
 		boolean value = false;
-		try {
-			value = dis.readBoolean();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (dis != null)
+			try {
+				value = dis.readBoolean();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return value;
 	}
 
@@ -126,12 +125,13 @@ public class BluetoothCommunication {
 	 */
 	public int readInt() {
 		int value = 0;
-		try {
-			value = dis.readInt();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (dis != null)
+			try {
+				value = dis.readInt();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return value;
 	}
 
@@ -142,8 +142,10 @@ public class BluetoothCommunication {
 		if (connection != null) {
 			try {
 				connection.close();
-				dis.close();
-				dos.close();
+				if (dis != null)
+					dis.close();
+				if (dos != null)
+					dos.close();
 			} catch (IOException e) {
 				// ignore
 			}
@@ -190,20 +192,23 @@ public class BluetoothCommunication {
 		private boolean running;
 		private boolean connected;
 		private String serverName;
+		private String address;
 
-		public BTConnector(BluetoothCommunication com, String serverName) {
+		public BTConnector(BluetoothCommunication com, String serverName,
+				String address) {
 			this.com = com;
 			this.serverName = serverName;
+			this.address = address;
 			connected = false;
 		}
 
 		@Override
 		public void run() {
 			running = true;
-			connected = com.openConnection(serverName);
+			connected = com.openConnection(serverName, address);
 			while (running && !connected) {
 				com.sleep(100);
-				connected = com.openConnection(serverName);
+				connected = com.openConnection(serverName, address);
 			}
 			running = false;
 		}

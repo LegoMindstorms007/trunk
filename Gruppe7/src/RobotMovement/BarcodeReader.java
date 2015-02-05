@@ -1,7 +1,7 @@
 package RobotMovement;
 
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
+import Sensors.Light;
 
 /**
  * Barcode reader class
@@ -17,14 +17,15 @@ public class BarcodeReader {
 	SensorArm arm;
 	TrackSuspension track;
 	long lastLine;
+	long lastNoLine;
 
 	/**
 	 * 
 	 * @param portOfLightSensor
 	 *            SensorPort of light sensor
 	 */
-	public BarcodeReader(SensorPort portOfLightSensor) {
-		light = new LightSensor(portOfLightSensor);
+	public BarcodeReader() {
+		light = Light.getInstanceOf();
 		arm = SensorArm.getInstance();
 		track = TrackSuspension.getInstance();
 	}
@@ -48,8 +49,12 @@ public class BarcodeReader {
 		}
 		track.forward();
 		lastLine = System.currentTimeMillis();
+		lastNoLine = System.currentTimeMillis();
 		while (track.motorsMoving()) {
 			if (System.currentTimeMillis() - lastLine > 2 * AVG_NOLINE_TIME)
+				track.stop();
+
+			if (System.currentTimeMillis() - lastNoLine > 2 * AVG_NOLINE_TIME)
 				track.stop();
 
 			if (lineValue != isLine()) {
@@ -57,11 +62,16 @@ public class BarcodeReader {
 				if (lineValue) {
 					lastLine = System.currentTimeMillis();
 					code++;
+				} else {
+					lastNoLine = System.currentTimeMillis();
 				}
 				sleep(100);
 			}
 
 		}
+		track.backward();
+		sleep(AVG_NOLINE_TIME);
+		track.stop();
 
 		return code;
 	}

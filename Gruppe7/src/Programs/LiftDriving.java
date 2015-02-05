@@ -18,6 +18,7 @@ import Sensors.Light;
 public class LiftDriving implements Program {
 
 	private static final String LIFT = "Lift";
+	private static final String LIFT_ADDRESS = "00165309448C";
 	private static final int GO_DOWN = 0;
 	private static final int IS_DOWN = 1;
 	private static final int CLOSE_CONNECTION = 2;
@@ -57,7 +58,7 @@ public class LiftDriving implements Program {
 	@Override
 	public void run() {
 		running = true;
-		com.connect(LIFT);
+		com.connect(LIFT, LIFT_ADDRESS);
 
 		alignRobotOnPlate();
 

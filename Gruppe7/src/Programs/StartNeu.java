@@ -1,5 +1,6 @@
 package Programs;
 
+import lejos.nxt.Battery;
 import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import RobotMovement.SensorArm;
@@ -10,7 +11,7 @@ import Sensors.UltrasoundSensor;
 
 public class StartNeu implements Program {
 	private static final int MOVINGSPEED = 2000;
-	private static final int TURNINGSPEED = 100;
+	private static final int TURNINGSPEED = (int)  (20 * Battery.getVoltage());
 	protected final static int backward = 150;
 	private boolean running;
 	private boolean bumped;
@@ -46,13 +47,14 @@ public class StartNeu implements Program {
 			}
 		}
 		tracks.stop();
-		tracks.backward(backward - 70);
+		tracks.backward(backward - 90);
 		tracks.stop();
 		tracks.pivotAngleRight(95);
 		tracks.waitForMotors();
 		arm.turnToCenter();
 		adjustToWallLeft();
 		arm.turnToCenter();
+		linefound = false;
 		while (!linefound && running) {
 			if (!tracks.motorsMoving()) {
 				tracks.forward();
@@ -82,10 +84,10 @@ public class StartNeu implements Program {
 				tracks.pivotAngleLeft(45);
 				tracks.waitForMotors();
 				tracks.forward(150);
-				tracks.pivotAngleRight(45);
+				tracks.pivotAngleRight(50);
 				tracks.waitForMotors();
-				adjustToWallRight();
 				arm.turnToCenter();
+				adjustToWallRight();
 			}
 			if (orientation == Orientation.TOLEFT) {
 				tracks.setSpeedLeft(MOVINGSPEED);
@@ -97,6 +99,7 @@ public class StartNeu implements Program {
 				tracks.setSpeed(MOVINGSPEED);
 			}
 		}
+
 	}
 
 	private void driveAlongLeftWall() {
@@ -120,7 +123,7 @@ public class StartNeu implements Program {
 				tracks.pivotAngleRight(45);
 				tracks.waitForMotors();
 				tracks.forward(150);
-				tracks.pivotAngleLeft(45);
+				tracks.pivotAngleLeft(50);
 				tracks.waitForMotors();
 				arm.turnToCenter();
 				adjustToWallLeft();
@@ -190,10 +193,10 @@ public class StartNeu implements Program {
 		sleep(50);
 		int secondMeasure = us.getAverageMeasurement(5);
 		int sum = firstMeasure + secondMeasure;
-		if (firstMeasure + secondMeasure > 120) {
+		if (firstMeasure + secondMeasure > 180) {
 			return Orientation.STOP;
 		}
-		if (sum < 20) {
+		if (sum < 25) {
 			return Orientation.TONEAR;
 		}
 		int position = firstMeasure - secondMeasure;

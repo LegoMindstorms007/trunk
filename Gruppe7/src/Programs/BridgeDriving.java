@@ -1,24 +1,28 @@
 package Programs;
 
+import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
+import Sensors.BumpSensor;
 import Sensors.Light;
 
 public class BridgeDriving implements Program {
 	public static final int MOVING_SPEED = 200;
 	public static final int SWEEPING_SPEED = 400;
 	public static final int ROTATINGSPEED = 500;
-	public static final int PANEL = 57;
-	public static final int NOGROUND = 42;
+	public static final int PANEL = 40;
+	public static final int NOGROUND = 28;
 	public static final int BLACKGROUND = 26;
 	public static final int GREEN = 35;
+	protected CollisionDetectionUS collisionDetection;
 	protected TrackSuspension track;
 	protected SensorArm arm;
 	protected LightSensor light;
 	protected boolean running;
 	protected LightSweeper sweeper;
+	protected BumpSensor bump;
 	Last last;
 
 	public BridgeDriving() {
@@ -29,6 +33,9 @@ public class BridgeDriving implements Program {
 		track.setSpeed(MOVING_SPEED);
 		sweeper = new LightSweeper();
 		running = true;
+		light.setFloodlight(true);
+		collisionDetection = new CollisionDetectionUS();
+		bump = BumpSensor.getInstanceOf();
 	}
 
 	@Override
@@ -66,29 +73,39 @@ public class BridgeDriving implements Program {
 	}
 
 	protected void findBridge() {
-		boolean foundBridge = false;
-		track.setSpeed(1000);
+		track.setSpeed(2000);
 		// Find the Bridge
-		while (running && !foundBridge) {
-			if (!track.motorsMoving()) {
-				track.forward();
-			}
-			if (light.getLightValue() >= BLACKGROUND) {
-				foundBridge = true;
-				track.forward(1300);
-			}
-			sleep(50);
-		}
+				arm.turnToPosition(SensorArm.MAXRIGHT);
+				int currentTacho = track.getLeftTachoCount();
+				int distance = 0;
+				while(light.getLightValue() >= NOGROUND && running && (distance < 5000)) {
+					if(!track.motorsMoving()) {
+						track.forward();
+					}
+					if(bump.touchedAny()) {
+						track.stop();
+					}
+					distance = track.getLeftTachoCount() - currentTacho;
+					sleep(50);
+				}
 	}
 
 	protected void driveOverBridge() {
 		track.setSpeed(MOVING_SPEED);
 		Thread sweeping = new Thread(sweeper);
 		sweeping.start();
+		new Thread(collisionDetection).start();
 		last = null;
 		while (running) {
 			if (!track.motorsMoving()) {
 				track.forward();
+			}
+			while(collisionDetection.possibleCollision()) {
+				track.stop();
+				sweeper.stopSweeping();
+			}
+			if(!sweeper.isSweeping()) {
+				sweeper.startSweeping();
 			}
 			Ground currentGround = checkGround(measure());
 			if (currentGround == Ground.AIR) {
@@ -124,6 +141,7 @@ public class BridgeDriving implements Program {
 		sweeper.halt();
 		track.stop();
 		arm.turnToCenter();
+		collisionDetection.halt();
 		running = false;
 	}
 
@@ -138,13 +156,7 @@ public class BridgeDriving implements Program {
 
 	private int measure() {
 		// WithLight
-		light.setFloodlight(true);
-		int lightValue = light.getLightValue();
-		light.setFloodlight(false);
-		sleep(10);
-		lightValue += light.getLightValue();
-		sleep(10);
-		return lightValue;
+		return light.getLightValue();
 	}
 
 	private Ground checkGround(int measurement) {

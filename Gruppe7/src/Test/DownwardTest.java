@@ -1,7 +1,6 @@
 package Test;
 
 import lejos.nxt.Button;
-import lejos.nxt.SensorPort;
 import Programs.DownwardFollower;
 import RobotMovement.Aligner;
 import RobotMovement.BarcodeReader;
@@ -9,8 +8,7 @@ import RobotMovement.BarcodeReader;
 public class DownwardTest {
 
 	public static void main(String args[]) {
-		DownwardFollower follower = new DownwardFollower(SensorPort.S4,
-				SensorPort.S3);
+		DownwardFollower follower = new DownwardFollower();
 
 		new Thread(follower).start();
 		while (!follower.isRunning())
@@ -21,9 +19,9 @@ public class DownwardTest {
 				follower.halt();
 			}
 		}
-		BarcodeReader bcReader = new BarcodeReader(SensorPort.S4);
+		BarcodeReader bcReader = new BarcodeReader();
 		bcReader.readBarcode();
-		Aligner aligner = new Aligner(SensorPort.S4, 35, false);
+		Aligner aligner = new Aligner(35, false);
 		aligner.align();
 	}
 }

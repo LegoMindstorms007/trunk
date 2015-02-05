@@ -48,6 +48,7 @@ public class PlankBridge implements Program {
 		while (secondFollower.isRunning() && running) {
 
 		}
+		halt();
 		track.stop();
 	}
 

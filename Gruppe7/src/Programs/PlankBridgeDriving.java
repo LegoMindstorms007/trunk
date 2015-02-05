@@ -30,7 +30,7 @@ public class PlankBridgeDriving extends BridgeDriving {
 				int position = arm.getArmPosition();
 				track.stop();
 				track.setSpeed(ROTATINGSPEED);
-				if (position > -45 && position < 45) {
+				if (position > -40 && position < 40) {
 					sweeper.stopSweeping();
 					arm.turnToCenter();
 					track.forward(10);

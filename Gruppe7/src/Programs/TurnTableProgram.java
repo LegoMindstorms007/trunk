@@ -25,16 +25,17 @@ public class TurnTableProgram implements Program {
 	@Override
 	public void run() {
 		while (running) {
+			tracks.forward(100);
 			new Thread(upwards).start();
 			sleep(100);
 			while (upwards.isRunning() && running) {
 				sleep(100);
 			}
 			table.connect();
-			driveInTable();
 			while (!table.isConnected() && running) {
 				sleep(100);
 			}
+			driveInTable();
 			while (!table.turn() && running) {
 				sleep(100);
 			}
@@ -87,10 +88,11 @@ public class TurnTableProgram implements Program {
 	}
 
 	private void driveOutTable() {
+		tracks.setSpeed(2000);
 		tracks.stop();
-		tracks.backward(190);
+		tracks.backward(220);
 		table.deregister();
-		tracks.pivotAngleRight(180);
+		tracks.pivotAngleRight(190);
 		tracks.waitForMotors();
 	}
 }
