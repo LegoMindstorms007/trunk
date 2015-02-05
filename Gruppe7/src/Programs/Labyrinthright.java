@@ -7,7 +7,7 @@ import Sensors.BumpSensor;
 import Sensors.Light;
 import Sensors.UltrasoundSensor;
 
-public class Labyrinth implements Program {
+public class Labyrinthright implements Program {
 
 	private static final int MOVING_SPEED = 750;
 	private static final int ARM_SPEED = 200;
@@ -21,7 +21,7 @@ public class Labyrinth implements Program {
 
 	// private int distance = 0;
 
-	public Labyrinth() {
+	public Labyrinthright() {
 		sArm = SensorArm.getInstance();
 		sArm.setSpeed(ARM_SPEED);
 		usSensor = UltrasoundSensor.getInstanceOf();
