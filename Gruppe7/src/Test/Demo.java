@@ -6,7 +6,7 @@ import lejos.nxt.SensorPort;
 import Programs.BridgeDriving;
 import Programs.DoorDriving;
 import Programs.DownwardFollower;
-import Programs.Labyrinth;
+import Programs.Labyrinthright;
 import Programs.Labyrinthleft;
 import Programs.LiftDriving;
 import Programs.LineFollower;
@@ -135,7 +135,7 @@ public class Demo {
 				if (goLeftInLabyrinth)
 					current = new Labyrinthleft();
 				else
-					current = new Labyrinth();
+					current = new Labyrinthright();
 				LCD.drawString("Labyrinth", 0, 0);
 				break;
 			case 5:
