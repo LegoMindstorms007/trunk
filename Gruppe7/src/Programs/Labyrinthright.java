@@ -17,7 +17,9 @@ public class Labyrinthright implements Program {
 	private boolean running;
 	private BumpSensor bump;
 	private LightSensor light;
-	//private boolean adjust = true;
+	// private int leftvalue=0;
+	// private int rightvalue=0;
+	private boolean adjust = true;
 
 	// private int distance = 0;
 
@@ -35,76 +37,48 @@ public class Labyrinthright implements Program {
 	public void run() {
 		running = true;
 		sArm.turnArmRight(90);
-		//movement.forward(40);
-		movement.forward();
+		movement.forward(40);
+		//movement.forward();
 		while (running) {
 			if (!isLine()) {
 				if (bump.touchedAny()) {
 					searchHolzByCollision();
 				} else if (isRightHolz()) {
-					int measurment = usSensor.getMeasurment();
-					if (measurment >= 8 && measurment <= 15) {// follow the
-																// wood
-						movement.forward();
-					} else if (measurment < 5) {
-						movement.backward(60);
-						movement.pivotAngleLeft(30);
-						movement.waitForMotors();
-						movement.forward(40);
-					} else if (measurment >= 5 && measurment < 8) {// adjust
-						movement.backward(60);
-						movement.pivotAngleLeft(15);
-						movement.waitForMotors();
-						movement.forward(50);
-					} else if (measurment > 15 && measurment <= 24) {// adjust
-						movement.pivotAngleRight(5);
-						movement.waitForMotors();
-						movement.forward(60);
-						while(movement.motorsMoving()){
-							if(isLine()){
-								movement.stop();
-								halt();
-							}
+						int measurment = usSensor.getMeasurment();
+						if (measurment >= 8 && measurment <= 15) {// follow the
+																	// wood
+							movement.forward();
+						} else if (measurment < 5) {
+							movement.backward(60);
+							movement.pivotAngleLeft(30);
+							movement.waitForMotors();
+							movement.forward(40);
+						} else if (measurment >= 5 && measurment < 8) {// adjust
+							movement.backward(60);
+							movement.pivotAngleLeft(15);
+							movement.waitForMotors();
+							movement.forward(50);
+						} else if (measurment > 15 && measurment <= 24) {// adjust
+							movement.pivotAngleRight(5);
+							movement.waitForMotors();
+							movement.forward(60);
+						} else if (measurment > 24) {
+							movement.pivotAngleRight(15);
+							movement.waitForMotors();
+							movement.forward(50);
 						}
-					} else if (measurment > 24) {
-						movement.pivotAngleRight(15);
-						movement.waitForMotors();
-						movement.forward(50);
-						while(movement.motorsMoving()){
-							if(isLine()){
-								movement.stop();
-								halt();
-							}
 					}
-				} else if (!isRightHolz()) {// air, turn to right
+				else if (!isRightHolz()) {// air, turn to right
 					turntoHolz();
 				}
 			} else {
 				running = false;
-				movement.setSpeed(MOVING_SPEED);
 			}
+
+		
 		}
 		movement.stop();
-		/*while (adjust) {
-			int measurment = usSensor.getMeasurment();
-			if (measurment >= 5 || measurment <= 7) {
-				adjust = false;
-			} else if (measurment > 7) {
-				movement.backward(50);
-				movement.pivotAngleRight(5);
-				movement.waitForMotors();
-				movement.forward(45);
-			} else if (measurment < 5) {
-				movement.backward(50);
-				movement.pivotAngleLeft(5);
-				movement.waitForMotors();
-				movement.forward(45);
-
-			}
-		}*/
-
 		sArm.turnToCenter();
-		}
 	}
 
 	private boolean isLine() {
@@ -123,6 +97,18 @@ public class Labyrinthright implements Program {
 	}
 
 	private void searchHolzByCollision() {
+		/*
+		 * int angle=0; movement.backward(70); sArm.turnArmLeft(180);
+		 * while(sArm.isMoving()){ if(usSensor.getMeasurment()>60){ sArm.stop();
+		 * angle=sArm.getArmPosition(); } } if(angle>0){
+		 * movement.pivotAngleLeft(angle); movement.waitForMotors();
+		 * sArm.turnToCenter(); sArm.turnArmRight(angle); } else if(angle ==0){
+		 * movement.pivotAngleLeft(45); movement.waitForMotors();
+		 * sArm.turnArmRight(90); } else if(angle < 0){
+		 * movement.pivotAngleLeft(45); movement.waitForMotors();
+		 * sArm.turnArmRight(90+angle); }
+		 */
+
 	//	boolean turn = false;
 		movement.backward(80);
 		movement.pivotAngleLeft(90);

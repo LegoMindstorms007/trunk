@@ -69,7 +69,8 @@ public class Labyrinthleft implements Program {
 				} else if (!isRightHolz()) {// air, turn to right
 					turntoHolz();
 				}
-			} else {
+			}
+			else {
 				running = false;
 			}
 		}
