@@ -22,7 +22,7 @@ public class UltraSonicTester {
 		UltrasoundSensor us = UltrasoundSensor.getInstanceOf();
 		boolean running = true;
 		while(running) {
-			int position = us.getAverageMeasurement(5);
+			int position = us.getMeasurment();
 			LCD.drawString(String.valueOf(position),0,1);
 			if (Button.waitForAnyPress(100) > 0) {
 				running = false;
