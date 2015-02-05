@@ -94,6 +94,7 @@ public class BridgeDriving implements Program {
 		track.setSpeed(MOVING_SPEED);
 		Thread sweeping = new Thread(sweeper);
 		sweeping.start();
+		new Thread(collisionDetection).start();
 		last = null;
 		while (running) {
 			if (!track.motorsMoving()) {
@@ -140,6 +141,7 @@ public class BridgeDriving implements Program {
 		sweeper.halt();
 		track.stop();
 		arm.turnToCenter();
+		collisionDetection.halt();
 		running = false;
 	}
 

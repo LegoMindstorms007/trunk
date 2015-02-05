@@ -15,7 +15,14 @@ public class LightSweeper implements Runnable {
 		moving = true;
 		while (running) {
 			while (running && moving) {
-				arm.tilt();
+				arm.turnToPosition(SensorArm.MAXLEFT,true );
+				while(arm.isMoving() && moving) {
+					sleep(10);
+				}
+				arm.turnToPosition(SensorArm.MAXRIGHT,true );
+				while(arm.isMoving() && moving) {
+					sleep(10);
+				}
 			}
 			sleep(200);
 		}
