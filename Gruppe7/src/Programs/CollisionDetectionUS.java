@@ -20,7 +20,7 @@ public class CollisionDetectionUS implements Program{
 	private void checkForCollision() {
 		boolean checking = true;
 		while(checking && running) {
-			if()
+			//if()
 		}
 	}
 	
