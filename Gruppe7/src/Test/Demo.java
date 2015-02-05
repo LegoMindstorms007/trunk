@@ -5,7 +5,9 @@ import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import Programs.BridgeDriving;
 import Programs.DoorDriving;
+import Programs.DownwardFollower;
 import Programs.Labyrinth;
+import Programs.Labyrinthleft;
 import Programs.LiftDriving;
 import Programs.LineFollower;
 import Programs.PlankBridge;
@@ -20,7 +22,7 @@ import Sensors.UltrasoundSensor;
 
 public class Demo {
 
-	private static final int NUM_PROGRAMS = 9;
+	private static final int NUM_PROGRAMS = 10;
 
 	public static final SensorPort BUMP_RIGHT = SensorPort.S1;
 	public static final SensorPort BUMP_LEFT = SensorPort.S2;
@@ -30,6 +32,7 @@ public class Demo {
 	public static void main(String[] args) {
 
 		int program = 0;
+		boolean goLeftInLabyrinth = false;
 		Program current = null;
 		BarcodeReader barcode = new BarcodeReader();
 
@@ -40,6 +43,75 @@ public class Demo {
 					current.halt();
 					sleep(10);
 				}
+			}
+
+			int buttonPushed = 0;
+
+			while (buttonPushed != Button.ID_ENTER) {
+				LCD.clear();
+				LCD.drawString("Labyrinth richtung:", 0, 0);
+
+				if (goLeftInLabyrinth)
+					LCD.drawString("Left", 0, 2);
+				else
+					LCD.drawString("Right", 0, 2);
+
+				buttonPushed = Button.waitForAnyPress();
+
+				if (buttonPushed == Button.ID_LEFT)
+					goLeftInLabyrinth = true;
+				else if (buttonPushed == Button.ID_RIGHT)
+					goLeftInLabyrinth = false;
+			}
+			buttonPushed = 0;
+
+			while (buttonPushed != Button.ID_ENTER) {
+				LCD.clear();
+				LCD.drawString("Programm wählen:", 0, 0);
+				String programName = "";
+				switch (program) {
+				case 0:
+					programName = "Start Programm";
+					break;
+				case 1:
+					programName = "Linie folgen";
+					break;
+				case 2:
+					programName = "Brücke fahren";
+					break;
+				case 3:
+					programName = "Lift fahren";
+					break;
+				case 4:
+					programName = "Labyrinth";
+					break;
+				case 5:
+					programName = "Sumpf + Gate";
+					break;
+				case 6:
+					programName = "Hängebrücke";
+					break;
+				case 7:
+					programName = "Nach Hängebrücke";
+					break;
+				case 8:
+					programName = "Drehteller";
+					break;
+				case 9:
+					programName = "Endgegner";
+					break;
+				}
+
+				LCD.drawString(programName, 0, 2);
+
+				buttonPushed = Button.waitForAnyPress();
+
+				if (buttonPushed == Button.ID_LEFT)
+					program += NUM_PROGRAMS - 1;
+				else if (buttonPushed == Button.ID_RIGHT)
+					program++;
+
+				program %= NUM_PROGRAMS;
 			}
 
 			switch (program) {
@@ -60,7 +132,10 @@ public class Demo {
 				LCD.drawString("Lift ", 0, 0);
 				break;
 			case 4:
-				current = new Labyrinth();
+				if (goLeftInLabyrinth)
+					current = new Labyrinthleft();
+				else
+					current = new Labyrinth();
 				LCD.drawString("Labyrinth", 0, 0);
 				break;
 			case 5:
@@ -70,9 +145,12 @@ public class Demo {
 				current = new PlankBridge();
 				break;
 			case 7:
-				current = new TurnTableProgram();
+				current = new DownwardFollower();
 				break;
 			case 8:
+				current = new TurnTableProgram();
+				break;
+			case 9:
 				// TODO : Boss
 				TrackSuspension track = TrackSuspension.getInstance();
 				track.setSpeed(5000);

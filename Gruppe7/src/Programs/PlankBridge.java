@@ -6,7 +6,6 @@ import RobotMovement.TrackSuspension;
 
 public class PlankBridge implements Program {
 	private UpwardsFollower firstFollower;
-	private DownwardFollower secondFollower;
 	private PlankBridgeDriving bridgeDriving;
 	private boolean running;
 	private TrackSuspension track = TrackSuspension.getInstance();
@@ -14,7 +13,6 @@ public class PlankBridge implements Program {
 	public PlankBridge() {
 		firstFollower = new UpwardsFollower();
 		bridgeDriving = new PlankBridgeDriving();
-		secondFollower = new DownwardFollower();
 		running = true;
 	}
 
@@ -42,12 +40,7 @@ public class PlankBridge implements Program {
 		track.setSpeed(2000);
 		track.forward(100);
 		track.stop();
-
-		new Thread(secondFollower).start();
 		sleep(100);
-		while (secondFollower.isRunning() && running) {
-
-		}
 		halt();
 		track.stop();
 	}

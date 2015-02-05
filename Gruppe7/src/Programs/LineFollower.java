@@ -246,6 +246,7 @@ public class LineFollower implements Program {
 		// checkLeft
 		if (checkLeft(90)) {
 			foundLine = true;
+			sensorArm.turnToCenter();
 			track.pivotAngleLeft(90);
 		}
 
@@ -254,6 +255,7 @@ public class LineFollower implements Program {
 			sensorArm.turnToPosition(-40, false);
 			if (checkRight(90)) {
 				foundLine = true;
+				sensorArm.turnToCenter();
 				track.pivotAngleRight(90);
 			}
 
@@ -264,7 +266,6 @@ public class LineFollower implements Program {
 				track.stop();
 			}
 		}
-		sensorArm.turnToCenter(true);
 		track.forward(20);
 		sensorArm.waitForArm();
 
