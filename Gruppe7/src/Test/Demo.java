@@ -36,6 +36,75 @@ public class Demo {
 		Program current = null;
 		BarcodeReader barcode = new BarcodeReader();
 
+		int buttonPushed = 0;
+
+		while (buttonPushed != Button.ID_ENTER) {
+			LCD.clear();
+			LCD.drawString("Labyrinth direction:", 0, 0);
+
+			if (goLeftInLabyrinth)
+				LCD.drawString("Left", 0, 2);
+			else
+				LCD.drawString("Right", 0, 2);
+
+			buttonPushed = Button.waitForAnyPress();
+
+			if (buttonPushed == Button.ID_LEFT)
+				goLeftInLabyrinth = true;
+			else if (buttonPushed == Button.ID_RIGHT)
+				goLeftInLabyrinth = false;
+		}
+		buttonPushed = 0;
+
+		while (buttonPushed != Button.ID_ENTER) {
+			LCD.clear();
+			LCD.drawString("Choose program:", 0, 0);
+			String programName = "";
+			switch (program) {
+			case 0:
+				programName = "Start program";
+				break;
+			case 1:
+				programName = "line following";
+				break;
+			case 2:
+				programName = "Bridge";
+				break;
+			case 3:
+				programName = "Lift";
+				break;
+			case 4:
+				programName = "Labyrinth";
+				break;
+			case 5:
+				programName = "Gate";
+				break;
+			case 6:
+				programName = "Plank-Bridge";
+				break;
+			case 7:
+				programName = "After Plank-Bridge";
+				break;
+			case 8:
+				programName = "Turntable";
+				break;
+			case 9:
+				programName = "Bossssssss";
+				break;
+			}
+
+			LCD.drawString(programName, 0, 2);
+
+			buttonPushed = Button.waitForAnyPress();
+
+			if (buttonPushed == Button.ID_LEFT)
+				program += NUM_PROGRAMS - 1;
+			else if (buttonPushed == Button.ID_RIGHT)
+				program++;
+
+			program %= NUM_PROGRAMS;
+		}
+
 		while (program < NUM_PROGRAMS) {
 
 			if (current != null) {
@@ -43,75 +112,6 @@ public class Demo {
 					current.halt();
 					sleep(10);
 				}
-			}
-
-			int buttonPushed = 0;
-
-			while (buttonPushed != Button.ID_ENTER) {
-				LCD.clear();
-				LCD.drawString("Labyrinth direction:", 0, 0);
-
-				if (goLeftInLabyrinth)
-					LCD.drawString("Left", 0, 2);
-				else
-					LCD.drawString("Right", 0, 2);
-
-				buttonPushed = Button.waitForAnyPress();
-
-				if (buttonPushed == Button.ID_LEFT)
-					goLeftInLabyrinth = true;
-				else if (buttonPushed == Button.ID_RIGHT)
-					goLeftInLabyrinth = false;
-			}
-			buttonPushed = 0;
-
-			while (buttonPushed != Button.ID_ENTER) {
-				LCD.clear();
-				LCD.drawString("Choose program:", 0, 0);
-				String programName = "";
-				switch (program) {
-				case 0:
-					programName = "Start program";
-					break;
-				case 1:
-					programName = "line following";
-					break;
-				case 2:
-					programName = "Bridge";
-					break;
-				case 3:
-					programName = "Lift";
-					break;
-				case 4:
-					programName = "Labyrinth";
-					break;
-				case 5:
-					programName = "Gate";
-					break;
-				case 6:
-					programName = "Plank-Bridge";
-					break;
-				case 7:
-					programName = "After Plank-Bridge";
-					break;
-				case 8:
-					programName = "Turntable";
-					break;
-				case 9:
-					programName = "Bossssssss";
-					break;
-				}
-
-				LCD.drawString(programName, 0, 2);
-
-				buttonPushed = Button.waitForAnyPress();
-
-				if (buttonPushed == Button.ID_LEFT)
-					program += NUM_PROGRAMS - 1;
-				else if (buttonPushed == Button.ID_RIGHT)
-					program++;
-
-				program %= NUM_PROGRAMS;
 			}
 
 			switch (program) {
