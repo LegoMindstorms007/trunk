@@ -16,7 +16,6 @@ public class DoorTest {
 		BarcodeReader barcode = new BarcodeReader();
 		TurnTableProgram turntable = new TurnTableProgram();
 		Button.waitForAnyPress();
-		aligner.align();
 
 		new Thread(door).start();
 

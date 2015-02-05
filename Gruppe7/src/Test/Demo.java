@@ -16,6 +16,7 @@ import RobotMovement.Aligner;
 import RobotMovement.BarcodeReader;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
+import Sensors.UltrasoundSensor;
 
 public class Demo {
 
@@ -100,6 +101,7 @@ public class Demo {
 				if (!buttonPressed) {
 					switch (program) {
 					case 4:
+						alignOnRight(12);
 					case 6:
 						Aligner aligner = new Aligner(35, false);
 						LCD.drawString(
@@ -130,5 +132,19 @@ public class Demo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private static void alignOnRight(int maxDist) {
+		SensorArm.getInstance().turnToPosition(-90);
+		if (UltrasoundSensor.getInstanceOf().getMeasurment() > maxDist + 1) {
+			TrackSuspension movement = TrackSuspension.getInstance();
+			movement.turnRight(-45);
+			movement.waitForMotors();
+			movement.backward(100);
+			movement.turnRight(45);
+			movement.waitForMotors();
+			movement.forward(150);
+		}
+		SensorArm.getInstance().turnToCenter();
 	}
 }

@@ -9,8 +9,8 @@ import Sensors.UltrasoundSensor;
 
 public class Labyrinth implements Program {
 
-	private static final int MOVING_SPEED = 650;
-	private static final int ARM_SPEED = 150;
+	private static final int MOVING_SPEED = 750;
+	private static final int ARM_SPEED = 200;
 	private SensorArm sArm;
 	private UltrasoundSensor usSensor;
 	private TrackSuspension movement;
@@ -43,27 +43,25 @@ public class Labyrinth implements Program {
 				if (bump.touchedAny()) {
 					searchHolzByCollision();
 				} else if (isRightHolz()) {
-					if (usSensor.getMeasurment() >= 8
-							&& usSensor.getMeasurment() <= 15) {// follow the
+					int measurment = usSensor.getMeasurment();
+					if (measurment >= 8 && measurment <= 15) {// follow the
 																// wood
 						movement.forward();
-					} else if (usSensor.getMeasurment() < 5) {
+					} else if (measurment < 5) {
 						movement.backward(60);
 						movement.pivotAngleLeft(30);
 						movement.waitForMotors();
 						movement.forward(40);
-					} else if (usSensor.getMeasurment() >= 5
-							&& usSensor.getMeasurment() < 8) {// adjust
+					} else if (measurment >= 5 && measurment < 8) {// adjust
 						movement.backward(60);
 						movement.pivotAngleLeft(15);
 						movement.waitForMotors();
 						movement.forward(50);
-					} else if (usSensor.getMeasurment() > 15
-							&& usSensor.getMeasurment() <= 24) {// adjust
+					} else if (measurment > 15 && measurment <= 24) {// adjust
 						movement.pivotAngleRight(5);
 						movement.waitForMotors();
 						movement.forward(60);
-					} else if (usSensor.getMeasurment() > 24) {
+					} else if (measurment > 24) {
 						movement.pivotAngleRight(15);
 						movement.waitForMotors();
 						movement.forward(50);
@@ -77,14 +75,15 @@ public class Labyrinth implements Program {
 		}
 		movement.stop();
 		while (adjust) {
-			if (usSensor.getMeasurment() >= 5 || usSensor.getMeasurment() <= 7) {
+			int measurment = usSensor.getMeasurment();
+			if (measurment >= 5 || measurment <= 7) {
 				adjust = false;
-			} else if (usSensor.getMeasurment() > 7) {
+			} else if (measurment > 7) {
 				movement.backward(50);
 				movement.pivotAngleRight(5);
 				movement.waitForMotors();
 				movement.forward(45);
-			} else if (usSensor.getMeasurment() < 5) {
+			} else if (measurment < 5) {
 				movement.backward(50);
 				movement.pivotAngleLeft(5);
 				movement.waitForMotors();
@@ -149,7 +148,8 @@ public class Labyrinth implements Program {
 		movement.pivotAngleLeft(90);
 		movement.waitForMotors();
 		movement.forward(40);
-		if (usSensor.getMeasurment() > 25 && usSensor.getMeasurment() < 50) {
+		int measurment = usSensor.getMeasurment();
+		if (measurment > 25 && measurment < 50) {
 			turn = true;
 		}
 		while (turn) {
