@@ -60,8 +60,12 @@ public class StartNeu implements Program {
 			if (!tracks.motorsMoving()) {
 				tracks.forward();
 			}
+			if(light.getLightValue() >= 35) {
+				linefound = true;
+			}
 		}
 		tracks.stop();
+		halt();
 	}
 
 	private void driveAlongRightWall() {
@@ -85,11 +89,11 @@ public class StartNeu implements Program {
 			Orientation orientation = CalculateAngle();
 			LCD.clear();
 			LCD.drawString(orientation.toString(), 0, 1);
-			if (orientation == orientation.STOP) {
+			if (orientation == Orientation.STOP) {
 				moving = false;
 				tracks.stop();
 			}
-			if (orientation == orientation.TONEAR) {
+			if (orientation == Orientation.TONEAR) {
 				tracks.stop();
 				tracks.setSpeed(MOVINGSPEED);
 				tracks.pivotAngleLeft(45);
@@ -134,11 +138,11 @@ public class StartNeu implements Program {
 			Orientation orientation = CalculateAngle();
 			LCD.clear();
 			LCD.drawString(orientation.toString(), 0, 1);
-			if (orientation == orientation.STOP) {
+			if (orientation == Orientation.STOP) {
 				moving = false;
 				tracks.stop();
 			}
-			if (orientation == orientation.TONEAR) {
+			if (orientation == Orientation.TONEAR) {
 				tracks.stop();
 				tracks.setSpeed(MOVINGSPEED);
 				tracks.pivotAngleRight(45);
@@ -215,7 +219,6 @@ public class StartNeu implements Program {
 		int secondMeasure = us.getAverageMeasurement(5);
 		if(firstMeasure == 255 || secondMeasure == 255) {
 			firstMeasure = us.getAverageMeasurement(5);
-			sleep(50);
 			secondMeasure = us.getAverageMeasurement(5);
 		}
 		int sum = firstMeasure + secondMeasure;
@@ -261,9 +264,9 @@ public class StartNeu implements Program {
 		@Override
 		public void run() {
 			while (running) {
-				if (light.getLightValue() >= 40) {
+				/*if (light.getLightValue() >= 40) {
 					linefound();
-				}
+				}*/
 				while (bumper.touchedFront()) {
 					bumped();
 					sleep(50);
