@@ -1,6 +1,5 @@
 package Programs;
 
-import lejos.nxt.SensorPort;
 import Communication.BluetoothCommunication;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
@@ -19,8 +18,7 @@ public class DoorDriving implements Program {
 	@SuppressWarnings("unused")
 	private BumpSensor bump;
 
-	public DoorDriving(SensorPort portOfUltrasoundSensor, SensorPort leftBump,
-			SensorPort rightBump) {
+	public DoorDriving() {
 		usSensor = UltrasoundSensor.getInstanceOf();
 		arm = SensorArm.getInstance();
 		com = new BluetoothCommunication();

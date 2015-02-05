@@ -1,10 +1,9 @@
 package Programs;
 
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
-import RobotMovement.LineAligner;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
+import Sensors.Light;
 import Sensors.UltrasoundSensor;
 
 /**
@@ -29,7 +28,6 @@ public class LineFollower implements Program {
 	protected int deltaSpeed;
 	protected boolean lineFinished;
 	protected boolean lastLeft = false;
-	protected LineAligner lineAligner;
 
 	/**
 	 * Constructs a line follower
@@ -39,8 +37,8 @@ public class LineFollower implements Program {
 	 * @param portOfUsSensor
 	 *            SensorPort of the ultrasonic sensor
 	 */
-	public LineFollower(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
-		init(portOfLightSensor, portOfUsSensor);
+	public LineFollower() {
+		init();
 		deltaSpeed = 0;
 	}
 
@@ -55,21 +53,19 @@ public class LineFollower implements Program {
 	 *            alteration of driving speed (negative = slower, postive =
 	 *            faster)
 	 */
-	public LineFollower(SensorPort portOfLightSensor,
-			SensorPort portOfUsSensor, int deltaSpeed) {
-		init(portOfLightSensor, portOfUsSensor);
+	public LineFollower(int deltaSpeed) {
+		init();
 		this.deltaSpeed = deltaSpeed;
 	}
 
-	private void init(SensorPort portOfLightSensor, SensorPort portOfUsSensor) {
-		light = new LightSensor(portOfLightSensor);
+	private void init() {
+		light = Light.getInstanceOf();
 		usSensor = UltrasoundSensor.getInstanceOf();
 
 		track = TrackSuspension.getInstance();
 		sensorArm = SensorArm.getInstance();
 		sensorArm.setSpeed(ARM_SPEED);
 		lightSweeper = new LightSweeper(sensorArm, this, BUFFERSIZE);
-		lineAligner = new LineAligner(portOfLightSensor);
 	}
 
 	@Override
@@ -131,9 +127,13 @@ public class LineFollower implements Program {
 	protected void alignOnEnd() {
 		int dist = 75;
 		track.backward(dist);
-		if (!searchTrack()) {
-			track.backward(25);
-			dist += 25;
+		track.setSpeed(ROTATING_SPEED);
+		if (checkRight(50)) {
+			track.pivotRight();
+		}
+		while (track.motorsMoving()) {
+			if (isLine())
+				track.stop();
 		}
 		sensorArm.turnToCenter();
 		track.forward(dist);
@@ -233,12 +233,13 @@ public class LineFollower implements Program {
 		boolean foundLine = false;
 		track.setSpeed(ROTATING_SPEED);
 		sensorArm.turnToPosition(20, true);
-		track.backward(25);
+		track.backward(30);
 		sensorArm.waitForArm();
 
 		// checkLeft
 		if (checkLeft(90)) {
 			foundLine = true;
+			sensorArm.turnToCenter();
 			track.pivotAngleLeft(90);
 		}
 
@@ -248,6 +249,7 @@ public class LineFollower implements Program {
 			track.waitForMotors();
 			if (checkRight(90)) {
 				foundLine = true;
+				sensorArm.turnToCenter();
 				track.pivotAngleRight(90);
 			}
 
@@ -259,7 +261,7 @@ public class LineFollower implements Program {
 			}
 		}
 		sensorArm.turnToCenter(true);
-		track.forward(25);
+		track.forward(40);
 		sensorArm.waitForArm();
 
 		track.setSpeed(MOVING_SPEED + deltaSpeed);

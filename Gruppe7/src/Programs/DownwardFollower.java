@@ -1,12 +1,9 @@
 package Programs;
 
-import lejos.nxt.SensorPort;
-
 public class DownwardFollower extends LineFollower {
 
-	public DownwardFollower(SensorPort portOfLightSensor,
-			SensorPort portOfUsSensor) {
-		super(portOfLightSensor, portOfUsSensor);
+	public DownwardFollower() {
+		super(-50);
 	}
 
 	@Override
@@ -15,6 +12,7 @@ public class DownwardFollower extends LineFollower {
 
 	@Override
 	protected void alignOnEnd() {
+		track.pivotAngleLeft(25);
 		/*
 		 * track.forward(100); track.pivotAngleRight(180);
 		 * track.waitForMotors(); while (!searchTrack()) { track.forward(10); }

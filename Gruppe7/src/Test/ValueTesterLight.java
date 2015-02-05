@@ -4,13 +4,15 @@ import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
+import Sensors.Light;
 
 public class ValueTesterLight {
 
 	public static void main(String[] args) {
-		SensorArm arm = new SensorArm();
+		SensorArm arm = SensorArm.getInstance();
 	arm.setSpeed(50);
-	LightSensor light = new LightSensor(SensorPort.S4);
+	LightSensor light = Light.getInstanceOf();
+	light.setFloodlight(true);
 	while(true) {
 		arm.turnToPosition(SensorArm.MAXLEFT, true); 
 		while(arm.isMoving()) {

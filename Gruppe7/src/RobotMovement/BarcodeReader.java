@@ -1,7 +1,7 @@
 package RobotMovement;
 
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
+import Sensors.Light;
 
 /**
  * Barcode reader class
@@ -23,8 +23,8 @@ public class BarcodeReader {
 	 * @param portOfLightSensor
 	 *            SensorPort of light sensor
 	 */
-	public BarcodeReader(SensorPort portOfLightSensor) {
-		light = new LightSensor(portOfLightSensor);
+	public BarcodeReader() {
+		light = Light.getInstanceOf();
 		arm = SensorArm.getInstance();
 		track = TrackSuspension.getInstance();
 	}

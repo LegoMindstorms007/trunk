@@ -2,12 +2,12 @@ package Programs;
 
 import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
 import Communication.BluetoothCommunication;
 import RobotMovement.Aligner;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
 import Sensors.BumpSensor;
+import Sensors.Light;
 
 /**
  * program for driving a lift
@@ -25,7 +25,6 @@ public class LiftDriving implements Program {
 	// private static final int GREENLIGHT = 35;
 	private static final int RIFT_LIMIT = 35;
 	private BluetoothCommunication com;
-	private SensorPort portOfLightSensor;
 	private boolean running;
 	private LightSensor light;
 	private SensorArm arm;
@@ -43,16 +42,16 @@ public class LiftDriving implements Program {
 	 * @param rightBumpSensor
 	 *            self explaining
 	 */
-	public LiftDriving(SensorPort portOfLightSensor) {
+	public LiftDriving() {
 
-		this.portOfLightSensor = portOfLightSensor;
-		aligner = new Aligner(portOfLightSensor, 30, true, false);
+		aligner = new Aligner(30, true, false);
 		arm = SensorArm.getInstance();
 		bump = BumpSensor.getInstanceOf();
 		track = TrackSuspension.getInstance();
 		track.setSpeed(1000);
 		arm.setSpeed(250);
 		com = new BluetoothCommunication();
+		light = Light.getInstanceOf();
 	}
 
 	@Override
@@ -107,7 +106,7 @@ public class LiftDriving implements Program {
 	private void alignRobotOnPlate() {
 		aligner.align();
 
-		initLight(true);
+		light.setFloodlight(true);
 
 		track.forward(200);
 		// turn right
@@ -133,10 +132,6 @@ public class LiftDriving implements Program {
 
 		// should be centered now
 		track.setSpeed(1000);
-	}
-
-	private void initLight(boolean useLight) {
-		light = new LightSensor(portOfLightSensor, useLight);
 	}
 
 	private boolean isRift() {

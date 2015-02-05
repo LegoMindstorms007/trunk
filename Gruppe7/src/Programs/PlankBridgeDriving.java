@@ -1,13 +1,11 @@
 package Programs;
 
-import lejos.nxt.SensorPort;
 
 public class PlankBridgeDriving extends BridgeDriving {
 	private int frontcounter;
 	public static final int NOGROUND = 25;
 
-	public PlankBridgeDriving(SensorPort lightPort, SensorPort ultraSoundPort) {
-		super(lightPort, ultraSoundPort);
+	public PlankBridgeDriving() {
 		frontcounter = 0;
 	}
 

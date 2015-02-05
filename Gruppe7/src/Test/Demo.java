@@ -30,7 +30,7 @@ public class Demo {
 
 		int program = 0;
 		Program current = null;
-		BarcodeReader barcode = new BarcodeReader(LIGHT);
+		BarcodeReader barcode = new BarcodeReader();
 
 		while (program < NUM_PROGRAMS) {
 
@@ -43,33 +43,33 @@ public class Demo {
 
 			switch (program) {
 			case 0:
-				current = new StartNeu(LIGHT, ULTRA_SOUND);
+				current = new StartNeu();
 				LCD.drawString("Start", 0, 0);
 				break;
 			case 1:
-				current = new LineFollower(LIGHT, ULTRA_SOUND);
+				current = new LineFollower();
 				LCD.drawString("Line", 0, 0);
 				break;
 			case 2:
-				current = new BridgeDriving(LIGHT, ULTRA_SOUND);
+				current = new BridgeDriving();
 				LCD.drawString("Bridge", 0, 0);
 				break;
 			case 3:
-				current = new LiftDriving(LIGHT);
+				current = new LiftDriving();
 				LCD.drawString("Lift ", 0, 0);
 				break;
 			case 4:
-				current = new Labyrinth(LIGHT, ULTRA_SOUND);
+				current = new Labyrinth();
 				LCD.drawString("Labyrinth", 0, 0);
 				break;
 			case 5:
-				current = new DoorDriving(ULTRA_SOUND);
+				current = new DoorDriving();
 				break;
 			case 6:
-				current = new PlankBridge(LIGHT, ULTRA_SOUND);
+				current = new PlankBridge();
 				break;
 			case 7:
-				current = new TurnTableProgram(LIGHT, ULTRA_SOUND);
+				current = new TurnTableProgram();
 				break;
 			case 8:
 				// TODO : Boss
@@ -99,12 +99,18 @@ public class Demo {
 				}
 				if (!buttonPressed) {
 					switch (program) {
-					case 1:
 					case 4:
 					case 6:
+						Aligner aligner = new Aligner(35, false);
 						LCD.drawString(
 								"Barcode value: " + barcode.readBarcode(), 0, 1);
-						Aligner aligner = new Aligner(LIGHT, 35, false);
+						aligner.align();
+						break;
+					case 1:
+						aligner = new Aligner(35, true);
+						LCD.drawString(
+								"Barcode value: " + barcode.readBarcode(), 0, 1);
+						TrackSuspension.getInstance().forward(50);
 						aligner.align();
 						break;
 					}
