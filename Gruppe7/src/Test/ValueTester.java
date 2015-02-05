@@ -2,17 +2,21 @@ package Test;
 
 import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
 import RobotMovement.SensorArm;
+import Sensors.Light;
 
 public class ValueTester {
 
 	public static void main(String[] args) {
 			SensorArm arm= SensorArm.getInstance();
 		arm.setSpeed(50);
+		LightSensor light = Light.getInstanceOf();
 		LightSensor light = new LightSensor(SensorPort.S4);
 		light.setFloodlight(false);
 		int lightValue = 0;
+		while (true) {
+			arm.turnToPosition(SensorArm.MAXLEFT, true);
+			while (arm.isMoving()) {
 		while(true) {
 			arm.turnToPosition(SensorArm.MAXLEFT, true); 
 			while(arm.isMoving()) {
@@ -34,9 +38,11 @@ public class ValueTester {
 				sleep(10);
 				LCD.drawString(String.valueOf(lightValue), 0, 1);
 			}
+
 			
 		}
 	}
+
 	
 	private static void sleep(int millis) {
 		try {

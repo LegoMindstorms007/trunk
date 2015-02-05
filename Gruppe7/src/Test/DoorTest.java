@@ -1,7 +1,6 @@
 package Test;
 
 import lejos.nxt.Button;
-import lejos.nxt.SensorPort;
 import Programs.DoorDriving;
 import Programs.PlankBridge;
 import Programs.TurnTableProgram;
@@ -11,13 +10,11 @@ import RobotMovement.BarcodeReader;
 public class DoorTest {
 
 	public static void main(String args[]) {
-		DoorDriving door = new DoorDriving(SensorPort.S3, SensorPort.S1,
-				SensorPort.S2);
-		PlankBridge bridge = new PlankBridge(SensorPort.S4, SensorPort.S3);
-		Aligner aligner = new Aligner(SensorPort.S4, 35, false);
-		BarcodeReader barcode = new BarcodeReader(SensorPort.S4);
-		TurnTableProgram turntable = new TurnTableProgram(SensorPort.S4,
-				SensorPort.S3);
+		DoorDriving door = new DoorDriving();
+		PlankBridge bridge = new PlankBridge();
+		Aligner aligner = new Aligner(35, false);
+		BarcodeReader barcode = new BarcodeReader();
+		TurnTableProgram turntable = new TurnTableProgram();
 		Button.waitForAnyPress();
 		aligner.align();
 

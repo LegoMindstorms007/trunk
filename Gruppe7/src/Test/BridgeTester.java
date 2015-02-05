@@ -1,7 +1,6 @@
 package Test;
 
 import lejos.nxt.Button;
-import lejos.nxt.SensorPort;
 import Programs.BridgeDriving;
 import Programs.PlankBridge;
 

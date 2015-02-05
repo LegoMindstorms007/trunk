@@ -2,19 +2,19 @@ package Test;
 
 import lejos.nxt.Button;
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
 import Programs.LineFollower;
 import RobotMovement.Aligner;
 import RobotMovement.BarcodeReader;
 import RobotMovement.TrackSuspension;
+import Sensors.Light;
 
 public class AlignTest {
 
 	public static void main(String args[]) {
-		LightSensor light = new LightSensor(SensorPort.S4);
-		LineFollower line = new LineFollower(SensorPort.S4, SensorPort.S3);
-		BarcodeReader barcode = new BarcodeReader(SensorPort.S4);
+		LightSensor light = Light.getInstanceOf();
+		LineFollower line = new LineFollower();
+		BarcodeReader barcode = new BarcodeReader();
 		int valueFront;
 		int valueBack;
 		Button.waitForAnyPress();
@@ -39,7 +39,7 @@ public class AlignTest {
 		Sound.beep();
 
 		barcode.readBarcode();
-		Aligner aligner = new Aligner(SensorPort.S4, 35, false);
+		Aligner aligner = new Aligner(35, false);
 
 		Sound.buzz();
 		aligner.align();
