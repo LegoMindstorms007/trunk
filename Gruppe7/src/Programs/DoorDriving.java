@@ -53,8 +53,11 @@ public class DoorDriving implements Program {
 			sleep(50);
 		}
 
+		long timeToDrive = System.currentTimeMillis() + 5000; // in 5 seconds
+
 		// wait until door is open
-		while (running && usSensor.getMeasurment() < 40) {
+		while (running && usSensor.getMeasurment() < 40
+				&& System.currentTimeMillis() < timeToDrive) {
 			sleep(10);
 		}
 
