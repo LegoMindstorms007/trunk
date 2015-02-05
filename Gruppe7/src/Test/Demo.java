@@ -49,7 +49,7 @@ public class Demo {
 
 			while (buttonPushed != Button.ID_ENTER) {
 				LCD.clear();
-				LCD.drawString("Labyrinth richtung:", 0, 0);
+				LCD.drawString("Labyrinth direction:", 0, 0);
 
 				if (goLeftInLabyrinth)
 					LCD.drawString("Left", 0, 2);
@@ -67,38 +67,38 @@ public class Demo {
 
 			while (buttonPushed != Button.ID_ENTER) {
 				LCD.clear();
-				LCD.drawString("Programm wählen:", 0, 0);
+				LCD.drawString("Choose program:", 0, 0);
 				String programName = "";
 				switch (program) {
 				case 0:
-					programName = "Start Programm";
+					programName = "Start program";
 					break;
 				case 1:
-					programName = "Linie folgen";
+					programName = "line following";
 					break;
 				case 2:
-					programName = "Brücke fahren";
+					programName = "Bridge";
 					break;
 				case 3:
-					programName = "Lift fahren";
+					programName = "Lift";
 					break;
 				case 4:
 					programName = "Labyrinth";
 					break;
 				case 5:
-					programName = "Sumpf + Gate";
+					programName = "Gate";
 					break;
 				case 6:
-					programName = "Hängebrücke";
+					programName = "Plank-Bridge";
 					break;
 				case 7:
-					programName = "Nach Hängebrücke";
+					programName = "After Plank-Bridge";
 					break;
 				case 8:
-					programName = "Drehteller";
+					programName = "Turntable";
 					break;
 				case 9:
-					programName = "Endgegner";
+					programName = "Bossssssss";
 					break;
 				}
 
