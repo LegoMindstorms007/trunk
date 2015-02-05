@@ -28,6 +28,7 @@ public class LineFollower implements Program {
 	protected int deltaSpeed;
 	protected boolean lineFinished;
 	protected boolean lastLeft = false;
+	protected CollisionDetectionUS collisionDetection;
 
 	/**
 	 * Constructs a line follower
@@ -66,6 +67,7 @@ public class LineFollower implements Program {
 		sensorArm = SensorArm.getInstance();
 		sensorArm.setSpeed(ARM_SPEED);
 		lightSweeper = new LightSweeper(sensorArm, this, BUFFERSIZE);
+		collisionDetection = new CollisionDetectionUS();
 	}
 
 	@Override
@@ -77,7 +79,7 @@ public class LineFollower implements Program {
 
 		new Thread(lightSweeper).start();
 		track.setSpeed(MOVING_SPEED + deltaSpeed);
-
+		new Thread(collisionDetection).start();
 		while (running && !lineFinished) {
 
 			// check if robot is on the line

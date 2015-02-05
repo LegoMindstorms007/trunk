@@ -10,7 +10,7 @@ public class CollisionDetectionUS implements Program{
 	@Override
 	public void run() {
 		while(running) {
-			
+			checkForCollision();
 		}
 		
 	}
@@ -32,9 +32,16 @@ public class CollisionDetectionUS implements Program{
 		}
 		sleep(500);
 		if(us.getAverageMeasurement(10) <= distance) {
-			possibleCollsion = false;
-		} else {
 			collided = true;
+		} else {
+			possibleCollsion = false;
+		}
+		while(collided && running) {
+			if(us.getAverageMeasurement(10) > distance) {
+				collided = false;
+				possibleCollsion = false;
+			}
+			sleep(10);
 		}
 		
 	}

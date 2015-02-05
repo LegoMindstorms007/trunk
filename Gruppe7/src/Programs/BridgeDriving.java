@@ -1,9 +1,11 @@
 package Programs;
 
+import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import RobotMovement.LightSweeper;
 import RobotMovement.SensorArm;
 import RobotMovement.TrackSuspension;
+import Sensors.BumpSensor;
 import Sensors.Light;
 
 public class BridgeDriving implements Program {
@@ -14,11 +16,13 @@ public class BridgeDriving implements Program {
 	public static final int NOGROUND = 28;
 	public static final int BLACKGROUND = 26;
 	public static final int GREEN = 35;
+	protected CollisionDetectionUS collisionDetection;
 	protected TrackSuspension track;
 	protected SensorArm arm;
 	protected LightSensor light;
 	protected boolean running;
 	protected LightSweeper sweeper;
+	protected BumpSensor bump;
 	Last last;
 
 	public BridgeDriving() {
@@ -30,6 +34,8 @@ public class BridgeDriving implements Program {
 		sweeper = new LightSweeper();
 		running = true;
 		light.setFloodlight(true);
+		collisionDetection = new CollisionDetectionUS();
+		bump = BumpSensor.getInstanceOf();
 	}
 
 	@Override
@@ -72,11 +78,15 @@ public class BridgeDriving implements Program {
 				arm.turnToPosition(SensorArm.MAXRIGHT);
 				int currentTacho = track.getLeftTachoCount();
 				int distance = 0;
-				while(light.getLightValue() >= NOGROUND && running && (distance < 1300)) {
+				while(light.getLightValue() >= NOGROUND && running && (distance < 5000)) {
 					if(!track.motorsMoving()) {
 						track.forward();
 					}
-					distance = currentTacho - track.getLeftTachoCount();
+					if(bump.touchedAny()) {
+						track.stop();
+					}
+					distance = track.getLeftTachoCount() - currentTacho;
+					sleep(50);
 				}
 	}
 
@@ -88,6 +98,13 @@ public class BridgeDriving implements Program {
 		while (running) {
 			if (!track.motorsMoving()) {
 				track.forward();
+			}
+			while(collisionDetection.possibleCollision()) {
+				track.stop();
+				sweeper.stopSweeping();
+			}
+			if(!sweeper.isSweeping()) {
+				sweeper.startSweeping();
 			}
 			Ground currentGround = checkGround(measure());
 			if (currentGround == Ground.AIR) {

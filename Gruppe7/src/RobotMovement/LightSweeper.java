@@ -33,6 +33,9 @@ public class LightSweeper implements Runnable {
 		moving = true;
 	}
 
+	public boolean isSweeping() {
+		return moving;
+	}
 	private static void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
