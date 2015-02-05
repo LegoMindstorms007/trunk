@@ -12,7 +12,7 @@ public class DownwardFollower extends LineFollower {
 
 	@Override
 	protected void alignOnEnd() {
-		track.pivotAngleLeft(25);
+		track.pivotAngleLeft(35);
 		track.waitForMotors();
 		/*
 		 * track.forward(100); track.pivotAngleRight(180);
