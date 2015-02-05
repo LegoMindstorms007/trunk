@@ -11,7 +11,6 @@ public class ValueTester {
 			SensorArm arm= SensorArm.getInstance();
 		arm.setSpeed(50);
 		LightSensor light = Light.getInstanceOf();
-		LightSensor light = new LightSensor(SensorPort.S4);
 		light.setFloodlight(false);
 		int lightValue = 0;
 		while (true) {
@@ -38,8 +37,8 @@ public class ValueTester {
 				sleep(10);
 				LCD.drawString(String.valueOf(lightValue), 0, 1);
 			}
-
-			
+		}
+			}
 		}
 	}
 
