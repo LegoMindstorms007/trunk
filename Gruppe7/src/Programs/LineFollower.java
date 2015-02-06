@@ -126,7 +126,7 @@ public class LineFollower implements Program {
 					if (checkWalls()) {
 						sensorArm.turnToCenter();
 						lineFinished = true;
-					} else { // else do a fallback search
+					} else if (doFallbacksearch) { // else do a fallback search
 						fallBack();
 					}
 

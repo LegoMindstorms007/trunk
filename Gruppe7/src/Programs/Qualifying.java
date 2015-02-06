@@ -11,7 +11,7 @@ public class Qualifying implements Program {
 	private boolean Labrinthright;
 
 	public Qualifying(boolean LabrinthRight, boolean doFallback) {
-		follower = new LineFollower(doFallback);
+		follower = new QualifyingFollower(doFallback);
 		tracks = TrackSuspension.getInstance();
 		Labrinthright = LabrinthRight;
 		labyrinthright = new Labyrinthright();
