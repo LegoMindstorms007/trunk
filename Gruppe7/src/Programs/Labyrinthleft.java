@@ -20,6 +20,7 @@ public class Labyrinthleft implements Program {
 	// private int leftvalue=0;
 	// private int rightvalue=0;
 	private boolean adjust = true;
+	private LineChecker checker;
 
 	// private int distance = 0;
 
@@ -31,15 +32,17 @@ public class Labyrinthleft implements Program {
 		movement.setSpeed(MOVING_SPEED);
 		bump = BumpSensor.getInstanceOf();
 		light = Light.getInstanceOf();
+		checker = new LineChecker(35);
 	}
 
 	// @Override
 	public void run() {
+		checker.start();
 		running = true;
 		sArm.turnArmLeft(90);
 		movement.forward(40);
 		while (running) {
-			if (!isLine()) {
+			if (!checker.isLine()) {
 				if (bump.touchedAny()) {
 					searchHolzByCollision();
 				} else if (isRightHolz()) {
@@ -47,7 +50,7 @@ public class Labyrinthleft implements Program {
 					if (measurment >= 8 && measurment <= 15) {// follow the
 																// wood
 						movement.forward();
-					} else if (measurment < 5) {//adjust 
+					} else if (measurment < 5) {// adjust
 						movement.backward(60);
 						movement.pivotAngleRight(30);
 						movement.waitForMotors();
@@ -69,10 +72,10 @@ public class Labyrinthleft implements Program {
 				} else if (!isRightHolz()) {// air, turn to right
 					turntoHolz();
 				}
-			}
-			else {
+			} else {
 				running = false;
 			}
+			checker.halt();
 		}
 		movement.stop();
 		while (adjust) {
@@ -144,24 +147,18 @@ public class Labyrinthleft implements Program {
 		 * sArm.turnArmRight(90+angle); }
 		 */
 
-		//boolean turn = false;
+		// boolean turn = false;
 		movement.backward(80);
 		movement.pivotAngleRight(90);
 		movement.waitForMotors();
 		movement.forward(40);
-		/*int measurment = usSensor.getMeasurment();
-		if (measurment > 25 && measurment < 50) {
-			turn = true;
-		}
-		while (turn) {
-			movement.backward(50);
-			movement.pivotAngleRight(50);
-			movement.waitForMotors();
-			movement.forward(20);
-			if (isRightHolz()) {
-				turn = false;
-			}
-		}*/
+		/*
+		 * int measurment = usSensor.getMeasurment(); if (measurment > 25 &&
+		 * measurment < 50) { turn = true; } while (turn) {
+		 * movement.backward(50); movement.pivotAngleRight(50);
+		 * movement.waitForMotors(); movement.forward(20); if (isRightHolz()) {
+		 * turn = false; } }
+		 */
 	}
 
 	@Override
@@ -172,5 +169,45 @@ public class Labyrinthleft implements Program {
 	@Override
 	public boolean isRunning() {
 		return running;
+	}
+
+	private class LineChecker extends Thread {
+		private boolean isLine;
+		private int lightValue;
+		private boolean running;
+		private Light light;
+
+		public LineChecker(int lightValue) {
+			this.lightValue = lightValue;
+			isLine = false;
+			light = Light.getInstanceOf();
+		}
+
+		@Override
+		public void run() {
+			running = true;
+			while (running && !isLine) {
+				isLine = light.getLightValue() > lightValue;
+				sleep(20);
+			}
+			running = false;
+		}
+
+		public void halt() {
+			running = false;
+		}
+
+		public boolean isLine() {
+			return isLine;
+		}
+
+		private void sleep(int millis) {
+			try {
+				Thread.sleep(millis);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }
