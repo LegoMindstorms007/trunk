@@ -31,11 +31,13 @@ public class EndBoss implements Program {
 		arm.setSpeed(2000);
 		tracks.forward(200);
 		while (running) {
-			tracks.turnRight(60);
+			tracks.turnRight(70);
 			tracks.waitForMotors();
-			tracks.forward(200);
-			tracks.turnLeft(60);
+			tracks.forward(300);
+			tracks.turnLeft(150);
 			tracks.waitForMotors();
+			tracks.forward(300);
+			tracks.turnRight(70);
 		}
 		running = false;
 	}
