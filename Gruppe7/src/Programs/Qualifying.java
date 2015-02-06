@@ -27,7 +27,6 @@ public class Qualifying implements Program {
 			while (follower.isRunning()) {
 
 			}
-			tracks.forward(200);
 			if (Labrinthright) {
 				new Thread(labyrinthright).start();
 				sleep(100);
