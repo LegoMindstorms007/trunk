@@ -13,7 +13,6 @@ public class EndBoss implements Program {
 	private SensorArm arm;
 	private TrackSuspension tracks;
 	private LightSweeper sweeper;
-
 	public EndBoss() {
 		bump = BumpSensor.getInstanceOf();
 		us = UltrasoundSensor.getInstanceOf();
@@ -25,19 +24,27 @@ public class EndBoss implements Program {
 	@Override
 	public void run() {
 		running = true;
-		new Thread(sweeper).start();
-		sleep(100);
 		tracks.setSpeed(5000);
-		arm.setSpeed(2000);
+		arm.turnToPosition(SensorArm.MAXLEFT);
 		tracks.forward(200);
-		while (running) {
 			tracks.turnRight(70);
 			tracks.waitForMotors();
 			tracks.forward(300);
-			tracks.turnLeft(150);
+			tracks.turnLeft(70);
 			tracks.waitForMotors();
-			tracks.forward(300);
-			tracks.turnRight(70);
+		while(running) {
+			if(bump.touchedAny()) {
+				tracks.setSpeed(5000);
+				tracks.stop();
+				tracks.backward(150);
+				tracks.stop();
+				tracks.pivotAngleLeft(95);
+				tracks.waitForMotors();
+			}
+			if(!tracks.motorsMoving()) {
+				tracks.forward();
+			}
+			
 		}
 		running = false;
 	}
