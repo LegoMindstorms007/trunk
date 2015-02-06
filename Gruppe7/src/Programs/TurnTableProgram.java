@@ -26,12 +26,12 @@ public class TurnTableProgram implements Program {
 	public void run() {
 		while (running) {
 			tracks.forward(100);
+			table.connect();
 			new Thread(upwards).start();
 			sleep(100);
 			while (upwards.isRunning() && running) {
 				sleep(100);
 			}
-			table.connect();
 			while (!table.isConnected() && running) {
 				sleep(100);
 			}
