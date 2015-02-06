@@ -78,7 +78,7 @@ public class Labyrinthleft implements Program {
 			checker.halt();
 		}
 		movement.stop();
-		while (adjust) {
+		/*while (adjust) {
 			int measurment = usSensor.getMeasurment();
 			if (measurment >= 5 || measurment <= 7) {
 				adjust = false;
@@ -94,10 +94,9 @@ public class Labyrinthleft implements Program {
 				movement.forward(45);
 
 			}
-		}
+		}*/
 
 		sArm.turnToCenter();
-
 		/*
 		 * distance = getDistance(); while(change){ if(distance<=3 &&
 		 * distance>=-3){ change = false; } else if(distance >3){
