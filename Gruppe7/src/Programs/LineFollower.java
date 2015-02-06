@@ -128,6 +128,8 @@ public class LineFollower implements Program {
 						lineFinished = true;
 					} else if (doFallbacksearch) { // else do a fallback search
 						fallBack();
+					} else {
+						lineFinished = true;
 					}
 
 				}
@@ -159,7 +161,7 @@ public class LineFollower implements Program {
 		int dist = 75;
 		track.backward(dist);
 		if (checkRight(90)) {
-			track.pivotAngleRight(10);
+			track.pivotAngleRight(5);
 			track.waitForMotors();
 		}
 		sensorArm.turnToCenter();
@@ -344,7 +346,6 @@ public class LineFollower implements Program {
 		}
 
 		return wallLeft && wallRight;
-
 	}
 
 	protected void sleep(int millis) {

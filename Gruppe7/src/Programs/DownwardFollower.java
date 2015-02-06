@@ -3,7 +3,7 @@ package Programs;
 public class DownwardFollower extends LineFollower {
 
 	public DownwardFollower() {
-		super(-50);
+		super(-25);
 	}
 
 	@Override
@@ -12,8 +12,10 @@ public class DownwardFollower extends LineFollower {
 
 	@Override
 	protected void alignOnEnd() {
-		track.pivotAngleLeft(35);
-		track.waitForMotors();
+		track.setSpeed(2000);
+		track.forward(300);
+		// track.pivotAngleLeft(35);
+		// track.waitForMotors();
 		/*
 		 * track.forward(100); track.pivotAngleRight(180);
 		 * track.waitForMotors(); while (!searchTrack()) { track.forward(10); }

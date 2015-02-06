@@ -13,7 +13,8 @@ public class QualifyingFollower extends LineFollower {
 	}
 
 	protected void alignOnEnd() {
-		track.turnRight(25);
+		track.turnRight(35);
+		track.waitForMotors();
 	}
 
 	protected void getToBarcode() {
@@ -24,9 +25,10 @@ public class QualifyingFollower extends LineFollower {
 				sleep(10);
 			}
 			track.stop();
-			track.forward(200);
-			track.turnLeft(90);
-			track.forward(200);
+			track.forward(400);
+			track.pivotAngleLeft(90);
+			track.waitForMotors();
+			track.forward(400);
 		}
 	}
 

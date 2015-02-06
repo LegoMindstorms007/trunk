@@ -39,7 +39,7 @@ public class Labyrinthright implements Program {
 	public void run() {
 		checker.start();
 		running = true;
-		sArm.turnArmRight(90);
+		sArm.turnToPosition(-90);
 		movement.forward(40);
 		// movement.forward();
 		while (running) {

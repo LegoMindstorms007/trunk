@@ -14,7 +14,6 @@ import Programs.LineFollower;
 import Programs.PlankBridge;
 import Programs.Program;
 import Programs.StartNeu;
-import Programs.TurnTableProgram;
 import RobotMovement.Aligner;
 import RobotMovement.BarcodeReader;
 import RobotMovement.SensorArm;
@@ -86,10 +85,10 @@ public class Demo {
 			case 7:
 				programName = "After Plank-Bridge";
 				break;
+			// case 8:
+			// programName = "Turntable";
+			// break;
 			case 8:
-				programName = "Turntable";
-				break;
-			case 9:
 				programName = "Bossssssss";
 				break;
 			}
@@ -149,10 +148,10 @@ public class Demo {
 			case 7:
 				current = new DownwardFollower();
 				break;
+			// case 8:
+			// current = new TurnTableProgram();
+			// break;
 			case 8:
-				current = new TurnTableProgram();
-				break;
-			case 9:
 				current = new EndBoss();
 				break;
 			default:
@@ -176,7 +175,7 @@ public class Demo {
 					switch (program) {
 					case 4:
 						alignOnRight(12);
-					case 7:
+						// case 7:
 						Aligner aligner = new Aligner(35, false);
 						LCD.drawString(
 								"Barcode value: " + barcode.readBarcode(), 0, 1);

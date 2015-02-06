@@ -39,7 +39,7 @@ public class Labyrinthleft implements Program {
 	public void run() {
 		checker.start();
 		running = true;
-		sArm.turnArmLeft(90);
+		sArm.turnToPosition(90);
 		movement.forward(40);
 		while (running) {
 			if (!checker.isLine()) {
