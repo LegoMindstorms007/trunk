@@ -6,8 +6,9 @@ import lejos.nxt.SensorPort;
 import Programs.BridgeDriving;
 import Programs.DoorDriving;
 import Programs.DownwardFollower;
-import Programs.Labyrinthright;
+import Programs.EndBoss;
 import Programs.Labyrinthleft;
+import Programs.Labyrinthright;
 import Programs.LiftDriving;
 import Programs.LineFollower;
 import Programs.PlankBridge;
@@ -134,8 +135,7 @@ public class Demo {
 			case 4:
 				if (goLeftInLabyrinth) {
 					current = new Labyrinthleft();
-				}
-				else {
+				} else {
 					current = new Labyrinthright();
 				}
 				LCD.drawString("Labyrinth", 0, 0);
@@ -153,13 +153,7 @@ public class Demo {
 				current = new TurnTableProgram();
 				break;
 			case 9:
-				// TODO : Boss
-				TrackSuspension track = TrackSuspension.getInstance();
-				track.setSpeed(5000);
-				track.forward();
-				SensorArm.getInstance().shootLeft();
-				SensorArm.getInstance().shootRight();
-				SensorArm.getInstance().turnToPosition(90);
+				current = new EndBoss();
 				break;
 			default:
 				current = null;
@@ -182,7 +176,7 @@ public class Demo {
 					switch (program) {
 					case 4:
 						alignOnRight(12);
-					case 6:
+					case 7:
 						Aligner aligner = new Aligner(35, false);
 						LCD.drawString(
 								"Barcode value: " + barcode.readBarcode(), 0, 1);
