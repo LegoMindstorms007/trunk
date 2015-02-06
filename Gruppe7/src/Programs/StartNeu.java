@@ -36,9 +36,9 @@ public class StartNeu implements Program {
 
 	@Override
 	public void run() {
-		sleep(1000);
 		tracks.setSpeed(MOVINGSPEED);
-		findLeftWall();
+		tracks.forward(100);
+		arm.turnToPosition(SensorArm.MAXLEFT);
 		driveAlongLeftWall();
 		findRightWall();
 		driveAlongRightWall();
