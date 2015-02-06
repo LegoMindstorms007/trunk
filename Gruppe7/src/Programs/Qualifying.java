@@ -10,9 +10,8 @@ public class Qualifying implements Program {
 	private Labyrinthleft labyrinthleft;
 	private boolean Labrinthright;
 
-	public Qualifying(boolean LabrinthRight) {
-		running = true;
-		follower = new LineFollower();
+	public Qualifying(boolean LabrinthRight, boolean doFallback) {
+		follower = new QualifyingFollower(doFallback);
 		tracks = TrackSuspension.getInstance();
 		Labrinthright = LabrinthRight;
 		labyrinthright = new Labyrinthright();
@@ -21,13 +20,13 @@ public class Qualifying implements Program {
 
 	@Override
 	public void run() {
+		running = true;
 		while (running) {
 			new Thread(follower).start();
 			sleep(100);
 			while (follower.isRunning()) {
 
 			}
-			tracks.forward(200);
 			if (Labrinthright) {
 				new Thread(labyrinthright).start();
 				sleep(100);
@@ -42,7 +41,7 @@ public class Qualifying implements Program {
 				}
 			}
 		}
-
+		running = false;
 	}
 
 	private void sleep(int i) {

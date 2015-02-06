@@ -29,14 +29,10 @@ public class LineFollower implements Program {
 	protected int deltaSpeed;
 	protected boolean lineFinished;
 	protected boolean lastLeft = false;
+	protected boolean doFallbacksearch = true;
 
 	/**
 	 * Constructs a line follower
-	 * 
-	 * @param portOfLightSensor
-	 *            SensorPort of the light sensor
-	 * @param portOfUsSensor
-	 *            SensorPort of the ultrasonic sensor
 	 */
 	public LineFollower() {
 		init();
@@ -44,12 +40,20 @@ public class LineFollower implements Program {
 	}
 
 	/**
+	 * Constructs a line follower
+	 * 
+	 * @param doFallback
+	 *            if a fallback search should be done or not
+	 */
+	public LineFollower(boolean doFallback) {
+		init();
+		deltaSpeed = 0;
+		doFallbacksearch = doFallback;
+	}
+
+	/**
 	 * Constructs a line follower including driving speed alteration
 	 * 
-	 * @param portOfLightSensor
-	 *            SensorPort of the light sensor
-	 * @param portOfUsSensor
-	 *            SensorPort of the ultrasonic sensor
 	 * @param deltaSpeed
 	 *            alteration of driving speed (negative = slower, postive =
 	 *            faster)
@@ -57,6 +61,22 @@ public class LineFollower implements Program {
 	public LineFollower(int deltaSpeed) {
 		init();
 		this.deltaSpeed = deltaSpeed;
+	}
+
+	/**
+	 * Constructs a line follower including driving speed alteration
+	 * 
+	 * @param deltaSpeed
+	 *            alteration of driving speed (negative = slower, postive =
+	 *            faster)
+	 * @param deltaSpeed
+	 *            alteration of driving speed (negative = slower, postive =
+	 *            faster)
+	 */
+	public LineFollower(int deltaSpeed, boolean doFallback) {
+		init();
+		this.deltaSpeed = deltaSpeed;
+		doFallbacksearch = doFallback;
 	}
 
 	private void init() {
@@ -106,7 +126,7 @@ public class LineFollower implements Program {
 					if (checkWalls()) {
 						sensorArm.turnToCenter();
 						lineFinished = true;
-					} else { // else do a fallback search
+					} else if (doFallbacksearch) { // else do a fallback search
 						fallBack();
 					}
 
